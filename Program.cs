@@ -4,14 +4,14 @@ using SixLabors.ImageSharp.Processing;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
-DKbase.Helper.getTipoApp = builder.Configuration.GetSection("appSettings")["getTipoApp"];
-DKbase.Helper.getFolder = builder.Configuration.GetSection("appSettings")["getFolder"];
+nscore.Helper.app = builder.Configuration.GetSection("appSettings")["app"];
+nscore.Helper.folder = builder.Configuration.GetSection("appSettings")["folder"];
 
 
 DKbase.Helper.getConnectionStringSQL = builder.Configuration.GetConnectionString("ConnectionSQL");
 
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => nscore.Util.HolaMundo());
 app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
 {
     http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";
@@ -28,7 +28,7 @@ async Task ResizeImageAsync(string r, string n, string an, string al, string c, 
     string strAncho = an;
     string strAlto = al;
     string strColor = string.Empty;
-    string RutaCompleta = Path.Combine(DKbase.Helper.getFolder, "archivos", ruta);
+    string RutaCompleta = Path.Combine(nscore.Helper.extFolder, "archivos", ruta);
     string RutaCompletaNombreArchivo = Path.Combine(RutaCompleta, nombre);
     var strPath = RutaCompletaNombreArchivo;
     using var image = await Image.LoadAsync(strPath, token);
