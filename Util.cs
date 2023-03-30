@@ -5,12 +5,12 @@ public class Util
 {
     public static string HolaMundo()
     {
-        ObserverCoordinates ciudad = ObserverCoordinates.cityQuito;//ObserverCoordinates.cityQuito  cityRosario
+        ObserverCoordinates ciudad = ObserverCoordinates.cityRosario;//ObserverCoordinates.cityQuito  cityRosario
         double julianDateGreenwich = AstronomyEngine.GetJulianDate();
         double sirio_Dec = -16.7280; // -16° 42' 58.017''
         double sirio_RA = 101.28326; // 06h 45m 08.9173s
         EquatorialCoordinates sirio_eq = new EquatorialCoordinates() { dec = sirio_Dec, ra = sirio_RA };
-        EquatorialCoordinates antares_eq = new EquatorialCoordinates() { dec = -26.4322, ra = 247.35489 };
+        EquatorialCoordinates antares_eq = new EquatorialCoordinates() { dec = -26.4832, ra = 247.70873 };
         HorariasCoordinates antares_horaria = AstronomyEngine.ToHorariasCoordinates(ciudad, antares_eq);//
         HorariasCoordinates sirio_horaria = AstronomyEngine.ToHorariasCoordinates(ciudad, sirio_eq);
         HorizontalCoordinates sirio_horizontal = AstronomyEngine.ToHorizontalCoordinates(ciudad, sirio_eq);
@@ -18,14 +18,14 @@ public class Util
         // Mostrar resultantes
         string result = string.Empty;
         result += " - sirio: ";
-        result += "Azimuth: " + AstronomyEngine.GetSexagesimal(sirio_horizontal.Azimuth);
+        result += "Azimuth: " + (sirio_horizontal.Azimuth);//AstronomyEngine.GetSexagesimal
         result += " - ";
-        result += "Altitud: " + AstronomyEngine.GetSexagesimal(sirio_horizontal.Altitude);
+        result += "Altitud: " + (sirio_horizontal.Altitude);
 
         result += " - antares: ";
         result += "Azimuth: " + AstronomyEngine.GetSexagesimal(antares_horizontal.Azimuth);
         result += " - ";
-        result += "Altitud: " + AstronomyEngine.GetSexagesimal(antares_horizontal.Altitude);
+        result += "Altitud: " +AstronomyEngine.GetSexagesimal(antares_horizontal.Altitude);
         /*
         /*
                      result +=   " - antares: ";

@@ -73,7 +73,6 @@ public class AstronomyEngine
     public static HorariasCoordinates ToHorariasCoordinates(ObserverCoordinates pCity, EquatorialCoordinates pEq)
     {
         double siderealTime = GetTSL(pCity);
-        // double ra_360 = (pEq.ra * 360.0 / 24.0);
         double hourAngle_astro = siderealTime - pEq.ra;
         while (hourAngle_astro < 0.0)
         {
@@ -102,95 +101,6 @@ public class AstronomyEngine
 
 
         return new HorizontalCoordinates() { Altitude = altitude, Azimuth = azimuth };
-    }
-    /*public static HorizontalCoordinates ToHorizontalCoordinates(ObserverCoordinates pCity, EquatorialCoordinates pEq)
-    {
-
-        double Azi_decimal = 0;
-        double Alt_decimal = 0;
-        // Convertir las coordenadas ecuatoriales a coordenadas horizontales
-        double siderealTime = GetTSL(pCity);
-
-        // ascensión recta local (ARL)
-        // ARL = RA - HSL
-        double ARL = siderealTime - pEq.ra;
-        // coordenada horaria (HA) 
-        // HA = 15 * ARL
-        double HA = 15.0 * ARL;
-        while (HA < 0.0)
-        {
-            HA += 360.0;
-        }
-        while (HA >= 360.0)
-        {
-            HA -= 360.0;
-        }
-
-        //Calcule el ángulo horario (AltH) del objeto como sigue:
-        //AltH = sin(Dec) * sin(latitud) + cos(Dec) * cos(latitud) * cos(HA)
-
-        double AltH = Math.Sin(pEq.dec * Math.PI / 180.0) * Math.Sin(pCity.latitude * Math.PI / 180.0) + Math.Cos(pEq.dec * Math.PI / 180.0) * Math.Cos(pCity.latitude * Math.PI / 180.0) * Math.Cos(HA * Math.PI / 180.0);
-        //Calcule la altura del objeto (Alt) como sigue:
-        //Alt = arcsin(AltH)
-        double Alt_radiales = Math.Asin(AltH);
-
-        //Calcule el azimut del objeto (Azi) como sigue:
-        //Azi = cos(Dec) * sin(HA) / cos(Alt)
-        double Azi_radiales = Math.Cos(pEq.dec * Math.PI / 180.0) * Math.Sin(HA * Math.PI / 180.0) / Math.Cos(Alt_radiales);
-        //Si sin(Azi) es positivo, Azi = 360 - Azi.
-        double sin_Azi = Math.Sin(Azi_radiales);
-
-        Azi_decimal = (Azi_radiales * (180.0 / Math.PI));
-
-        if (sin_Azi > 0.0)
-        {
-            Azi_decimal = 360.0 - Azi_decimal;
-        }
-        Alt_decimal = Alt_radiales * (180.0 / Math.PI);
-        //conectarStellarium();
-        //////////////
-
-
- 
-
-        return new HorizontalCoordinates() { Altitude = Alt_decimal, Azimuth = Azi_decimal };
-}*/
-    public static void conectarStellarium()
-    {
-
-        // IP address of the machine running Stellarium
-        string ipAddress = "localhost";// "192.168.1.100";
-                                       // Port number that Stellarium is listening on
-        int port = 10001;
-
-        try
-        {
-            // Create a new TCP/IP client socket
-            TcpClient client = new TcpClient();
-
-            // Connect to Stellarium
-            client.Connect(ipAddress, port);
-
-            // Send a message to Stellarium
-            string message = "{\"id\":1,\"method\":\"ping\"}\n";
-            byte[] data = System.Text.Encoding.ASCII.GetBytes(message);
-            NetworkStream stream = client.GetStream();
-            stream.Write(data, 0, data.Length);
-
-            // Receive a response from Stellarium
-            data = new byte[256];
-            string response = string.Empty;
-            int bytes = stream.Read(data, 0, data.Length);
-            response = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
-            Console.WriteLine("Received: {0}", response);
-
-            // Close the connection
-            client.Close();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Exception: {0}", e);
-        }
     }
 
 }
