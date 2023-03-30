@@ -6,6 +6,10 @@ public class ObserverCoordinates
     public double latitude { get; set; }//= 19.4326; // en grados
     public double longitude { get; set; }//= -99.1332; // en grados
     public double altitude { get; set; }//= 0.0; // en metros
+
+   // public double latitude_radianes { get { return latitude * Math.PI / 180.0; } }
+  // public double longitude_radianes { get { return longitude * Math.PI / 180.0; } }
+    //public double altitude_radianes { get { return altitude * Math.PI / 180.0; } }
     public TimeZoneInfo timeZoneInfo { get; set; }
     public double timeZone
     {
@@ -28,6 +32,13 @@ public class EquatorialCoordinates
     public double dec = 0; // en grados
     public double epoch = 2000.0; // en años julianos
 
+   // public double ra_radianes { get { return ra * Math.PI / 180.0; } }
+    //public double dec_radianes { get { return dec * Math.PI / 180.0; } }
     //public EquatorialCoordinates sirio_eq = new EquatorialCoordinates() { dec = sirio_Dec, ra = sirio_RA };
 
+}
+public class HorariasCoordinates
+{
+      public double dec = 0; // en grados
+    public double HA = 0; // en grados
 }
