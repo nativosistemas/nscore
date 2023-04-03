@@ -5,6 +5,12 @@ public class Util
 {
     public static string HolaMundo()
     {
+        //
+        ServoController device = new ServoController();
+        device.logica();
+        // 
+
+
         ObserverCoordinates ciudad = ObserverCoordinates.cityRosario;//ObserverCoordinates.cityQuito  cityRosario
         double julianDateGreenwich = AstronomyEngine.GetJulianDate();
         double sirio_Dec = -16.7280; // -16° 42' 58.017''
@@ -25,7 +31,7 @@ public class Util
         result += " - antares: ";
         result += "Azimuth: " + AstronomyEngine.GetSexagesimal(antares_horizontal.Azimuth);
         result += " - ";
-        result += "Altitud: " +AstronomyEngine.GetSexagesimal(antares_horizontal.Altitude);
+        result += "Altitud: " + AstronomyEngine.GetSexagesimal(antares_horizontal.Altitude);
         /*
         /*
                      result +=   " - antares: ";
