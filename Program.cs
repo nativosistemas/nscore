@@ -7,7 +7,8 @@ var app = builder.Build();
 nscore.Helper.app = builder.Configuration.GetSection("appSettings")["app"];
 nscore.Helper.folder = builder.Configuration.GetSection("appSettings")["folder"];
 
-
+DKbase.Helper.getFolder  = builder.Configuration.GetSection("appSettings")["folder"];
+DKbase.Helper.getTipoApp= builder.Configuration.GetSection("appSettings")["app"];
 DKbase.Helper.getConnectionStringSQL = builder.Configuration.GetConnectionString("ConnectionSQL");
 
 

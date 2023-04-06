@@ -18,9 +18,15 @@ public class ServoController
 
     public ServoController()
     {
-        gpioController = new GpioController(PinNumberingScheme.Board);
-        //  int servoPin = 18;
-        gpioController.OpenPin(servoPin_18, PinMode.Output);
+        try
+        {
+            gpioController = new GpioController(PinNumberingScheme.Board);
+            gpioController.OpenPin(servoPin_18, PinMode.Output);
+        }
+        catch (Exception ex)
+        {
+            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
+        }
     }
 
     public void SetServoPosition(double pPositionDegree)
@@ -37,7 +43,7 @@ public class ServoController
 
         try
         {
-            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "hola mundo", DateTime.Now);
+            //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "hola mundo", DateTime.Now);
             bool ledOn = true;
             while (true)
             {
@@ -58,7 +64,18 @@ public class ServoController
         catch (Exception ex)
         {
             DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
-            gpioController.ClosePin(servoPin_18);
+
+        }
+        finally
+        {
+            try
+            {
+                gpioController.ClosePin(servoPin_18);
+            }
+            catch (Exception ex_finally)
+            {
+                DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex_finally, DateTime.Now);
+            }
         }
 
     }
