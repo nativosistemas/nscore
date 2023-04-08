@@ -8,7 +8,7 @@ public sealed class Helper
     {
         set; get;
     }
-    public static string folder
+    public static string folder//git reset --hard HEAD
     {
         set; get;
     }
