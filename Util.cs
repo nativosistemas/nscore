@@ -6,8 +6,8 @@ public class Util
     public static string HolaMundo()
     {
         //
-        ServoController device = new ServoController();
-        device.logica();
+      //  ServoController device = new ServoController();
+      //  device.logica();
           //    DKbase.generales.Log.LogErrorFile("HolaMundo", "ex.ToString()");
         // 
 
@@ -45,6 +45,10 @@ public class Util
                 result += " - ";
                 result += "dec: " + AstronomyEngine.GetSexagesimal(sirio_horaria.dec);//*/
         //return "Tiempo sideral local: " + AstronomyEngine.GetHHmmss( AstronomyEngine.GetTSL(ciudad_rosario));
+
+//string directorioActual = System.IO.Directory.GetCurrentDirectory();
+//string rutaApp = System.Reflection.Assembly.GetEntryAssembly().Location;
+
         return "Ok: HolaMundo! || sirio -> HorizontalCoordinates: " + result;
     }
 }

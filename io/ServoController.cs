@@ -45,7 +45,8 @@ public class ServoController
         {
             //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "hola mundo", DateTime.Now);
             bool ledOn = true;
-            while (true)
+            int contador = 0;
+            while (contador <= 90) // un minuto y medio 
             {
                 /* if (gpioController.Read(servoPin_18) == PinValue.High)
                  {
