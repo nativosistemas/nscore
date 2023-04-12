@@ -66,7 +66,7 @@ public class ServoController : IServoController
                 }
                 //gpioController.Write(servoPin_24_Gpio10, ((ledOn) ? PinValue.High : PinValue.Low));
                 //Thread.Sleep(1000);
-                ledOn = !ledOn;
+               // ledOn = !ledOn;
             }
 
         }
