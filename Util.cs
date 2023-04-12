@@ -3,12 +3,17 @@ namespace nscore;
 
 public class Util
 {
+    public static string MoverServo(nscore.IServoController pServo)
+    {
+        pServo.logica();
+        return "Ok";
+    }
     public static string HolaMundo()
     {
         //
-      //  ServoController device = new ServoController();
-      //  device.logica();
-              DKbase.generales.Log.LogErrorFile("HolaMundo", "ex.ToString()");
+        //  ServoController device = new ServoController();
+        //  device.logica();
+        DKbase.generales.Log.LogErrorFile("HolaMundo", "ex.ToString()");
         // 
 
 
@@ -46,8 +51,8 @@ public class Util
                 result += "dec: " + AstronomyEngine.GetSexagesimal(sirio_horaria.dec);//*/
         //return "Tiempo sideral local: " + AstronomyEngine.GetHHmmss( AstronomyEngine.GetTSL(ciudad_rosario));
 
-//string directorioActual = System.IO.Directory.GetCurrentDirectory();
-//string rutaApp = System.Reflection.Assembly.GetEntryAssembly().Location;
+        //string directorioActual = System.IO.Directory.GetCurrentDirectory();
+        //string rutaApp = System.Reflection.Assembly.GetEntryAssembly().Location;
 
         return "Ok: HolaMundo! || sirio -> HorizontalCoordinates: " + result;
     }

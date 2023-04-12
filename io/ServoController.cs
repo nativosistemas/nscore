@@ -1,11 +1,15 @@
 using System.Device.Gpio;
 
 namespace nscore;
-public class ServoController
+public interface IServoController
+{
+    public void logica();
+}
+public class ServoController : IServoController
 {
     private readonly GpioController gpioController;
     // private readonly PwmChannel _pwmChannel;
-    public int servoPin_18 = 18;
+    public int servoPin_24_Gpio10 = 24;
     //   private const double MinAngle = 0.0;
     //  private const double MaxAngle = 1.0;
 
@@ -21,7 +25,7 @@ public class ServoController
         try
         {
             gpioController = new GpioController(PinNumberingScheme.Board);
-            gpioController.OpenPin(servoPin_18, PinMode.Output);
+            gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
         }
         catch (Exception ex)
         {
@@ -38,15 +42,16 @@ public class ServoController
         //  gpioController.SetPwmFrequency(servoPin, frequency_Hz);
         //   gpioController.SetPwmDutyCycle(servoPin, pulseWidth);
     }
+    bool ledOn = true;
     public void logica()
     {
 
         try
         {
             //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "hola mundo", DateTime.Now);
-            bool ledOn = true;
+
             int contador = 0;
-            while (contador <= 90) // un minuto y medio 
+            //while (contador <= 90) // un minuto y medio 
             {
                 /* if (gpioController.Read(servoPin_18) == PinValue.High)
                  {
@@ -56,7 +61,7 @@ public class ServoController
                  {
                      gpioController.Write(servoPin_18, PinValue.High);
                  }*/
-                gpioController.Write(servoPin_18, ((ledOn) ? PinValue.High : PinValue.Low));
+                gpioController.Write(servoPin_24_Gpio10, ((ledOn) ? PinValue.High : PinValue.Low));
                 Thread.Sleep(1000);
                 ledOn = !ledOn;
             }
@@ -71,7 +76,7 @@ public class ServoController
         {
             try
             {
-                gpioController.ClosePin(servoPin_18);
+                gpioController.ClosePin(servoPin_24_Gpio10);
             }
             catch (Exception ex_finally)
             {

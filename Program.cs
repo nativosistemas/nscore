@@ -7,7 +7,10 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
         var app = builder.Build();
+
+
         nscore.Helper.app = builder.Configuration.GetSection("appSettings")["app"];
         nscore.Helper.folder = System.IO.Directory.GetCurrentDirectory();// builder.Configuration.GetSection("appSettings")["folder"];
 
@@ -16,7 +19,7 @@ internal class Program
         DKbase.Helper.getConnectionStringSQL = builder.Configuration.GetConnectionString("ConnectionSQL");
 
 
-        app.MapGet("/", () => nscore.Util.HolaMundo());
+        app.MapGet("/", (nscore.IServoController pServo) => nscore.Util.MoverServo(pServo));
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";
