@@ -25,7 +25,7 @@ public class ServoController : IServoController
         try
         {
             gpioController = new GpioController(PinNumberingScheme.Board);
-            gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
+
         }
         catch (Exception ex)
         {
@@ -42,28 +42,31 @@ public class ServoController : IServoController
         //  gpioController.SetPwmFrequency(servoPin, frequency_Hz);
         //   gpioController.SetPwmDutyCycle(servoPin, pulseWidth);
     }
-    bool ledOn = true;
-    public void logica()
-    {
 
+    public bool logica()
+    {
+        bool ledOn = true;
         try
         {
+            gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
             //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "hola mundo", DateTime.Now);
 
-           // int contador = 0;
+            // int contador = 0;
             //while (contador <= 90) // un minuto y medio 
             {
                 if (gpioController.Read(servoPin_24_Gpio10) == PinValue.High)
-                 {
-                     gpioController.Write(servoPin_24_Gpio10, PinValue.Low);
-                 }
-                 else
-                 {
-                     gpioController.Write(servoPin_24_Gpio10, PinValue.High);
-                 }
+                {
+                    gpioController.Write(servoPin_24_Gpio10, PinValue.Low);
+                    ledOn = false;
+                }
+                else
+                {
+                    gpioController.Write(servoPin_24_Gpio10, PinValue.High);
+                    ledOn = true;
+                }
                 //gpioController.Write(servoPin_24_Gpio10, ((ledOn) ? PinValue.High : PinValue.Low));
                 Thread.Sleep(1000);
-                ledOn = !ledOn;
+               // ledOn = !ledOn;
             }
 
         }
@@ -83,6 +86,7 @@ public class ServoController : IServoController
                 DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex_finally, DateTime.Now);
             }
         }
+        return ledOn;
 
     }
     public double GetPositionDegree()
