@@ -50,18 +50,18 @@ public class ServoController : IServoController
         {
             //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "hola mundo", DateTime.Now);
 
-            int contador = 0;
+           // int contador = 0;
             //while (contador <= 90) // un minuto y medio 
             {
-                /* if (gpioController.Read(servoPin_18) == PinValue.High)
+                if (gpioController.Read(servoPin_24_Gpio10) == PinValue.High)
                  {
-                     gpioController.Write(servoPin_18, PinValue.Low);
+                     gpioController.Write(servoPin_24_Gpio10, PinValue.Low);
                  }
                  else
                  {
-                     gpioController.Write(servoPin_18, PinValue.High);
-                 }*/
-                gpioController.Write(servoPin_24_Gpio10, ((ledOn) ? PinValue.High : PinValue.Low));
+                     gpioController.Write(servoPin_24_Gpio10, PinValue.High);
+                 }
+                //gpioController.Write(servoPin_24_Gpio10, ((ledOn) ? PinValue.High : PinValue.Low));
                 Thread.Sleep(1000);
                 ledOn = !ledOn;
             }
