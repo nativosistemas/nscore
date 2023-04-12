@@ -7,7 +7,7 @@ public interface IServoController
 }
 public class ServoController : IServoController
 {
-    private readonly GpioController gpioController;
+    // private readonly GpioController gpioController;
     // private readonly PwmChannel _pwmChannel;
     public int servoPin_24_Gpio10 = 24;
     //   private const double MinAngle = 0.0;
@@ -24,8 +24,8 @@ public class ServoController : IServoController
     {
         try
         {
-            gpioController = new GpioController(PinNumberingScheme.Board);
-  gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
+            // gpioController = new GpioController(PinNumberingScheme.Board)
+            //gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
         }
         catch (Exception ex)
         {
@@ -42,18 +42,19 @@ public class ServoController : IServoController
         //  gpioController.SetPwmFrequency(servoPin, frequency_Hz);
         //   gpioController.SetPwmDutyCycle(servoPin, pulseWidth);
     }
- bool ledOn = false;
+    bool ledOn = false;
     public bool logica()
     {
-       
+
         try
         {
-          
+
             //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "hola mundo", DateTime.Now);
 
             // int contador = 0;
-            //while (contador <= 90) // un minuto y medio 
+            using (GpioController gpioController = new GpioController(PinNumberingScheme.Board))
             {
+                gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
                 if (ledOn)
                 {
                     gpioController.Write(servoPin_24_Gpio10, PinValue.Low);
@@ -66,7 +67,8 @@ public class ServoController : IServoController
                 }
                 //gpioController.Write(servoPin_24_Gpio10, ((ledOn) ? PinValue.High : PinValue.Low));
                 //Thread.Sleep(1000);
-               // ledOn = !ledOn;
+                // ledOn = !ledOn;
+                gpioController.ClosePin(servoPin_24_Gpio10);
             }
 
         }
@@ -79,7 +81,7 @@ public class ServoController : IServoController
         {
             try
             {
-               // gpioController.ClosePin(servoPin_24_Gpio10);
+                // 
             }
             catch (Exception ex_finally)
             {
