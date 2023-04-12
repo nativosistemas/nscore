@@ -3,7 +3,7 @@ using System.Device.Gpio;
 namespace nscore;
 public interface IServoController
 {
-    public void logica();
+    public bool logica();
 }
 public class ServoController : IServoController
 {

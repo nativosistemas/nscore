@@ -6,7 +6,7 @@ public class Util
     public static string MoverServo(nscore.IServoController pServo)
     {
         pServo.logica();
-        return "Ok";
+        return  pServo.logica()? "On":"Off";
     }
     public static string HolaMundo()
     {
