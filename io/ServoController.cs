@@ -42,10 +42,10 @@ public class ServoController : IServoController
         //  gpioController.SetPwmFrequency(servoPin, frequency_Hz);
         //   gpioController.SetPwmDutyCycle(servoPin, pulseWidth);
     }
-
+ bool ledOn = false;
     public bool logica()
     {
-        bool ledOn = true;
+       
         try
         {
             gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
@@ -54,7 +54,7 @@ public class ServoController : IServoController
             // int contador = 0;
             //while (contador <= 90) // un minuto y medio 
             {
-                if (gpioController.Read(servoPin_24_Gpio10) == PinValue.High)
+                if (ledOn)
                 {
                     gpioController.Write(servoPin_24_Gpio10, PinValue.Low);
                     ledOn = false;
@@ -65,8 +65,8 @@ public class ServoController : IServoController
                     ledOn = true;
                 }
                 //gpioController.Write(servoPin_24_Gpio10, ((ledOn) ? PinValue.High : PinValue.Low));
-                Thread.Sleep(1000);
-               // ledOn = !ledOn;
+                //Thread.Sleep(1000);
+                ledOn = !ledOn;
             }
 
         }
