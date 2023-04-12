@@ -3,10 +3,10 @@ namespace nscore;
 
 public class Util
 {
-    public static string MoverServo(nscore.IServoController pServo)
+    public static string MoverServo(string n, nscore.IServoController pServo)
     {
-        pServo.logica();
-        return  pServo.logica()? "On":"Off";
+        Console.Write("n: " + n);
+        return pServo.logica() ? "On" : "Off";
     }
     public static string HolaMundo()
     {

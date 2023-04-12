@@ -19,8 +19,8 @@ internal class Program
         DKbase.Helper.getConnectionStringSQL = builder.Configuration.GetConnectionString("ConnectionSQL");
 
 
-        app.MapGet("/", (nscore.IServoController pServo) => nscore.Util.MoverServo(pServo));
-        app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
+        app.MapGet("/", (string n, nscore.IServoController pServo) => nscore.Util.MoverServo(n,pServo));
+        app.MapGet("/image/{strImage}", (string r,string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";
             return Results.Stream(stream => ResizeImageAsync(r, n, an, al, c, re, stream, token), "image/jpeg");

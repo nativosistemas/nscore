@@ -42,7 +42,7 @@ public class ServoController : IServoController
         //  gpioController.SetPwmFrequency(servoPin, frequency_Hz);
         //   gpioController.SetPwmDutyCycle(servoPin, pulseWidth);
     }
-    bool ledOn = false;
+  bool ledOn = false;
     public bool logica()
     {
 
@@ -52,16 +52,20 @@ public class ServoController : IServoController
             //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "hola mundo", DateTime.Now);
 
             // int contador = 0;
+            Console.Write("inicio");
             using (GpioController gpioController = new GpioController(PinNumberingScheme.Board))
             {
+                            Console.Write("   using (GpioController gpioController = new GpioController(PinNumberingScheme.Board))");
                 gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
                 if (ledOn)
                 {
+                     Console.Write(" ledOn true");
                     gpioController.Write(servoPin_24_Gpio10, PinValue.Low);
                     ledOn = false;
                 }
                 else
                 {
+                       Console.Write(" ledOn false");
                     gpioController.Write(servoPin_24_Gpio10, PinValue.High);
                     ledOn = true;
                 }
@@ -74,6 +78,7 @@ public class ServoController : IServoController
         }
         catch (Exception ex)
         {
+                   Console.Write("   catch (Exception ex)");
             DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
 
         }
