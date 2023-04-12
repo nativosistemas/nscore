@@ -25,7 +25,7 @@ public class ServoController : IServoController
         try
         {
             gpioController = new GpioController(PinNumberingScheme.Board);
-
+  gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
         }
         catch (Exception ex)
         {
@@ -48,7 +48,7 @@ public class ServoController : IServoController
        
         try
         {
-            gpioController.OpenPin(servoPin_24_Gpio10, PinMode.Output);
+          
             //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "hola mundo", DateTime.Now);
 
             // int contador = 0;
@@ -79,7 +79,7 @@ public class ServoController : IServoController
         {
             try
             {
-                gpioController.ClosePin(servoPin_24_Gpio10);
+               // gpioController.ClosePin(servoPin_24_Gpio10);
             }
             catch (Exception ex_finally)
             {
