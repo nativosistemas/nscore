@@ -7,7 +7,8 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
+       // builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
+        builder.Services.AddSingleton<nscore.LedClient>();
         var app = builder.Build();
 
 
@@ -18,9 +19,10 @@ internal class Program
         DKbase.Helper.getTipoApp = nscore.Helper.app;
         DKbase.Helper.getConnectionStringSQL = builder.Configuration.GetConnectionString("ConnectionSQL");
 
-
-        app.MapGet("/", (string n, nscore.IServoController pServo) => nscore.Util.MoverServo(n,pServo));
-        app.MapGet("/image/{strImage}", (string r,string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
+        app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
+        app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
+     //   app.MapGet("/", (string n, nscore.IServoController pServo) => nscore.Util.MoverServo(n, pServo));
+        app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";
             return Results.Stream(stream => ResizeImageAsync(r, n, an, al, c, re, stream, token), "image/jpeg");
