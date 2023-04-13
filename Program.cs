@@ -9,6 +9,7 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
        // builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
         builder.Services.AddSingleton<nscore.LedClient>();
+           builder.Services.AddSingleton<nscore.ServoClient>();
         var app = builder.Build();
 
 
@@ -21,7 +22,7 @@ internal class Program
 
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
-     //   app.MapGet("/", (string n, nscore.IServoController pServo) => nscore.Util.MoverServo(n, pServo));
+        app.MapGet("/", (string n, nscore.ServoClient pServo) => pServo.moveStar());
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";
