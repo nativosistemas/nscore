@@ -21,8 +21,8 @@ public class ServoClient : IDisposable
     }
     public void moveStar()
     {
-        MoverServo(servo1Pin, 90); // Angulo de 90 grados para servo1
-        MoverServo(servo2Pin, 180); // Angulo de 180 grados para servo2
+        MoverServo(servo1Pin, 90); // Angulo en grados para servo1
+        MoverServo(servo2Pin, 45); // Angulo en grados para servo2
         LedOn();
     }
     public void MoverServo(int pin, double angulo)
@@ -55,6 +55,9 @@ public class ServoClient : IDisposable
         {
             if (disposing)
             {
+                _controller.Write(LedPin, PinValue.Low);
+                _controller.Write(servo1Pin, PinValue.Low);
+                _controller.Write(servo2Pin, PinValue.Low);                
                 _controller.Dispose();
             }
 
