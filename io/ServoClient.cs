@@ -4,7 +4,7 @@ public class ServoClient : IDisposable
 {
     private const int LedPin = 24;
     private const int servo1Pin = 17; // Cambiar al número de pin GPIO correspondiente
-    private const int servo2Pin = 18; // Cambiar al número de pin GPIO correspondiente
+    private const int servo2Pin = 27; // Cambiar al número de pin GPIO correspondiente
     private GpioController _controller = new GpioController();
     private bool disposedValue = false;
 
