@@ -22,7 +22,7 @@ internal class Program
 
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
-        app.MapGet("/", (nscore.ServoClient pServo) => pServo.moveStar());
+        app.MapGet("/", (nscore.ServoClient pServo) => pServo.Main_Socket());
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";

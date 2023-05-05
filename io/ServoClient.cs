@@ -1,4 +1,8 @@
 using System.Device.Gpio;
+using System.Net.Sockets;
+using System.Net;
+using System.Text;
+
 namespace nscore;
 public class ServoClient : IDisposable
 {
@@ -25,8 +29,42 @@ public class ServoClient : IDisposable
         MoverServo(servo2Pin, 45); // Angulo en grados para servo2
         LedOn();
     }
+    public void Main_Socket()
+    {
+        // Crear un nuevo socket UDP
+        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        int nro_puerto = 4096;
+        // Configurar la dirección IP y el puerto local para recibir datos
+        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, nro_puerto);
+
+        // Vincular el socket a la dirección local
+        socket.Bind(localEndPoint);
+
+        // Buffer para almacenar los datos recibidos
+        byte[] buffer = new byte[1024];
+
+        // Recibir datos en el socket
+        int bytesRead = socket.Receive(buffer);
+
+        // Convertir los datos recibidos en una cadena
+        string receivedData = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+        Console.WriteLine("Datos recibidos: " + receivedData);
+
+        // Enviar datos al remitente
+
+        ObserverCoordinates ciudad = ObserverCoordinates.cityRosario;
+        EquatorialCoordinates sirio_eq = new EquatorialCoordinates() { dec = -16.7280, ra = 101.28326 };
+          HorizontalCoordinates sirio_horizontal = AstronomyEngine.ToHorizontalCoordinates(ciudad, sirio_eq);
+        string responseData = Convert.ToInt32( sirio_horizontal.Altitude).ToString() + "_"+ Convert.ToInt32( sirio_horizontal.Azimuth).ToString() + "_0";// "Hola desde el servidor";
+        byte[] responseBytes = Encoding.ASCII.GetBytes(responseData);
+        socket.SendTo(responseBytes, bytesRead, SocketFlags.None, localEndPoint);
+
+        // Cerrar el socket cuando hayas terminado de usarlo
+        socket.Close();
+    }
     public void MoverServo(int pin, double angulo)
     {
+
         // Calcular el valor del pulso en microsegundos para el ángulo deseado
         // 0.5 ms (ángulo 0) + ((2.4 ms - 0.5 ms) / 180) * angulo
         var pulso = 0.5 + ((2.4 - 0.5) / 180.0) * angulo;
@@ -57,7 +95,7 @@ public class ServoClient : IDisposable
             {
                 _controller.Write(LedPin, PinValue.Low);
                 _controller.Write(servo1Pin, PinValue.Low);
-                _controller.Write(servo2Pin, PinValue.Low);                
+                _controller.Write(servo2Pin, PinValue.Low);
                 _controller.Dispose();
             }
 
