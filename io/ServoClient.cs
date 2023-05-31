@@ -33,7 +33,7 @@ public class ServoClient : IDisposable
     {
        // IPEndPoint ipEndPoint = new(ipAddress, 11_000);
         // Crear un nuevo socket UDP
-        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        Socket socket = new Socket(AddressFamily.Unix, SocketType.Dgram, ProtocolType.Udp);
         int nro_puerto = 10000;
         // Configurar la dirección IP y el puerto local para recibir datos
         IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), nro_puerto);
