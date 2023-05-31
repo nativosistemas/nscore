@@ -36,7 +36,7 @@ public class ServoClient : IDisposable
         Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         int nro_puerto = 10000;
         // Configurar la dirección IP y el puerto local para recibir datos
-        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, nro_puerto);
+        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), nro_puerto);
 
         // Vincular el socket a la dirección local
         socket.Bind(localEndPoint);
