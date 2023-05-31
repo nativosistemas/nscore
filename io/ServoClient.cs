@@ -29,67 +29,40 @@ public class ServoClient : IDisposable
         MoverServo(servo2Pin, 45); // Angulo en grados para servo2
         LedOn();
     }
-       public void Main_Socket()
+    public void Main_Socket()
     {
-       // IPEndPoint ipEndPoint = new(ipAddress, 11_000);
+
         // Crear un nuevo socket UDP
-        Socket socket = new Socket(AddressFamily.InterNetwork , SocketType.Dgram, ProtocolType.Udp);
+        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         int nro_puerto = 10000;
         // Configurar la dirección IP y el puerto local para recibir datos
         IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), nro_puerto);
 
-        // Vincular el socket a la dirección local
-        socket.Bind(localEndPoint);
-
-        // Buffer para almacenar los datos recibidos
-        byte[] buffer = new byte[1024];
-
-        // Recibir datos en el socket
-        int bytesRead = socket.Receive(buffer);
-
-        // Convertir los datos recibidos en una cadena
-        string receivedData = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-        Console.WriteLine("Datos recibidos: " + receivedData);
 
         // Enviar datos al remitente
 
         ObserverCoordinates ciudad = ObserverCoordinates.cityRosario;
         EquatorialCoordinates sirio_eq = new EquatorialCoordinates() { dec = -16.7280, ra = 101.28326 };
-          HorizontalCoordinates sirio_horizontal = AstronomyEngine.ToHorizontalCoordinates(ciudad, sirio_eq);
-        string responseData = Convert.ToInt32( sirio_horizontal.Altitude).ToString() + "_"+ Convert.ToInt32( sirio_horizontal.Azimuth).ToString() + "_0";// "Hola desde el servidor";
+        HorizontalCoordinates sirio_horizontal = AstronomyEngine.ToHorizontalCoordinates(ciudad, sirio_eq);
+        string responseData = Convert.ToInt32(sirio_horizontal.Altitude).ToString() + "_" + Convert.ToInt32(sirio_horizontal.Azimuth).ToString() + "_0";// "Hola desde el servidor";
         byte[] responseBytes = Encoding.ASCII.GetBytes(responseData);
-        socket.SendTo(responseBytes, bytesRead, SocketFlags.None, localEndPoint);
+        socket.SendTo(responseBytes, localEndPoint);
 
         // Cerrar el socket cuando hayas terminado de usarlo
         socket.Close();
     }
-    public void Main_Socket_v2()
+    public void sendData(HorizontalCoordinates pHorizontalCoordinates)
     {
-       // IPEndPoint ipEndPoint = new(ipAddress, 11_000);
-        // Crear un nuevo socket UDP
-        Socket socket = new Socket(AddressFamily.InterNetwork , SocketType.Dgram, ProtocolType.Udp);
+
+        Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         int nro_puerto = 10000;
         // Configurar la dirección IP y el puerto local para recibir datos
         IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), nro_puerto);
 
-  
-
-        // Enviar datos al remitente
-
-        ObserverCoordinates ciudad = ObserverCoordinates.cityRosario;
-        EquatorialCoordinates sirio_eq = new EquatorialCoordinates() { dec = -16.7280, ra = 101.28326 };
-          HorizontalCoordinates sirio_horizontal = AstronomyEngine.ToHorizontalCoordinates(ciudad, sirio_eq);
-        string responseData = Convert.ToInt32( sirio_horizontal.Altitude).ToString() + "_"+ Convert.ToInt32( sirio_horizontal.Azimuth).ToString() + "_0";// "Hola desde el servidor";
+        string responseData = Convert.ToInt32(pHorizontalCoordinates.Altitude).ToString() + "_" + Convert.ToInt32(pHorizontalCoordinates.Azimuth).ToString() + "_0";// "Hola desde el servidor";
         byte[] responseBytes = Encoding.ASCII.GetBytes(responseData);
-
-
-    
-
         // Envía los datos
         socket.SendTo(responseBytes, localEndPoint);
-
-
-
 
         // Cerrar el socket cuando hayas terminado de usarlo
         socket.Close();

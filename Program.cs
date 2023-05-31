@@ -7,9 +7,10 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-       // builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
+        // builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
         builder.Services.AddSingleton<nscore.LedClient>();
-           builder.Services.AddSingleton<nscore.ServoClient>();
+        //  builder.Services.AddSingleton<nscore.ServoClient>();
+        builder.Services.AddSingleton<nscore.AstronomySocket>();
         var app = builder.Build();
 
 
@@ -22,7 +23,8 @@ internal class Program
 
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
-        app.MapGet("/", (nscore.ServoClient pServo) => pServo.Main_Socket_v2());
+        app.MapGet("/servo", ((int id) => { nscore.AstronomySocket.enviarInfo(id); return "Ok"; }));
+        app.MapGet("/", () => nscore.HtmlAstro.Index());
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";
