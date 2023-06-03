@@ -31,3 +31,27 @@ public class HorariasCoordinates
     public double dec = 0; // en grados
     public double HA = 0; // en grados
 }
+public class ServoCoordinates
+{
+    private double _servoH { get; set; }
+    private double _servoV { get; set; }
+    public double servoH { get { return _servoH; } set { if (value >= 0.0 && value <= 180.0) { _servoH = value; } } }
+    public double servoV { get { return _servoV; } set { if (value >= 0.0 && value <= 180.0) { _servoV = value; } } }
+
+
+    public static ServoCoordinates convertServoCoordinates(HorizontalCoordinates pValue)
+    {
+        bool isAzimuthMas180 = false;
+        double horizontal = pValue.Azimuth;
+        double vertical = pValue.Altitude;
+        if (pValue.Azimuth > 180.0)
+        {
+            isAzimuthMas180 = true;
+            horizontal = 180.0 - (pValue.Azimuth - 180.0);
+        }
+        if (isAzimuthMas180) { 
+            vertical = 180.0 - pValue.Altitude ;
+        }
+        return new ServoCoordinates() { servoH = horizontal, servoV = vertical };
+    }
+}

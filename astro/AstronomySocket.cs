@@ -49,9 +49,12 @@ public class AstronomySocket : IDisposable
             int nro_puerto = 10000;
             // Configurar la dirección IP y el puerto local para recibir datos
             IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), nro_puerto);
+       
+               ServoCoordinates oServoCoordinates =      ServoCoordinates.convertServoCoordinates(pHorizontalCoordinates);
 
-            string responseData = Convert.ToInt32(pHorizontalCoordinates.Altitude).ToString() + "_" + Convert.ToInt32(pHorizontalCoordinates.Azimuth).ToString() + "_0";// "Hola desde el servidor";
-            byte[] responseBytes = Encoding.ASCII.GetBytes(responseData);
+
+            string responseData = Convert.ToInt32(oServoCoordinates.servoH).ToString() + "_" + Convert.ToInt32(oServoCoordinates.servoV).ToString() + "_0";// "Hola desde el servidor";
+            byte[] responseBytes = Encoding.Unicode.GetBytes(responseData);
             // Envía los datos
             socket.SendTo(responseBytes, localEndPoint);
 
