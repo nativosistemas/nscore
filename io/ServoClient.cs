@@ -45,7 +45,7 @@ public class ServoClient : IDisposable
         EquatorialCoordinates sirio_eq = new EquatorialCoordinates() { dec = -16.7280, ra = 101.28326 };
         HorizontalCoordinates sirio_horizontal = AstronomyEngine.ToHorizontalCoordinates(ciudad, sirio_eq);
         string responseData = Convert.ToInt32(sirio_horizontal.Altitude).ToString() + "_" + Convert.ToInt32(sirio_horizontal.Azimuth).ToString() + "_0";// "Hola desde el servidor";
-        byte[] responseBytes = Encoding.ASCII.GetBytes(responseData);
+        byte[] responseBytes = Encoding.Unicode.GetBytes(responseData);
         socket.SendTo(responseBytes, localEndPoint);
 
         // Cerrar el socket cuando hayas terminado de usarlo
@@ -60,7 +60,7 @@ public class ServoClient : IDisposable
         IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), nro_puerto);
 
         string responseData = Convert.ToInt32(pHorizontalCoordinates.Altitude).ToString() + "_" + Convert.ToInt32(pHorizontalCoordinates.Azimuth).ToString() + "_0";// "Hola desde el servidor";
-        byte[] responseBytes = Encoding.ASCII.GetBytes(responseData);
+        byte[] responseBytes = Encoding.Unicode.GetBytes(responseData);
         // Envía los datos
         socket.SendTo(responseBytes, localEndPoint);
 

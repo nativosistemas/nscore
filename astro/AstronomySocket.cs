@@ -54,7 +54,7 @@ public class AstronomySocket : IDisposable
 
 
             string responseData = Convert.ToInt32(oServoCoordinates.servoH).ToString() + "_" + Convert.ToInt32(oServoCoordinates.servoV).ToString() + "_0";// "Hola desde el servidor";
-            byte[] responseBytes = Encoding.Unicode.GetBytes(responseData);
+            byte[] responseBytes = Encoding.UTF8.GetBytes(responseData);
             // Envía los datos
             socket.SendTo(responseBytes, localEndPoint);
 
