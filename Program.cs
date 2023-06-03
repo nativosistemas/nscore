@@ -11,6 +11,7 @@ internal class Program
         builder.Services.AddSingleton<nscore.LedClient>();
         //  builder.Services.AddSingleton<nscore.ServoClient>();
         builder.Services.AddSingleton<nscore.AstronomySocket>();
+
         var app = builder.Build();
 
 

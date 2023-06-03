@@ -43,13 +43,18 @@ public class ServoCoordinates
     {
         bool isAzimuthMas180 = false;
         double horizontal = pValue.Azimuth;
-        double vertical = pValue.Altitude;
+        double vertical = pValue.Altitude;// si es negativo
         if (pValue.Azimuth > 180.0)
         {
             isAzimuthMas180 = true;
             horizontal = 180.0 - (pValue.Azimuth - 180.0);
         }
-        if (isAzimuthMas180) { 
+        if (pValue.Altitude < 0.0)
+        {
+            return null;
+        }
+        if (isAzimuthMas180)
+        {
             vertical = 180.0 - pValue.Altitude ;
         }
         return new ServoCoordinates() { servoH = horizontal, servoV = vertical };

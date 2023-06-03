@@ -45,21 +45,26 @@ public class AstronomySocket : IDisposable
     {
         try
         {
-            Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            int nro_puerto = 10000;
-            // Configurar la dirección IP y el puerto local para recibir datos
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), nro_puerto);
-       
-               ServoCoordinates oServoCoordinates =      ServoCoordinates.convertServoCoordinates(pHorizontalCoordinates);
+            ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(pHorizontalCoordinates);
+            if (oServoCoordinates != null)
+            {
 
+                Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+                int nro_puerto = 10000;
+                // Configurar la dirección IP y el puerto local para recibir datos
+                IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse("127.0.0.1"), nro_puerto);
 
-            string responseData = Convert.ToInt32(oServoCoordinates.servoH).ToString() + "_" + Convert.ToInt32(oServoCoordinates.servoV).ToString() + "_0";// "Hola desde el servidor";
-            byte[] responseBytes = Encoding.UTF8.GetBytes(responseData);
-            // Envía los datos
-            socket.SendTo(responseBytes, localEndPoint);
+                string responseData = Convert.ToInt32(oServoCoordinates.servoH).ToString() + "_" + Convert.ToInt32(oServoCoordinates.servoV).ToString() + "_1";// "Hola desde el servidor";
+                byte[] responseBytes = Encoding.UTF8.GetBytes(responseData);
+                // Envía los datos
+                socket.SendTo(responseBytes, localEndPoint);
 
-            // Cerrar el socket cuando hayas terminado de usarlo
-            socket.Close();
+                // Cerrar el socket cuando hayas terminado de usarlo
+                socket.Close();
+            }
+            else{
+
+            }
         }
         catch (Exception ex)
         {
