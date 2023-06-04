@@ -3,6 +3,7 @@ namespace nscore;
 
 public class Util
 {
+    public static string WebRootPath { get; set; }
     public static string MoverServo(string n, nscore.IServoController pServo)
     {
         Console.Write("n: " + n);
@@ -55,5 +56,40 @@ public class Util
         //string rutaApp = System.Reflection.Assembly.GetEntryAssembly().Location;
 
         return "Ok: HolaMundo! || sirio -> HorizontalCoordinates: " + result;
+    }
+    public static List<Star> getStars()
+    {
+        List<Star> l = new List<Star>();
+        try
+        {
+            //  builder.Environment.WebRootPath
+            // var nameFile = Path.Combine(Directory.GetCurrentDirectory(), @"files", "Las Estrellas mas Brilantes.txt");
+
+            var nameFile = Path.Combine(nscore.Util.WebRootPath, @"files", "Las Estrellas mas Brilantes.txt");
+            if (File.Exists(nameFile))
+            {
+                using (var sr = new StreamReader(nameFile))
+                {
+                    string line;
+                    while ((line = sr.ReadLine()) != null)
+                    {
+                        Star o = new Star();
+                        o.nameBayer = Convert.ToInt32(line.Substring(0, 4).Replace(@",", string.Empty));
+                        o.name = line.Substring(30, 18).Trim();
+                        string[] ra = line.Substring(48, 6).Trim().Split(new Char[] { ' ' });
+                        o.ra = Convert.ToDouble(ra[0]) + (Convert.ToDouble(ra[1]) / 60);
+                        o.dec = Convert.ToDouble(line.Substring(54, 8));
+                        l.Add(o);
+                        Console.WriteLine(line);
+                    }
+                }
+            }
+        }
+        catch (IOException e)
+        {
+            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), e, DateTime.Now);
+            Console.WriteLine(e.Message);
+        }
+        return l;
     }
 }

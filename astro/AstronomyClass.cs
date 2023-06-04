@@ -1,5 +1,12 @@
 namespace nscore;
 
+public class Star
+{
+    public int nameBayer { get; set; }
+    public string name { get; set; }
+    public double ra { get; set; }
+    public double dec { get; set; }
+}
 public class ObserverCoordinates
 {
     // Coordenadas geográficas del observador

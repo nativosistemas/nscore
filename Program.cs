@@ -11,9 +11,9 @@ internal class Program
         builder.Services.AddSingleton<nscore.LedClient>();
         //  builder.Services.AddSingleton<nscore.ServoClient>();
         builder.Services.AddSingleton<nscore.AstronomySocket>();
-
+        nscore.Util.WebRootPath = builder.Environment.WebRootPath;
         var app = builder.Build();
-
+        app.UseStaticFiles();
 
         nscore.Helper.app = builder.Configuration.GetSection("appSettings")["app"];
         nscore.Helper.folder = System.IO.Directory.GetCurrentDirectory();// builder.Configuration.GetSection("appSettings")["folder"];
@@ -24,7 +24,8 @@ internal class Program
 
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
-        app.MapGet("/servo", ((int id) => { nscore.AstronomySocket.enviarInfo(id); return "Ok"; }));
+        app.MapGet("/servo", ((int id) => { return nscore.AstronomySocket.sendStar(id); }));
+        app.MapGet("/stars", (() => { return Results.Json(nscore.Util.getStars()); }));
         app.MapGet("/", () => nscore.HtmlAstro.Index());
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
