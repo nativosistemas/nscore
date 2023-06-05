@@ -77,7 +77,7 @@ public class Util
                         o.nameBayer = Convert.ToInt32(line.Substring(0, 4).Replace(@",", string.Empty));
                         o.name = line.Substring(30, 18).Trim();
                         string[] ra = line.Substring(48, 6).Trim().Split(new Char[] { ' ' });
-                        o.ra = Convert.ToDouble(ra[0]) + (Convert.ToDouble(ra[1]) / 60);
+                        o.ra = ((Convert.ToDouble(ra[0]) + (Convert.ToDouble(ra[1]) / 60)) * 360.0) / 24.0;
                         o.dec = Convert.ToDouble(line.Substring(54, 8));
                         l.Add(o);
                         Console.WriteLine(line);

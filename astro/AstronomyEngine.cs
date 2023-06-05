@@ -93,6 +93,8 @@ public class AstronomyEngine
         double altitude = Math.Asin(Math.Sin(pEq.dec * Math.PI / 180) * Math.Sin(pCity.latitude * Math.PI / 180) + Math.Cos(pEq.dec * Math.PI / 180) * Math.Cos(pCity.latitude * Math.PI / 180) * Math.Cos(hourAngle_astro * Math.PI / 180)) * 180 / Math.PI;
         double azimuth = Math.Atan2(Math.Sin(hourAngle_astro * Math.PI / 180), Math.Cos(hourAngle_astro * Math.PI / 180) * Math.Sin(pCity.latitude * Math.PI / 180) - Math.Tan(pEq.dec * Math.PI / 180) * Math.Cos(pCity.latitude * Math.PI / 180)) * 180 / Math.PI;
 
+        // azimut desde el norte
+        azimuth -= 180.0;
         // Convertir el azimut a un ángulo entre 0 y 360 grados
         if (azimuth < 0.0)
         {
