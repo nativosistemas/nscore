@@ -1,4 +1,3 @@
-import socket
 import sys
 import RPi.GPIO as GPIO
 import time
