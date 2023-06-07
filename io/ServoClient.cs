@@ -2,6 +2,8 @@ using System.Device.Gpio;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using IronPython.Hosting;
+using Microsoft.Scripting.Hosting;
 
 namespace nscore;
 public class ServoClient : IDisposable
@@ -91,7 +93,67 @@ public class ServoClient : IDisposable
     {
         _controller.Write(LedPin, PinValue.Low);
     }
+    public static string MainPython()
+    {
+        string result = "(vacio)";
+        var nameFile = Path.Combine(nscore.Util.WebRootPath, @"files", "py_serverV3.py");
+        if (File.Exists(nameFile))
+        {
+            // Ruta al intérprete de Python
+            string pythonInterpreter = "python";
 
+            // Ruta al archivo Python que contiene la función
+            string pythonFile = nameFile;//"ruta/al/archivo.py";
+
+            // Nombre de la función que deseas ejecutar
+            string functionName = "helloWord";
+
+            // Argumentos para pasar a la función (opcional)
+            string arguments = "fff";
+
+            // Crear el proceso externo para ejecutar Python
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.FileName = pythonInterpreter;
+            startInfo.Arguments = $"{pythonFile} {functionName} {arguments}";
+            startInfo.RedirectStandardOutput = true;
+            startInfo.UseShellExecute = false;
+            startInfo.CreateNoWindow = true;
+
+            // Iniciar el proceso
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            process.StartInfo = startInfo;
+            process.Start();
+
+            // Leer la salida de la función de Python
+            string output = process.StandardOutput.ReadToEnd();
+
+            // Esperar a que el proceso termine
+            process.WaitForExit();
+            result = output;
+        }
+        // Imprimir la salida de la función
+        //  Console.WriteLine(output);
+        return result;
+    }
+    public static string MainPython_v2()
+    {
+        string result = "(vacio)";
+        var nameFile = Path.Combine(nscore.Util.WebRootPath, @"files", "py_serverV3.py");
+        if (File.Exists(nameFile))
+        {
+
+            ScriptRuntime py = Python.CreateRuntime();
+            dynamic pyProgram = py.UseFile(nameFile);
+            double h = 90.1;
+            double v = 45.1;
+            result = pyProgram.moveServo(h, v);
+
+
+
+        }
+
+        return result;
+    }
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)
