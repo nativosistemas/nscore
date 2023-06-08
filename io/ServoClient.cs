@@ -2,8 +2,6 @@ using System.Device.Gpio;
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using IronPython.Hosting;
-using Microsoft.Scripting.Hosting;
 
 namespace nscore;
 public class ServoClient : IDisposable
@@ -106,10 +104,11 @@ public class ServoClient : IDisposable
             string pythonFile = nameFile;//"ruta/al/archivo.py";
 
             // Nombre de la función que deseas ejecutar
-            string functionName = "helloWord";
-
+            string functionName = "moveServo";
+            double h = 90.1;
+            double v = 45.1;
             // Argumentos para pasar a la función (opcional)
-            string arguments = "fff";
+            string arguments = "90.1 45.1";
 
             // Crear el proceso externo para ejecutar Python
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
@@ -135,25 +134,7 @@ public class ServoClient : IDisposable
         //  Console.WriteLine(output);
         return result;
     }
-    public static string MainPython_v2()
-    {
-        string result = "(vacio)";
-        var nameFile = Path.Combine(nscore.Util.WebRootPath, @"files", "py_serverV3.py");
-        if (File.Exists(nameFile))
-        {
 
-            ScriptRuntime py = Python.CreateRuntime();
-            dynamic pyProgram = py.UseFile(nameFile);
-            double h = 90.1;
-            double v = 45.1;
-            result = pyProgram.moveServo(h, v);
-
-
-
-        }
-
-        return result;
-    }
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)
