@@ -49,14 +49,14 @@ public class AstronomyPython : IDisposable
             using (Py.GIL()) // Inicializa el Global Interpreter Lock (GIL) de Python
             {
                       var nameFile = Path.Combine(nscore.Util.WebRootPath, @"files", "py_servo.py");
-            if (File.Exists(nameFile))
-            {}
+            //if (File.Exists(nameFile))
+           // {}
                 dynamic py = Py.Import("__main__"); // Importa el módulo principal de Python
                 py.exec(File.ReadAllText(nameFile)); // Ejecuta el script Python "py_servo.py"
 
                 dynamic moveServo = py.moveServo; // Obtiene la referencia a la función Python
 
-                moveServo = moveServo(pServoCoordinates.servoH,pServoCoordinates.servoV,true); // Llama a la función Python
+                moveServo = moveServo(Convert.ToInt32(pServoCoordinates.servoH),Convert.ToInt32(pServoCoordinates.servoV),1); // Llama a la función Python
 
                 Console.WriteLine(result); // Imprime el resultado
             }
