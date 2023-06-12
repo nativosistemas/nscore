@@ -58,7 +58,7 @@ public class AstronomySocket : IDisposable
             // Envía los datos
             socket.SendTo(responseBytes, localEndPoint);
 
-
+             /*
             // Leer datos respuesta
             // Buffer para almacenar los datos leídos
             byte[] buffer = new byte[1024];
@@ -68,6 +68,7 @@ public class AstronomySocket : IDisposable
             // Convertir los datos recibidos a una cadena de texto
             string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
             Console.WriteLine("dataReceived: " + dataReceived);
+            */
             // Cerrar el socket cuando hayas terminado de usarlo
             socket.Close();
         }
