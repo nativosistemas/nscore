@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Text;
+using Python.Runtime;
 
 namespace nscore;
 public class AstronomyPython : IDisposable
@@ -45,10 +46,23 @@ public class AstronomyPython : IDisposable
         string result = string.Empty;
         try
         {
+            using (Py.GIL()) // Inicializa el Global Interpreter Lock (GIL) de Python
+            {
+                      var nameFile = Path.Combine(nscore.Util.WebRootPath, @"files", "py_servo.py");
+            if (File.Exists(nameFile))
+            {}
+                dynamic py = Py.Import("__main__"); // Importa el módulo principal de Python
+                py.exec(File.ReadAllText(nameFile)); // Ejecuta el script Python "py_servo.py"
 
+                dynamic moveServo = py.moveServo; // Obtiene la referencia a la función Python
 
-           // string responseData = Convert.ToInt32(pServoCoordinates.servoH).ToString() + "_" + Convert.ToInt32(pServoCoordinates.servoV).ToString() + "_0";// "Hola desde el servidor";
- 
+                moveServo = moveServo(pServoCoordinates.servoH,pServoCoordinates.servoV,true); // Llama a la función Python
+
+                Console.WriteLine(result); // Imprime el resultado
+            }
+
+            // string responseData = Convert.ToInt32(pServoCoordinates.servoH).ToString() + "_" + Convert.ToInt32(pServoCoordinates.servoV).ToString() + "_0";// "Hola desde el servidor";
+
         }
         catch (Exception ex)
         {
