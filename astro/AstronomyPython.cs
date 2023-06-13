@@ -49,8 +49,9 @@ public class AstronomyPython : IDisposable
             string envPythonHome = @"C:\Python39\python39.dll";
             ///usr/bin/python2.7
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-            {
-                envPythonHome = @"/usr/bin/python2.7";
+            {///
+
+                envPythonHome = @"/usr/bin/python";///python2.7
             }
             // your PATH environment variable as well.
             Runtime.PythonDLL = envPythonHome;//"python310.dll";
