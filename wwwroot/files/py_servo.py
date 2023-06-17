@@ -10,17 +10,23 @@ GPIO.setup(21, GPIO.OUT)  # laser
 pV = GPIO.PWM(7, 50)
 pH = GPIO.PWM(11, 50)
 
-pV.start(2.5)
-pH.start(2.5)
-time.sleep(1)
-#pV.stop()
-#pH.stop()
+# pV.start(2.5)
+# pH.start(2.5)
+# time.sleep(1)
+# pV.stop()
+# pH.stop()
+
 
 def getDC_grados(pGrados):
     return round((((float(pGrados) - float(180)) * float(-5)) / float(-180)) + float(10), 1)
 
 
 def moveServo(pGradoH, pGradoV, pIsOnLaser):
+    pV.start(2.5)
+    pH.start(2.5)
+    time.sleep(1)
+    # pV.stop()
+    # pH.stop()
     valorH = getDC_grados(pGradoH)
     pH.ChangeDutyCycle(valorH)
 
