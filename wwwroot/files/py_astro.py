@@ -40,7 +40,7 @@ pV.ChangeDutyCycle(valorV)#pV.start(valorV)#
 
 # timer
 # ¿aca va un timer?
-time.sleep(2)
+time.sleep(1)
 
 if bool(parametroLaser):
     GPIO.output(21, GPIO.HIGH)  # led on
@@ -52,7 +52,7 @@ else:
 pV.stop()
 pH.stop()
 
-time.sleep(5)
+time.sleep(10)
 
 GPIO.cleanup()
 
