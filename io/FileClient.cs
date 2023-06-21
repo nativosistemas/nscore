@@ -34,10 +34,26 @@ public class FileClient : IDisposable
     public static string run()
     {
         string result = null;
-        var nameFile = Path.Combine(nscore.Util.WebRootPath, @"files", "py_test.exe");
-        if (File.Exists(nameFile))
+        string nameFile = string.Empty;
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
         {
-            string output = RunProcessAndGetOutput(nameFile, "");//RunProcessAndGetOutput("dotnet", "--version");
+            nameFile = "py_astro";
+        }
+        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            nameFile = "py_astro.exe";
+        }
+
+        var pathAndFile = Path.Combine(nscore.Util.WebRootPath, @"files", nameFile);
+        if (File.Exists(pathAndFile))
+        {
+            double H = 45.6;
+            double V = 97.28;
+            int laser = 1;
+            //double decimalUSA = double.Parse( H , System.Globalization.CultureInfo.InvariantCulture);
+            string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
+
+            string output = RunProcessAndGetOutput(pathAndFile, parameter);//RunProcessAndGetOutput("dotnet", "--version");
             result = output;// ProcessStart(nameFile);
         }
         return result;
