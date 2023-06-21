@@ -30,7 +30,10 @@ public class ProcessAnt : IDisposable
             };
             _controller.StartInfo = processInfo;
         }
-
+        else
+        {
+            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), "no find File.Exists(pathAndFile)", DateTime.Now);
+        }
 
     }
 
@@ -53,7 +56,7 @@ public class ProcessAnt : IDisposable
         catch (Exception ex)
         {
             DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
-            System.Console.WriteLine(ex);
+            //System.Console.WriteLine(ex);
         }
         return output;
     }
@@ -64,7 +67,7 @@ public class ProcessAnt : IDisposable
         {
             if (disposing)
             {
-                 _controller.Dispose();
+                _controller.Dispose();
             }
 
             disposedValue = true;
