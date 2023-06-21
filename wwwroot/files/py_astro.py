@@ -27,29 +27,31 @@ parametroLaser = int(sys.argv[3])
 suma = parametroH + parametroV + parametroLaser
 
 
-pV.start(2.5)
-pH.start(2.5)
-time.sleep(1)
-# pV.stop()
-# pH.stop()
+#pV.start(2.5)
+#pH.start(2.5)
+#time.sleep(1)
+## pV.stop()
+## pH.stop()
 valorH = getDC_grados(parametroH)
-pH.ChangeDutyCycle(valorH)
+pH.start(parametroH)#pH.ChangeDutyCycle(valorH)
 
 valorV = getDC_grados(parametroV)
-pV.ChangeDutyCycle(valorV)
+pV.start(valorV)#pV.ChangeDutyCycle(valorV)
+
+# timer
+# ¿aca va un timer?
+time.sleep(2)
 
 if bool(parametroLaser):
     GPIO.output(21, GPIO.HIGH)  # led on
 else:
     GPIO.output(21, GPIO.LOW)  # led off
 
-# timer
-# ¿aca va un timer?
-time.sleep(3)
+
 
 pV.stop()
 pH.stop()
-GPIO.cleanup()
+#GPIO.cleanup()
 
 
 # Utilizar el parámetro recibido
