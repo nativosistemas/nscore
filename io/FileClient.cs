@@ -31,8 +31,9 @@ public class FileClient : IDisposable
                DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
            }
        }*/
-    public static string run()
+    public static string  RunProcessAstro(double pH, double pV, int pLaser)
     {
+
         string result = null;
         string nameFile = string.Empty;
         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
@@ -47,9 +48,9 @@ public class FileClient : IDisposable
         var pathAndFile = Path.Combine(nscore.Util.WebRootPath, @"files", nameFile);
         if (File.Exists(pathAndFile))
         {
-            double H = 45.6;
-            double V = 97.28;
-            int laser = 1;
+            double H = pH;
+            double V = pV;
+            int laser = pLaser;
             //double decimalUSA = double.Parse( H , System.Globalization.CultureInfo.InvariantCulture);
             string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
 
