@@ -80,7 +80,7 @@ public class Util
                         o.ra = ((Convert.ToDouble(ra[0]) + (Convert.ToDouble(ra[1]) / 60)) * 360.0) / 24.0;
                         o.dec = Convert.ToDouble(line.Substring(54, 8));
                         l.Add(o);
-                        Console.WriteLine(line);
+                        //Console.WriteLine(line);
                     }
                 }
             }

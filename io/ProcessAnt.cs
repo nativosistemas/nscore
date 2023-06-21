@@ -5,8 +5,10 @@ public class ProcessAnt : IDisposable
 {
     private bool disposedValue = false;
     private Process _controller = new Process();
+    private List<Star> _l_Star = null;
     public ProcessAnt()
     {
+        _l_Star = nscore.Util.getStars();
         string nameFile = string.Empty;
         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
         {
@@ -36,7 +38,42 @@ public class ProcessAnt : IDisposable
         }
 
     }
-
+    public List<Star> getStars()
+    {
+        return _l_Star;
+    }
+    public string findStar(int pId)
+    {
+        string result = string.Empty;
+        ObserverCoordinates city = ObserverCoordinates.cityRosario;
+        Star oStar = _l_Star.Where(x => x.nameBayer == pId).FirstOrDefault();
+        if (oStar != null)
+        {
+            EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
+            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(city, eq);
+            if (hc != null)
+            {
+                ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
+                if (oServoCoordinates != null)
+                {
+                    result = moveTheAnt(oServoCoordinates);
+                }
+                else
+                {
+                    result = "Estrella no es visible";
+                }
+            }
+        }
+        else
+        {
+            result = "No se encontro estrella";
+        }
+        return result;
+    }
+    public string moveTheAnt(ServoCoordinates pServoCoordinates)
+    {
+        return moveTheAnt(pServoCoordinates.servoH, pServoCoordinates.servoV, 1);
+    }
     public string moveTheAnt(double pH, double pV, int pLaser)
     {
         string output = "null";
