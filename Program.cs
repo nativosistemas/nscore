@@ -26,7 +26,8 @@ internal class Program
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
         app.MapGet("/servo", ((int id) => { return nscore.AstronomySocket.sendStar(id); }));
         app.MapGet("/stars", (() => { return Results.Json(nscore.Util.getStars()); }));
-        app.MapGet("/", () => nscore.FileClient.run());
+        app.MapGet("/astro", ((double h, double v, int laser) => { return nscore.Util.moveTheAnt(h, v, laser); }));
+        app.MapGet("/", () => nscore.Util.moveTheAnt(12.3, 54.655, 1));
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";
