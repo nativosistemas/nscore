@@ -27,16 +27,16 @@ parametroLaser = int(sys.argv[3])
 suma = parametroH + parametroV + parametroLaser
 
 
-#pV.start(2.5)
-#pH.start(2.5)
-#time.sleep(1)
+pV.start(2.5)
+pH.start(2.5)
+time.sleep(1)
 ## pV.stop()
 ## pH.stop()
 valorH = getDC_grados(parametroH)
-pH.start(parametroH)#pH.ChangeDutyCycle(valorH)
+pH.ChangeDutyCycle(valorH)#pH.start(parametroH)#
 
 valorV = getDC_grados(parametroV)
-pV.start(valorV)#pV.ChangeDutyCycle(valorV)
+pV.ChangeDutyCycle(valorV)#pV.start(valorV)#
 
 # timer
 # ¿aca va un timer?
