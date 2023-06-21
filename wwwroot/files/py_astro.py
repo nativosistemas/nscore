@@ -9,7 +9,7 @@ GPIO.setup(21, GPIO.OUT)  # laser
 
 pV = GPIO.PWM(7, 50)
 pH = GPIO.PWM(11, 50)
-
+GPIO.output(21, GPIO.LOW)
 
 def getDC_grados(pGrados):
     return round((((float(pGrados) - float(180)) * float(-5)) / float(-180)) + float(10), 1)
