@@ -1,18 +1,12 @@
 using System.Diagnostics;
+
 namespace nscore;
-public class FileClient : IDisposable
+public class ProcessAnt : IDisposable
 {
-
     private bool disposedValue = false;
-
-    public FileClient()
+    private Process _controller = new Process();
+    public ProcessAnt()
     {
-
-    }
-    public static string  RunProcessAstro(double pH, double pV, int pLaser)
-    {
-
-        string result = null;
         string nameFile = string.Empty;
         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
         {
@@ -26,43 +20,35 @@ public class FileClient : IDisposable
         var pathAndFile = Path.Combine(nscore.Util.WebRootPath, @"files", nameFile);
         if (File.Exists(pathAndFile))
         {
-            double H = pH;
-            double V = pV;
-            int laser = pLaser;
-            //double decimalUSA = double.Parse( H , System.Globalization.CultureInfo.InvariantCulture);
-            string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
-
-            string output = RunProcessAndGetOutput(pathAndFile, parameter);//RunProcessAndGetOutput("dotnet", "--version");
-            result = output;// ProcessStart(nameFile);
-        }
-        return result;
-    }
-   
-    public static string RunProcessAndGetOutput(string fileName, string arguments)
-    {
-        string output = null;
-        try
-        {
             var processInfo = new ProcessStartInfo
             {
-                FileName = fileName,
-                Arguments = arguments,
+                FileName = pathAndFile,
+                //Arguments = arguments,
                 RedirectStandardOutput = true,
                 UseShellExecute = false,
                 CreateNoWindow = true
             };
+            _controller.StartInfo = processInfo;
+        }
 
 
+    }
 
-            using (var process = new Process())
-            {
-                process.StartInfo = processInfo;
-                process.Start();
+    public string moveTheAnt(double pH, double pV, int pLaser)
+    {
+        string output = "null";
+        try
+        {
+            double H = pH;
+            double V = pV;
+            int laser = pLaser;
+            string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
+            _controller.StartInfo.Arguments = parameter;
+            _controller.Start();
 
-                output = process.StandardOutput.ReadToEnd();
+            output = _controller.StandardOutput.ReadToEnd();
 
-                process.WaitForExit();
-            }
+            _controller.WaitForExit();
         }
         catch (Exception ex)
         {
@@ -71,13 +57,14 @@ public class FileClient : IDisposable
         }
         return output;
     }
+
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)
         {
             if (disposing)
             {
-
+                 _controller.Dispose();
             }
 
             disposedValue = true;

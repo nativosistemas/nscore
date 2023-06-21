@@ -10,7 +10,7 @@ internal class Program
         // builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
         builder.Services.AddSingleton<nscore.LedClient>();
         //  builder.Services.AddSingleton<nscore.ServoClient>();
-        builder.Services.AddSingleton<nscore.AstronomySocket>();
+        builder.Services.AddSingleton<nscore.ProcessAnt>();
         nscore.Util.WebRootPath = builder.Environment.WebRootPath;
         var app = builder.Build();
         app.UseStaticFiles();
@@ -26,7 +26,7 @@ internal class Program
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
         app.MapGet("/servo", ((int id) => { return nscore.AstronomySocket.sendStar(id); }));
         app.MapGet("/stars", (() => { return Results.Json(nscore.Util.getStars()); }));
-        app.MapGet("/astro", ((double h, double v, int laser) => { return nscore.Util.moveTheAnt(h, v, laser); }));
+        app.MapGet("/astro", ((nscore.ProcessAnt pProcessAnt, double h, double v, int laser) => { return pProcessAnt.moveTheAnt(h, v, laser); }));
         app.MapGet("/", () => nscore.Util.moveTheAnt(12.3, 54.655, 1));
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
