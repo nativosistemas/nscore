@@ -51,7 +51,10 @@ else:
 
 pV.stop()
 pH.stop()
-#GPIO.cleanup()
+
+time.sleep(5)
+
+GPIO.cleanup()
 
 
 # Utilizar el parámetro recibido
