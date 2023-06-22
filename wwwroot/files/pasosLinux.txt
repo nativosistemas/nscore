@@ -1,2 +1,5 @@
+pyinstaller --onefile  py_astro.py
+// para generar el ejecutable de python
+
 chmod +x py_astro
 // comando de bash para darle permiso de ejecución 
