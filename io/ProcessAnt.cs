@@ -6,6 +6,8 @@ public class ProcessAnt : IDisposable
     private bool disposedValue = false;
     private Process _controller = new Process();
     private List<Star> _l_Star = null;
+    private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
+    public ObserverCoordinates city { get { return _city; } set { _city = value; } }
     public ProcessAnt()
     {
         _l_Star = nscore.Util.getStars();
@@ -40,12 +42,26 @@ public class ProcessAnt : IDisposable
     }
     public List<Star> getStars()
     {
+        foreach (Star oStar in _l_Star)
+        {
+            EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
+            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(city, eq);
+            ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
+            if (oServoCoordinates != null)
+            {
+                oStar.visible = true;
+            }
+            else
+            {
+                oStar.visible = false;
+            }
+        }
         return _l_Star;
     }
     public string findStar(int pId)
     {
         string result = string.Empty;
-        ObserverCoordinates city = ObserverCoordinates.cityRosario;
+        //ObserverCoordinates city = ObserverCoordinates.cityRosario;
         Star oStar = _l_Star.Where(x => x.nameBayer == pId).FirstOrDefault();
         if (oStar != null)
         {

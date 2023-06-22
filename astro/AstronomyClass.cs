@@ -6,6 +6,7 @@ public class Star
     public string name { get; set; }
     public double ra { get; set; }
     public double dec { get; set; }
+    public bool visible { get; set; }
 }
 public class ObserverCoordinates
 {
@@ -62,8 +63,8 @@ public class ServoCoordinates
         }
         if (isAzimuthMas180)
         {
-            vertical = 180.0 - pValue.Altitude ;
+            vertical = 180.0 - pValue.Altitude;
         }
-        return new ServoCoordinates() { servoH = horizontal, servoV = vertical };
+        return new ServoCoordinates() { servoH = Math.Round(horizontal, 6), servoV = Math.Round(vertical, 6) };
     }
 }

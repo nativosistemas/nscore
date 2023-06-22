@@ -119,3 +119,9 @@
       transform: rotate(360deg);
     }
   }
+
+
+  .scrollable-list {
+    max-height: 20em; /* Establece la altura máxima deseada */
+    overflow: auto; /* Habilita la barra de desplazamiento en caso de exceder la altura máxima */
+  }

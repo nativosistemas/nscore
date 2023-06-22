@@ -24,7 +24,7 @@ if len(sys.argv) < 2:
 parametroH = float(sys.argv[1])
 parametroV = float(sys.argv[2])
 parametroLaser = int(sys.argv[3])
-suma = parametroH + parametroV + parametroLaser
+#suma = parametroH + parametroV + parametroLaser
 
 
 pV.start(2.5)
@@ -58,5 +58,5 @@ GPIO.cleanup()
 
 
 # Utilizar el parámetro recibido
-print("Los parámetros recibido es: parametroH: " + str(parametroH)+" - parametroV: " +
-      str(parametroV) + " - parametroLaser: " + str(parametroLaser) + " - suma: " + str(suma))
+print("H: " + str(parametroH) + " ("+str(valorH)+")"+ " - parametroV: " +
+      str(parametroV) + " ("+str(valorV)+")"+ " - laser: " + str(parametroLaser))

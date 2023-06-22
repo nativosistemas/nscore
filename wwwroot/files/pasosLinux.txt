@@ -1,0 +1,2 @@
+chmod +x py_astro
+// comando de bash para darle permiso de ejecución 
