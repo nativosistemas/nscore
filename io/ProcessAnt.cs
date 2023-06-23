@@ -85,7 +85,7 @@ public class ProcessAnt : IDisposable
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "\n" + strHc + "\n";
                     result += moveTheAnt(oServoCoordinates);
-                    actionLaser(0, 1);
+                    //actionLaser(0, 1);
                 }
                 else
                 {
@@ -113,7 +113,7 @@ public class ProcessAnt : IDisposable
             int laser = pLaser;
             string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
             _controller.StartInfo.Arguments = parameter;
-            _controller.StartInfo.FileName = nameFileServo;
+            //_controller.StartInfo.FileName = nameFileServo;
             _controller.Start();
 
             output = _controller.StandardOutput.ReadToEnd();

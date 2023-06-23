@@ -3,3 +3,10 @@ pyinstaller --onefile  py_astro.py
 
 chmod +x py_astro
 // comando de bash para darle permiso de ejecución 
+
+////
+pyinstaller --onefile  py_laser.py
+// para generar el ejecutable de python
+
+chmod +x py_laser
+// comando de bash para darle permiso de ejecución 
