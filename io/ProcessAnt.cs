@@ -5,15 +5,17 @@ public class ProcessAnt : IDisposable
 {
     private bool disposedValue = false;
     private Process _controller = new Process();
+    private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
-    string nameFileServo = string.Empty;
-    string nameFileLaser = string.Empty;
+
+
     public ProcessAnt()
     {
         _l_Star = nscore.Util.getStars();
-        //string nameFile = string.Empty;
+        string nameFileLaser = string.Empty;
+        string nameFileServo = string.Empty;
         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
         {
             nameFileServo = "py_astro";
@@ -21,14 +23,6 @@ public class ProcessAnt : IDisposable
         else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
         {
             nameFileServo = "py_astro.exe";
-        }
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-        {
-            nameFileLaser = "py_laser";
-        }
-        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-        {
-            nameFileLaser = "py_laser.exe";
         }
         var pathAndFile = Path.Combine(nscore.Util.WebRootPath, @"files", nameFileServo);
         if (File.Exists(pathAndFile))
@@ -42,6 +36,28 @@ public class ProcessAnt : IDisposable
                 CreateNoWindow = true
             };
             _controller.StartInfo = processInfo;
+        }
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            nameFileLaser = "py_laser";
+        }
+        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            nameFileLaser = "py_laser.exe";
+        }
+
+        var pathAndFileLaser = Path.Combine(nscore.Util.WebRootPath, @"files", nameFileLaser);
+        if (File.Exists(pathAndFileLaser))
+        {
+            var processInfoLaser = new ProcessStartInfo
+            {
+                FileName = pathAndFileLaser,
+                //Arguments = arguments,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+            _controllerLaser.StartInfo = processInfoLaser;
         }
         else
         {
@@ -85,7 +101,7 @@ public class ProcessAnt : IDisposable
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "\n" + strHc + "\n";
                     result += moveTheAnt(oServoCoordinates);
-                    //actionLaser(0, 1);
+                    actionLaser(0, 1);
                 }
                 else
                 {
@@ -134,13 +150,12 @@ public class ProcessAnt : IDisposable
         {
             int laser = pLaser;
             string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(laser);
-            _controller.StartInfo.Arguments = parameter;
-            _controller.StartInfo.FileName = nameFileLaser;
-            _controller.Start();
+            _controllerLaser.StartInfo.Arguments = parameter;
+            _controllerLaser.Start();
 
-            output = _controller.StandardOutput.ReadToEnd();
+            output = _controllerLaser.StandardOutput.ReadToEnd();
 
-            _controller.WaitForExit();
+            _controllerLaser.WaitForExit();
         }
         catch (Exception ex)
         {
