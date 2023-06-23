@@ -14,6 +14,13 @@ GPIO.output(21, GPIO.LOW)
 def getDC_grados(pGrados):
     return round((((float(pGrados) - float(180)) * float(-5)) / float(-180)) + float(10), 1)
 
+# Función para calcular el ciclo de trabajo correspondiente a un ángulo dado
+def calcular_ciclo_de_trabajo(angulo):
+    ciclo_minimo = 2.5
+    ciclo_maximo = 12.5
+    rango = ciclo_maximo - ciclo_minimo
+    ciclo = ciclo_minimo + (rango / 180.0) * angulo
+    return ciclo
 
 # Verificar si se proporcionaron suficientes argumentos
 if len(sys.argv) < 2:
@@ -27,16 +34,16 @@ parametroLaser = int(sys.argv[3])
 #suma = parametroH + parametroV + parametroLaser
 
 
-pV.start(2.5)
-pH.start(2.5)
-time.sleep(1)
+#pV.start(2.5)
+#pH.start(2.5)
+#time.sleep(1)
 ## pV.stop()
 ## pH.stop()
-valorH = getDC_grados(parametroH)
-pH.ChangeDutyCycle(valorH)#pH.start(parametroH)#
+valorH = calcular_ciclo_de_trabajo(parametroH)
+pH.start(valorH)#pH.ChangeDutyCycle(valorH)
 
-valorV = getDC_grados(parametroV)
-pV.ChangeDutyCycle(valorV)#pV.start(valorV)#
+valorV = calcular_ciclo_de_trabajo(parametroV)
+pV.start(valorV)#pV.ChangeDutyCycle(valorV)
 
 # timer
 # ¿aca va un timer?
@@ -58,5 +65,5 @@ GPIO.cleanup()
 
 
 # Utilizar el parámetro recibido
-print("H: " + str(parametroH) + " ("+str(valorH)+")"+ " - parametroV: " +
+print("H: " + str(parametroH) + " ("+str(valorH)+")"+ " - V: " +
       str(parametroV) + " ("+str(valorV)+")"+ " - laser: " + str(parametroLaser))

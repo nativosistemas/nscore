@@ -72,7 +72,10 @@ public class ProcessAnt : IDisposable
                 ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
                 if (oServoCoordinates != null)
                 {
-                    result = moveTheAnt(oServoCoordinates);
+                    string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
+                    string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
+                    result += strEq + "\n" + strHc + "\n";
+                    result += moveTheAnt(oServoCoordinates);
                 }
                 else
                 {
