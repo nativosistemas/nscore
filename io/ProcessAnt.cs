@@ -8,20 +8,29 @@ public class ProcessAnt : IDisposable
     private List<Star> _l_Star = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
+    string nameFileServo = string.Empty;
+    string nameFileLaser = string.Empty;
     public ProcessAnt()
     {
         _l_Star = nscore.Util.getStars();
-        string nameFile = string.Empty;
+        //string nameFile = string.Empty;
         if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
         {
-            nameFile = "py_astro";
+            nameFileServo = "py_astro";
         }
         else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
         {
-            nameFile = "py_astro.exe";
+            nameFileServo = "py_astro.exe";
         }
-
-        var pathAndFile = Path.Combine(nscore.Util.WebRootPath, @"files", nameFile);
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            nameFileLaser = "py_laser";
+        }
+        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            nameFileLaser = "py_laser.exe";
+        }
+        var pathAndFile = Path.Combine(nscore.Util.WebRootPath, @"files", nameFileServo);
         if (File.Exists(pathAndFile))
         {
             var processInfo = new ProcessStartInfo
@@ -76,6 +85,7 @@ public class ProcessAnt : IDisposable
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "\n" + strHc + "\n";
                     result += moveTheAnt(oServoCoordinates);
+                    actionLaser(0, 1);
                 }
                 else
                 {
@@ -103,6 +113,7 @@ public class ProcessAnt : IDisposable
             int laser = pLaser;
             string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
             _controller.StartInfo.Arguments = parameter;
+            _controller.StartInfo.FileName = nameFileServo;
             _controller.Start();
 
             output = _controller.StandardOutput.ReadToEnd();
@@ -116,7 +127,27 @@ public class ProcessAnt : IDisposable
         }
         return output;
     }
+    public string actionLaser(int pIsRead, int pLaser)
+    {
+        string output = "null";
+        try
+        {
+            int laser = pLaser;
+            string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(laser);
+            _controller.StartInfo.Arguments = parameter;
+            _controller.StartInfo.FileName = nameFileLaser;
+            _controller.Start();
 
+            output = _controller.StandardOutput.ReadToEnd();
+
+            _controller.WaitForExit();
+        }
+        catch (Exception ex)
+        {
+            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
+        }
+        return output;
+    }
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)

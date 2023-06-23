@@ -11,13 +11,11 @@ pV = GPIO.PWM(7, 50)
 pH = GPIO.PWM(11, 50)
 GPIO.output(21, GPIO.LOW)
 
-def getDC_grados(pGrados):
-    return round((((float(pGrados) - float(180)) * float(-5)) / float(-180)) + float(10), 1)
 
 # Función para calcular el ciclo de trabajo correspondiente a un ángulo dado
 def calcular_ciclo_de_trabajo(angulo):
     ciclo_minimo = 2.5
-    ciclo_maximo = 12.5
+    ciclo_maximo = 12
     rango = ciclo_maximo - ciclo_minimo
     ciclo = ciclo_minimo + (rango / 180.0) * angulo
     return ciclo
@@ -49,17 +47,17 @@ pV.start(valorV)#pV.ChangeDutyCycle(valorV)
 # ¿aca va un timer?
 time.sleep(1)
 
-if bool(parametroLaser):
-    GPIO.output(21, GPIO.HIGH)  # led on
-else:
-    GPIO.output(21, GPIO.LOW)  # led off
+#if bool(parametroLaser):
+#    GPIO.output(21, GPIO.HIGH)  # led on
+#else:
+#    GPIO.output(21, GPIO.LOW)  # led off
 
 
 
 pV.stop()
 pH.stop()
 
-time.sleep(10)
+#time.sleep(10)
 
 GPIO.cleanup()
 
