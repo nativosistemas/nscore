@@ -10,3 +10,13 @@ pyinstaller --onefile  py_laser.py
 
 chmod +x py_laser
 // comando de bash para darle permiso de ejecución 
+
+//// para que la app se inicie siempre en la raspberry
+copiar el archivo en la ruta /etc/systemd/system/
+
+//Ejecuta los siguientes comandos para habilitar el servicio y asegurarte de que se inicie 
+sudo systemctl enable astro.service
+sudo systemctl start astro.service
+
+// ver el estado
+sudo systemctl status astro.service 
