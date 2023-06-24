@@ -72,8 +72,8 @@ public class AstronomyEngine
     //
     public static HorariasCoordinates ToHorariasCoordinates(ObserverCoordinates pCity, EquatorialCoordinates pEq)
     {
-        double siderealTime = GetTSL(pCity);
-        double hourAngle_astro = siderealTime - pEq.ra;
+        double siderealTime_local = GetTSL(pCity);
+        double hourAngle_astro = siderealTime_local - pEq.ra;
         while (hourAngle_astro < 0.0)
         {
             hourAngle_astro += 360.0;
