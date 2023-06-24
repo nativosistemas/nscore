@@ -6,7 +6,7 @@
     <title>Estrellas</title>
     <link href="../includes/css/bootstrap.min.css" rel="stylesheet">
     <link href="../includes/css/astro.css" rel="stylesheet">
-    <script src="../includes/js/astro.js?n=0" type="text/javascript"></script>
+    <script src="../includes/js/astro.js?n=1" type="text/javascript"></script>
 </head>
 
 <body>
@@ -14,18 +14,24 @@
     <div class="container">
         <br />
         <div class="row">
-            <div class="col">
+            <div class="col-8">
                 <div class="alert alert-primary" role="alert">
                     Estrellas
                 </div>
+       
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-secondary" onclick="onClickApagarLaser()">Apagar Laser</button>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col">
                 <ul id="miLista" class="list-group scrollable-list">
-
                 </ul>
             </div>
-
         </div>
-  
-     
+
         <br />
         <div class="row">
             <div id="divMsg" class="col">

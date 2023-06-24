@@ -12,7 +12,7 @@ window.addEventListener("load", (event) => {
                 if (!element.visible) {
                     disabled = ' disabled list-group-item-dark ';
                 }
-                strHtml += '<li class="list-group-item' + disabled + '" value="' + element.nameBayer + '">' + element.name  +  '</li>';
+                strHtml += '<li class="list-group-item' + disabled + '" value="' + element.nameBayer + '">' + element.name + '</li>';
             }
         }
         );
@@ -62,22 +62,16 @@ async function fetchServo(pId) {
     const text = await response.text();
     return text;
 }
+function onClickApagarLaser() {
+    fetchLaser(0, 0);
+}
+async function fetchLaser(pRead, pOn) {
+    const response = await fetch('/laser?read=' + pRead + '&on=' + pOn);
+    const text = await response.text();
+    return text;
+}
 var isOnClickStar = false;
-/*function onClickStar() {
-    if (!isOnClickStar) {
-        isOnClickStar = true;
-        // $("#spinner").show();
-        document.getElementById("spinner").style.display = '';
-        var id = document.getElementById("starDataList").value;
-        fetchServo(id).then(text => {
-            var strHtml = '';
-            strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
-            document.getElementById("divMsg").innerHTML = strHtml;
-            isOnClickStar = false;
-            document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
-        });
-    }
-}*/
+
 function onClickStar(pId) {
     if (!isOnClickStar) {
         isOnClickStar = true;
