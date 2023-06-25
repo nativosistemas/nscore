@@ -8,8 +8,8 @@ public class ProcessAnt : IDisposable
     private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
-    private static Semaphore _semaphore_laser = new Semaphore(1, 1);
-    private static Semaphore _semaphore_servo = new Semaphore(1, 1);
+    private static Semaphore _semaphore_laser = new Semaphore(0, 1);
+    private static Semaphore _semaphore_servo = new Semaphore(0, 1);
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
 
 

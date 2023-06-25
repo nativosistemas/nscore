@@ -28,5 +28,5 @@ sudo systemctl stop astro.service
 // para publicar app
 dotnet publish
 
-// permiso carpeta
+// permiso carpeta al usuario pi
 sudo chown -R pi /usr/src/nscore/
