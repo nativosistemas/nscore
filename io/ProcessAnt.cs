@@ -46,7 +46,7 @@ public class ProcessAnt : IDisposable
             nameFileLaser = "py_laser.exe";
         }
 
-        var pathAndFileLaser = Path.Combine(nscore.Util.WebRootPath, @"files", nameFileLaser);
+        var pathAndFileLaser = Path.Combine(DKbase.Helper.getFolder, @"files", nameFileLaser);
         if (File.Exists(pathAndFileLaser))
         {
             var processInfoLaser = new ProcessStartInfo

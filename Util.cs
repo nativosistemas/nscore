@@ -92,8 +92,5 @@ public class Util
         }
         return l;
     }
-    public static string moveTheAnt(double pH, double pV, int pLaser)
-    {
-        return nscore.FileClient.RunProcessAstro(pH, pV, pLaser);
-    }
+
 }

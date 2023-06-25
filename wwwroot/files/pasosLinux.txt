@@ -21,3 +21,6 @@ sudo systemctl start astro.service
 
 // ver el estado
 sudo systemctl status astro.service 
+
+// para parar proceso PARA PUBLICAR
+sudo systemctl stop astro.service
