@@ -24,7 +24,7 @@ public class ProcessAnt : IDisposable
         {
             nameFileServo = "py_astro.exe";
         }
-        var pathAndFile = Path.Combine(DKbase.Helper.getFolder, @"files", nameFileServo);//nscore.Util.WebRootPath
+        var pathAndFile = Path.Combine(nscore.Helper.folder, @"files", nameFileServo);//nscore.Util.WebRootPath
         if (File.Exists(pathAndFile))
         {
             var processInfo = new ProcessStartInfo
@@ -46,7 +46,7 @@ public class ProcessAnt : IDisposable
             nameFileLaser = "py_laser.exe";
         }
 
-        var pathAndFileLaser = Path.Combine(DKbase.Helper.getFolder, @"files", nameFileLaser);
+        var pathAndFileLaser = Path.Combine(nscore.Helper.folder, @"files", nameFileLaser);
         if (File.Exists(pathAndFileLaser))
         {
             var processInfoLaser = new ProcessStartInfo
