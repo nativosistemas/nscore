@@ -8,8 +8,7 @@ public class ProcessAnt : IDisposable
     private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
-    private static Semaphore _semaphore_laser = new Semaphore(0, 1);
-    private static Semaphore _semaphore_servo = new Semaphore(0, 1);
+    private static Semaphore _semaphore_ant = new Semaphore(0, 1);
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
 
 
@@ -102,8 +101,10 @@ public class ProcessAnt : IDisposable
                     string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "\n" + strHc + "\n";
+                    _semaphore_ant.WaitOne(); // Intentar adquirir un recurso del semáforo
                     result += moveTheAnt(oServoCoordinates);
                     actionLaser(0, 1);
+                    _semaphore_ant.Release(); // Liberar el recurso en el semáforo
                 }
                 else
                 {
@@ -130,12 +131,12 @@ public class ProcessAnt : IDisposable
             double V = pV;
             int laser = pLaser;
             string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
-            _semaphore_servo.WaitOne(); // Intentar adquirir un recurso del semáforo
+
             _controller.StartInfo.Arguments = parameter;
             _controller.Start();
             output = _controller.StandardOutput.ReadToEnd();
             _controller.WaitForExit();
-            _semaphore_servo.Release(); // Liberar el recurso en el semáforo
+
         }
         catch (Exception ex)
         {
@@ -151,12 +152,11 @@ public class ProcessAnt : IDisposable
         {
             int laser = pLaser;
             string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(laser);
-            _semaphore_laser.WaitOne(); // Intentar adquirir un recurso del semáforo
             _controllerLaser.StartInfo.Arguments = parameter;
             _controllerLaser.Start();
             output = _controllerLaser.StandardOutput.ReadToEnd();
             _controllerLaser.WaitForExit();
-            _semaphore_laser.Release(); // Liberar el recurso en el semáforo
+
         }
         catch (Exception ex)
         {
@@ -172,8 +172,7 @@ public class ProcessAnt : IDisposable
             {
                 _controller.Dispose();
                 _controllerLaser.Dispose();
-                _semaphore_servo.Dispose();
-                _semaphore_laser.Dispose();
+                _semaphore_ant.Dispose();
             }
 
             disposedValue = true;
