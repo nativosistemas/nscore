@@ -8,7 +8,7 @@ public class ProcessAnt : IDisposable
     private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
-    private static Semaphore _semaphore_ant = new Semaphore(0, 1);
+    //private static Semaphore _semaphore_ant = new Semaphore(0, 1);
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
 
 
@@ -101,10 +101,10 @@ public class ProcessAnt : IDisposable
                     string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "\n" + strHc + "\n";
-                    _semaphore_ant.WaitOne(); // Intentar adquirir un recurso del semáforo
+                    //_semaphore_ant.WaitOne(); // Intentar adquirir un recurso del semáforo
                     result += moveTheAnt(oServoCoordinates);
                     actionLaser(0, 1);
-                    _semaphore_ant.Release(); // Liberar el recurso en el semáforo
+                   // _semaphore_ant.Release(); // Liberar el recurso en el semáforo
                 }
                 else
                 {
@@ -172,7 +172,7 @@ public class ProcessAnt : IDisposable
             {
                 _controller.Dispose();
                 _controllerLaser.Dispose();
-                _semaphore_ant.Dispose();
+               // _semaphore_ant.Dispose();
             }
 
             disposedValue = true;
