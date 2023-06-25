@@ -1,15 +1,16 @@
 pyinstaller --onefile  py_astro.py
 // para generar el ejecutable de python
 
-chmod +x py_astro
-// comando de bash para darle permiso de ejecución 
+chmod +x /usr/src/nscore/py_astro
+// comando de bash para darle permiso de ejecución en la RUTA especifica
+
 
 ////
 pyinstaller --onefile  py_laser.py
 // para generar el ejecutable de python
 
-chmod +x py_laser
-// comando de bash para darle permiso de ejecución 
+chmod +x /usr/src/nscore/py_laser
+// comando de bash para darle permiso de ejecución en la RUTA especifica
 
 //// para que la app se inicie siempre en la raspberry
 copiar el archivo en la ruta /etc/systemd/system/

@@ -24,7 +24,7 @@ public class ProcessAnt : IDisposable
         {
             nameFileServo = "py_astro.exe";
         }
-        var pathAndFile = Path.Combine(nscore.Util.WebRootPath, @"files", nameFileServo);
+        var pathAndFile = Path.Combine(DKbase.Helper.getFolder, @"files", nameFileServo);//nscore.Util.WebRootPath
         if (File.Exists(pathAndFile))
         {
             var processInfo = new ProcessStartInfo
