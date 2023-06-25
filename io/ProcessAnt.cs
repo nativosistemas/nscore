@@ -8,6 +8,8 @@ public class ProcessAnt : IDisposable
     private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
+    private static Semaphore _semaphore_laser = new Semaphore(1, 1);
+    private static Semaphore _semaphore_servo = new Semaphore(1, 1);
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
 
 
@@ -128,13 +130,12 @@ public class ProcessAnt : IDisposable
             double V = pV;
             int laser = pLaser;
             string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
+            _semaphore_servo.WaitOne(); // Intentar adquirir un recurso del semáforo
             _controller.StartInfo.Arguments = parameter;
-            //_controller.StartInfo.FileName = nameFileServo;
             _controller.Start();
-
             output = _controller.StandardOutput.ReadToEnd();
-
             _controller.WaitForExit();
+            _semaphore_servo.WaitOne(); // Intentar adquirir un recurso del semáforo
         }
         catch (Exception ex)
         {
@@ -150,12 +151,12 @@ public class ProcessAnt : IDisposable
         {
             int laser = pLaser;
             string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(laser);
+            _semaphore_laser.WaitOne(); // Intentar adquirir un recurso del semáforo
             _controllerLaser.StartInfo.Arguments = parameter;
             _controllerLaser.Start();
-
             output = _controllerLaser.StandardOutput.ReadToEnd();
-
             _controllerLaser.WaitForExit();
+            _semaphore_laser.WaitOne(); // Intentar adquirir un recurso del semáforo
         }
         catch (Exception ex)
         {
@@ -170,6 +171,9 @@ public class ProcessAnt : IDisposable
             if (disposing)
             {
                 _controller.Dispose();
+                _controllerLaser.Dispose();
+                _semaphore_servo.Dispose();
+                _semaphore_laser.Dispose();
             }
 
             disposedValue = true;

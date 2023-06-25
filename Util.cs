@@ -4,11 +4,7 @@ namespace nscore;
 public class Util
 {
     public static string WebRootPath { get; set; }
-    public static string MoverServo(string n, nscore.IServoController pServo)
-    {
-        Console.Write("n: " + n);
-        return pServo.logica() ? "On" : "Off";
-    }
+
     public static string HolaMundo()
     {
         //
