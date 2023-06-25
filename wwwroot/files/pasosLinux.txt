@@ -24,3 +24,6 @@ sudo systemctl status astro.service
 
 // para parar proceso PARA PUBLICAR
 sudo systemctl stop astro.service
+
+// para publicar app
+dotnet publish

@@ -16,7 +16,7 @@ internal class Program
         app.UseStaticFiles();
 
         nscore.Helper.app = builder.Configuration.GetSection("appSettings")["app"];
-        nscore.Helper.folder = System.IO.Directory.GetCurrentDirectory();// builder.Configuration.GetSection("appSettings")["folder"];
+        nscore.Helper.folder = builder.Configuration.GetSection("appSettings")["folder"];// System.IO.Directory.GetCurrentDirectory();
 
         DKbase.Helper.getFolder = nscore.Helper.folder;
         DKbase.Helper.getTipoApp = nscore.Helper.app;
