@@ -135,7 +135,7 @@ public class ProcessAnt : IDisposable
             _controller.Start();
             output = _controller.StandardOutput.ReadToEnd();
             _controller.WaitForExit();
-            _semaphore_servo.WaitOne(); // Intentar adquirir un recurso del semáforo
+            _semaphore_servo.Release(); // Liberar el recurso en el semáforo
         }
         catch (Exception ex)
         {
@@ -156,7 +156,7 @@ public class ProcessAnt : IDisposable
             _controllerLaser.Start();
             output = _controllerLaser.StandardOutput.ReadToEnd();
             _controllerLaser.WaitForExit();
-            _semaphore_laser.WaitOne(); // Intentar adquirir un recurso del semáforo
+            _semaphore_laser.Release(); // Liberar el recurso en el semáforo
         }
         catch (Exception ex)
         {
