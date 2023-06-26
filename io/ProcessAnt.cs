@@ -5,8 +5,8 @@ public class ProcessAnt : IDisposable
 {
     private bool disposedValue = false;
     //private Process _controller = new Process();
-    private PoolProcessServo _poolProcessServo = new PoolProcessServo(1);
-    private PoolProcessLaser _poolProcessLaser = new PoolProcessLaser(1);
+    private ProcessServo _processServo = new ProcessServo();
+    private ProcessLaser _processLaser = new ProcessLaser();
     //private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
@@ -72,54 +72,15 @@ public class ProcessAnt : IDisposable
     }
     public string moveTheAnt(ServoCoordinates pServoCoordinates)
     {
-        return moveTheAnt(pServoCoordinates.servoH, pServoCoordinates.servoV, 1);
+        return _processServo.Start(pServoCoordinates.servoH, pServoCoordinates.servoV, 1);
     }
     public string moveTheAnt(double pH, double pV, int pLaser)
     {
-        string output = "null";
-        try
-        {
-            ProcessServo oProcessServo = _poolProcessServo.GetResource();
-            if (oProcessServo != null)
-            {
-                oProcessServo.Start(pH, pV, pLaser);
-                _poolProcessServo.SetResource(oProcessServo);
-            }
-            else
-            {
-                output = "recurso en uso";
-            }
-
-        }
-        catch (Exception ex)
-        {
-            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
-
-        }
-        return output;
+        return _processServo.Start(pH, pV, pLaser);
     }
     public string actionLaser(int pIsRead, int pLaser)
     {
-        string output = "null";
-        try
-        {
-            ProcessLaser oProcess = _poolProcessLaser.GetResource();
-            if (oProcess != null)
-            {
-                oProcess.Start(pIsRead, pLaser);
-                _poolProcessLaser.SetResource(oProcess);
-            }
-            else
-            {
-                output = "recurso en uso";
-            }
-
-        }
-        catch (Exception ex)
-        {
-            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
-        }
-        return output;
+        return _processLaser.Start(pIsRead, pLaser);
     }
     protected virtual void Dispose(bool disposing)
     {
@@ -127,8 +88,8 @@ public class ProcessAnt : IDisposable
         {
             if (disposing)
             {
-                _poolProcessServo.Dispose();
-                _poolProcessLaser.Dispose();
+                _processServo.Dispose();
+                _processLaser.Dispose();
             }
 
             disposedValue = true;
@@ -143,31 +104,67 @@ public class ProcessAnt : IDisposable
 public class ProcessServo : IDisposable
 {
     private bool disposedValue = false;
-    private Process _controller = new Process();
+    private readonly Queue<Process> recursosDisponibles;
+    private readonly int maxRecursos;
     public ProcessServo()
     {
+        this.maxRecursos = 1;
+        recursosDisponibles = new Queue<Process>();
 
-        string nameFile = string.Empty;
-        // 
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        // Inicializar el pool con recursos preinstanciados
+        for (int i = 0; i < maxRecursos; i++)
         {
-            nameFile = "py_astro";
-        }
-        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-        {
-            nameFile = "py_astro.exe";
-        }
-        var pathAndFile = Path.Combine(nscore.Helper.folder, nameFile);
-        if (File.Exists(pathAndFile))
-        {
-            var processInfo = new ProcessStartInfo
+
+            Process oProcess = new Process();
+            string nameFile = string.Empty;
+            // 
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
             {
-                FileName = pathAndFile,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            _controller.StartInfo = processInfo;
+                nameFile = "py_astro";
+            }
+            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            {
+                nameFile = "py_astro.exe";
+            }
+            var pathAndFile = Path.Combine(nscore.Helper.folder, nameFile);
+            if (File.Exists(pathAndFile))
+            {
+                var processInfo = new ProcessStartInfo
+                {
+                    FileName = pathAndFile,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                oProcess.StartInfo = processInfo;
+            }
+            recursosDisponibles.Enqueue(oProcess);
+        }
+
+    }
+    public Process GetResource()
+    {
+        if (recursosDisponibles.Count > 0)
+        {
+            return recursosDisponibles.Dequeue();
+        }
+
+        // Aquí puedes implementar la lógica para manejar el caso en el que no haya recursos disponibles,
+        // como lanzar una excepción o esperar hasta que haya un recurso disponible.
+
+        return null;
+    }
+
+    public void SetResource(Process recurso)
+    {
+        if (recursosDisponibles.Count < maxRecursos)
+        {
+            recursosDisponibles.Enqueue(recurso);
+        }
+        else
+        {
+            // Aquí puedes implementar la lógica para manejar el caso en el que el pool está lleno
+            // y no se puede devolver el recurso.
         }
     }
     public string Start(double pH, double pV, int pLaser)
@@ -175,16 +172,23 @@ public class ProcessServo : IDisposable
         string output = "null";
         try
         {
-            double H = pH;
-            double V = pV;
-            int laser = pLaser;
-            string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
-
-            _controller.StartInfo.Arguments = parameter;
-            _controller.Start();
-            output = _controller.StandardOutput.ReadToEnd();
-            _controller.WaitForExit();
-
+            Process oProcess = GetResource();
+            if (oProcess != null)
+            {
+                double H = pH;
+                double V = pV;
+                int laser = pLaser;
+                string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
+                oProcess.StartInfo.Arguments = parameter;
+                oProcess.Start();
+                output = oProcess.StandardOutput.ReadToEnd();
+                oProcess.WaitForExit();
+                SetResource(oProcess);
+            }
+            else
+            {
+                output = "recurso en uso";
+            }
         }
         catch (Exception ex)
         {
@@ -198,7 +202,7 @@ public class ProcessServo : IDisposable
         {
             if (disposing)
             {
-                _controller.Dispose();
+                //
             }
 
             disposedValue = true;
@@ -213,29 +217,64 @@ public class ProcessServo : IDisposable
 public class ProcessLaser : IDisposable
 {
     private bool disposedValue = false;
-    private Process _controller = new Process();
+    private readonly Queue<Process> recursosDisponibles;
+    private readonly int maxRecursos;
     public ProcessLaser()
     {
-        string nameFile = string.Empty;
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        this.maxRecursos = 1;
+        recursosDisponibles = new Queue<Process>();
+        // Inicializar el pool con recursos preinstanciados
+        for (int i = 0; i < maxRecursos; i++)
         {
-            nameFile = "py_laser";
-        }
-        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-        {
-            nameFile = "py_laser.exe";
-        }
-        var pathAndFile = Path.Combine(nscore.Helper.folder, nameFile);
-        if (File.Exists(pathAndFile))
-        {
-            var processInfo = new ProcessStartInfo
+            Process oProcess = new Process();
+            string nameFile = string.Empty;
+            // 
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
             {
-                FileName = pathAndFile,
-                RedirectStandardOutput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-            _controller.StartInfo = processInfo;
+                nameFile = "py_laser";
+            }
+            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            {
+                nameFile = "py_laser.exe";
+            }
+            var pathAndFile = Path.Combine(nscore.Helper.folder, nameFile);
+            if (File.Exists(pathAndFile))
+            {
+                var processInfo = new ProcessStartInfo
+                {
+                    FileName = pathAndFile,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    CreateNoWindow = true
+                };
+                oProcess.StartInfo = processInfo;
+            }
+            recursosDisponibles.Enqueue(oProcess);
+        }
+    }
+    public Process GetResource()
+    {
+        if (recursosDisponibles.Count > 0)
+        {
+            return recursosDisponibles.Dequeue();
+        }
+
+        // Aquí puedes implementar la lógica para manejar el caso en el que no haya recursos disponibles,
+        // como lanzar una excepción o esperar hasta que haya un recurso disponible.
+
+        return null;
+    }
+
+    public void SetResource(Process recurso)
+    {
+        if (recursosDisponibles.Count < maxRecursos)
+        {
+            recursosDisponibles.Enqueue(recurso);
+        }
+        else
+        {
+            // Aquí puedes implementar la lógica para manejar el caso en el que el pool está lleno
+            // y no se puede devolver el recurso.
         }
     }
     public string Start(int pIsRead, int pLaser)
@@ -243,12 +282,20 @@ public class ProcessLaser : IDisposable
         string output = "null";
         try
         {
-            string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(pLaser);
-            _controller.StartInfo.Arguments = parameter;
-            _controller.Start();
-            output = _controller.StandardOutput.ReadToEnd();
-            _controller.WaitForExit();
-
+            Process oProcess = GetResource();
+            if (oProcess != null)
+            {
+                string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(pLaser);
+                oProcess.StartInfo.Arguments = parameter;
+                oProcess.Start();
+                output = oProcess.StandardOutput.ReadToEnd();
+                oProcess.WaitForExit();
+                SetResource(oProcess);
+            }
+            else
+            {
+                output = "recurso en uso";
+            }
         }
         catch (Exception ex)
         {
@@ -262,129 +309,7 @@ public class ProcessLaser : IDisposable
         {
             if (disposing)
             {
-                _controller.Dispose();
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-    }
-}
-public class PoolProcessServo : IDisposable
-{
-    private bool disposedValue = false;
-    private readonly Queue<ProcessServo> recursosDisponibles;
-    private readonly int maxRecursos;
-
-    public PoolProcessServo(int maxRecursos)
-    {
-        this.maxRecursos = maxRecursos;
-        recursosDisponibles = new Queue<ProcessServo>();
-
-        // Inicializar el pool con recursos preinstanciados
-        for (int i = 0; i < maxRecursos; i++)
-        {
-            recursosDisponibles.Enqueue(new ProcessServo());
-        }
-    }
-
-    public ProcessServo GetResource()
-    {
-        if (recursosDisponibles.Count > 0)
-        {
-            return recursosDisponibles.Dequeue();
-        }
-
-        // Aquí puedes implementar la lógica para manejar el caso en el que no haya recursos disponibles,
-        // como lanzar una excepción o esperar hasta que haya un recurso disponible.
-
-        return null;
-    }
-
-    public void SetResource(ProcessServo recurso)
-    {
-        if (recursosDisponibles.Count < maxRecursos)
-        {
-            recursosDisponibles.Enqueue(recurso);
-        }
-        else
-        {
-            // Aquí puedes implementar la lógica para manejar el caso en el que el pool está lleno
-            // y no se puede devolver el recurso.
-        }
-    }
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-    }
-}
-public class PoolProcessLaser : IDisposable
-{
-    private bool disposedValue = false;
-    private readonly Queue<ProcessLaser> recursosDisponibles;
-    private readonly int maxRecursos;
-
-    public PoolProcessLaser(int maxRecursos)
-    {
-        this.maxRecursos = maxRecursos;
-        recursosDisponibles = new Queue<ProcessLaser>();
-
-        // Inicializar el pool con recursos preinstanciados
-        for (int i = 0; i < maxRecursos; i++)
-        {
-            recursosDisponibles.Enqueue(new ProcessLaser());
-        }
-    }
-
-    public ProcessLaser GetResource()
-    {
-        if (recursosDisponibles.Count > 0)
-        {
-            return recursosDisponibles.Dequeue();
-        }
-
-        // Aquí puedes implementar la lógica para manejar el caso en el que no haya recursos disponibles,
-        // como lanzar una excepción o esperar hasta que haya un recurso disponible.
-
-        return null;
-    }
-
-    public void SetResource(ProcessLaser recurso)
-    {
-        if (recursosDisponibles.Count < maxRecursos)
-        {
-            recursosDisponibles.Enqueue(recurso);
-        }
-        else
-        {
-            // Aquí puedes implementar la lógica para manejar el caso en el que el pool está lleno
-            // y no se puede devolver el recurso.
-        }
-    }
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-
+                //
             }
 
             disposedValue = true;
