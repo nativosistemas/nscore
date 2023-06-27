@@ -17,10 +17,15 @@ internal class Program
 
         nscore.Helper.app = builder.Configuration.GetSection("appSettings")["app"];
         nscore.Helper.folder = builder.Configuration.GetSection("appSettings")["folder"];// System.IO.Directory.GetCurrentDirectory();
+        nscore.Helper.sqllite = builder.Configuration.GetSection("appSettings")["sqllite"];
 
         DKbase.Helper.getFolder = nscore.Helper.folder;
         DKbase.Helper.getTipoApp = nscore.Helper.app;
         DKbase.Helper.getConnectionStringSQL = builder.Configuration.GetConnectionString("ConnectionSQL");
+        //
+        nscore.AstroDbContext.initDbContext();
+          nscore.AstroDbContext.initTableStar();
+        //
 
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });

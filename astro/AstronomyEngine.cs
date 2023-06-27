@@ -70,10 +70,9 @@ public class AstronomyEngine
         return lst;
     }
     //
-    public static HorariasCoordinates ToHorariasCoordinates(ObserverCoordinates pCity, EquatorialCoordinates pEq)
+    public static HorariasCoordinates ToHorariasCoordinates(double pSiderealTimeLocal, EquatorialCoordinates pEq)
     {
-        double siderealTime_local = GetTSL(pCity);
-        double hourAngle_astro = siderealTime_local - pEq.ra;
+        double hourAngle_astro = pSiderealTimeLocal - pEq.ra;
         while (hourAngle_astro < 0.0)
         {
             hourAngle_astro += 360.0;
@@ -84,10 +83,10 @@ public class AstronomyEngine
         }
         return new HorariasCoordinates() { dec = pEq.dec, HA = hourAngle_astro };
     }
-    public static HorizontalCoordinates ToHorizontalCoordinates(ObserverCoordinates pCity, EquatorialCoordinates pEq)
+    public static HorizontalCoordinates ToHorizontalCoordinates(double pSiderealTimeLocal, ObserverCoordinates pCity, EquatorialCoordinates pEq)
     {
 
-        HorariasCoordinates oHorariasCoordinates = ToHorariasCoordinates(pCity, pEq);
+        HorariasCoordinates oHorariasCoordinates = ToHorariasCoordinates(pSiderealTimeLocal, pEq);
         double hourAngle_astro = oHorariasCoordinates.HA;
 
         double altitude = Math.Asin(Math.Sin(pEq.dec * Math.PI / 180) * Math.Sin(pCity.latitude * Math.PI / 180) + Math.Cos(pEq.dec * Math.PI / 180) * Math.Cos(pCity.latitude * Math.PI / 180) * Math.Cos(hourAngle_astro * Math.PI / 180)) * 180 / Math.PI;

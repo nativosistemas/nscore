@@ -1,7 +1,19 @@
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
+
 namespace nscore;
 
+//[Keyless]
 public class Star
 {
+    /* public Star(){
+         guid = Guid.NewGuid();
+     }
+     [Key]
+     public Guid guid { get; set; }*/
+    [Key]
+    [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+    public int id { get; set; }
     public int nameBayer { get; set; }
     public string name { get; set; }
     public double ra { get; set; }

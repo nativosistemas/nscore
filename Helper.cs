@@ -8,7 +8,11 @@ public sealed class Helper
     {
         set; get;
     }
-    public static string folder//git reset --hard HEAD
+    public static string folder
+    {
+        set; get;
+    }
+    public static string sqllite
     {
         set; get;
     }

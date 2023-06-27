@@ -16,14 +16,15 @@ public class ProcessAnt : IDisposable
 
     public ProcessAnt()
     {
-        _l_Star = nscore.Util.getStars();
+        _l_Star = nscore.AstroDbContext.getStars();
     }
     public List<Star> getStars()
     {
+        double siderealTime_local = AstronomyEngine.GetTSL(city);
         foreach (Star oStar in _l_Star)
         {
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
-            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(city, eq);
+            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
             if (oServoCoordinates != null)
             {
@@ -43,8 +44,9 @@ public class ProcessAnt : IDisposable
         Star oStar = _l_Star.Where(x => x.nameBayer == pId).FirstOrDefault();
         if (oStar != null)
         {
+            double siderealTime_local = AstronomyEngine.GetTSL(city);
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
-            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(city, eq);
+            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             if (hc != null)
             {
                 ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
@@ -104,75 +106,27 @@ public class ProcessAnt : IDisposable
 public class ProcessServo : IDisposable
 {
     private bool disposedValue = false;
-    private readonly Queue<Process> recursosDisponibles;
-    private readonly int maxRecursos;
+    private PoolProcess _PoolProcess;
     public ProcessServo()
     {
-        this.maxRecursos = 1;
-        recursosDisponibles = new Queue<Process>();
-
-        // Inicializar el pool con recursos preinstanciados
-        for (int i = 0; i < maxRecursos; i++)
+        string nameFile = string.Empty;
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
         {
-
-            Process oProcess = new Process();
-            string nameFile = string.Empty;
-            // 
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-            {
-                nameFile = "py_astro";
-            }
-            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-            {
-                nameFile = "py_astro.exe";
-            }
-            var pathAndFile = Path.Combine(nscore.Helper.folder, nameFile);
-            if (File.Exists(pathAndFile))
-            {
-                var processInfo = new ProcessStartInfo
-                {
-                    FileName = pathAndFile,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                oProcess.StartInfo = processInfo;
-            }
-            recursosDisponibles.Enqueue(oProcess);
+            nameFile = "py_astro";
         }
-
-    }
-    public Process GetResource()
-    {
-        if (recursosDisponibles.Count > 0)
+        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
         {
-            return recursosDisponibles.Dequeue();
+            nameFile = "py_astro.exe";
         }
-
-        // Aquí puedes implementar la lógica para manejar el caso en el que no haya recursos disponibles,
-        // como lanzar una excepción o esperar hasta que haya un recurso disponible.
-
-        return null;
+        _PoolProcess = new PoolProcess(1, nameFile);
     }
 
-    public void SetResource(Process recurso)
-    {
-        if (recursosDisponibles.Count < maxRecursos)
-        {
-            recursosDisponibles.Enqueue(recurso);
-        }
-        else
-        {
-            // Aquí puedes implementar la lógica para manejar el caso en el que el pool está lleno
-            // y no se puede devolver el recurso.
-        }
-    }
     public string Start(double pH, double pV, int pLaser)
     {
         string output = "null";
         try
         {
-            Process oProcess = GetResource();
+            Process oProcess = _PoolProcess.GetResource();
             if (oProcess != null)
             {
                 double H = pH;
@@ -183,7 +137,7 @@ public class ProcessServo : IDisposable
                 oProcess.Start();
                 output = oProcess.StandardOutput.ReadToEnd();
                 oProcess.WaitForExit();
-                SetResource(oProcess);
+                _PoolProcess.SetResource(oProcess);
             }
             else
             {
@@ -202,7 +156,7 @@ public class ProcessServo : IDisposable
         {
             if (disposing)
             {
-                //
+                _PoolProcess.Dispose();
             }
 
             disposedValue = true;
@@ -217,29 +171,82 @@ public class ProcessServo : IDisposable
 public class ProcessLaser : IDisposable
 {
     private bool disposedValue = false;
-    private readonly Queue<Process> recursosDisponibles;
-    private readonly int maxRecursos;
+    private PoolProcess _PoolProcess;
     public ProcessLaser()
     {
-        this.maxRecursos = 1;
-        recursosDisponibles = new Queue<Process>();
-        // Inicializar el pool con recursos preinstanciados
-        for (int i = 0; i < maxRecursos; i++)
+        string nameFile = string.Empty;
+        // 
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
         {
-            Process oProcess = new Process();
-            string nameFile = string.Empty;
-            // 
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+            nameFile = "py_laser";
+        }
+        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            nameFile = "py_laser.exe";
+        }
+        _PoolProcess = new PoolProcess(1, nameFile);
+    }
+
+    public string Start(int pIsRead, int pLaser)
+    {
+        string output = "null";
+        try
+        {
+            Process oProcess = _PoolProcess.GetResource();
+            if (oProcess != null)
             {
-                nameFile = "py_laser";
+                string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(pLaser);
+                oProcess.StartInfo.Arguments = parameter;
+                oProcess.Start();
+                output = oProcess.StandardOutput.ReadToEnd();
+                oProcess.WaitForExit();
+                _PoolProcess.SetResource(oProcess);
             }
-            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            else
             {
-                nameFile = "py_laser.exe";
+                output = "recurso en uso";
             }
-            var pathAndFile = Path.Combine(nscore.Helper.folder, nameFile);
-            if (File.Exists(pathAndFile))
+        }
+        catch (Exception ex)
+        {
+            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
+        }
+        return output;
+    }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
             {
+                _PoolProcess.Dispose();
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+    }
+}
+public class PoolProcess : IDisposable
+{
+    private bool disposedValue = false;
+    private readonly Queue<Process> recursosDisponibles;
+    private readonly int maxRecursos;
+    public PoolProcess(int pMaxRecursos, string pNameFile)
+    {
+        this.maxRecursos = pMaxRecursos;
+        recursosDisponibles = new Queue<Process>();
+        var pathAndFile = Path.Combine(nscore.Helper.folder, pNameFile);
+        if (File.Exists(pathAndFile))
+        {
+            // Inicializar el pool con recursos preinstanciados
+            for (int i = 0; i < maxRecursos; i++)
+            {
+                Process oProcess = new Process();
                 var processInfo = new ProcessStartInfo
                 {
                     FileName = pathAndFile,
@@ -248,8 +255,8 @@ public class ProcessLaser : IDisposable
                     CreateNoWindow = true
                 };
                 oProcess.StartInfo = processInfo;
+                recursosDisponibles.Enqueue(oProcess);
             }
-            recursosDisponibles.Enqueue(oProcess);
         }
     }
     public Process GetResource()
@@ -277,32 +284,7 @@ public class ProcessLaser : IDisposable
             // y no se puede devolver el recurso.
         }
     }
-    public string Start(int pIsRead, int pLaser)
-    {
-        string output = "null";
-        try
-        {
-            Process oProcess = GetResource();
-            if (oProcess != null)
-            {
-                string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(pLaser);
-                oProcess.StartInfo.Arguments = parameter;
-                oProcess.Start();
-                output = oProcess.StandardOutput.ReadToEnd();
-                oProcess.WaitForExit();
-                SetResource(oProcess);
-            }
-            else
-            {
-                output = "recurso en uso";
-            }
-        }
-        catch (Exception ex)
-        {
-            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
-        }
-        return output;
-    }
+
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)

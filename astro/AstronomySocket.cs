@@ -19,8 +19,9 @@ public class AstronomySocket : IDisposable
         Star oStar = nscore.Util.getStars().Where(x => x.nameBayer == pId).FirstOrDefault();
         if (oStar != null)
         {
+            double siderealTime_local = AstronomyEngine.GetTSL(city);
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
-            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(city, eq);
+            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             if (hc != null)
             {
                 ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
@@ -58,17 +59,17 @@ public class AstronomySocket : IDisposable
             // Envía los datos
             socket.SendTo(responseBytes, localEndPoint);
 
-             /*
-            // Leer datos respuesta
-            // Buffer para almacenar los datos leídos
-            byte[] buffer = new byte[1024];
-            // Leer datos del socket
-            int bytesRead = socket.Receive(buffer);
+            /*
+           // Leer datos respuesta
+           // Buffer para almacenar los datos leídos
+           byte[] buffer = new byte[1024];
+           // Leer datos del socket
+           int bytesRead = socket.Receive(buffer);
 
-            // Convertir los datos recibidos a una cadena de texto
-            string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-            Console.WriteLine("dataReceived: " + dataReceived);
-            */
+           // Convertir los datos recibidos a una cadena de texto
+           string dataReceived = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+           Console.WriteLine("dataReceived: " + dataReceived);
+           */
             // Cerrar el socket cuando hayas terminado de usarlo
             socket.Close();
         }
