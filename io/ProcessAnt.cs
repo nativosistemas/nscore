@@ -55,10 +55,8 @@ public class ProcessAnt : IDisposable
                     string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "\n" + strHc + "\n";
-                    //_semaphore_ant.WaitOne(); // Intentar adquirir un recurso del semáforo
                     result += moveTheAnt(oServoCoordinates);
-                    actionLaser(0, 1);
-                    // _semaphore_ant.Release(); // Liberar el recurso en el semáforo
+                    //actionLaser(0, 1);
                 }
                 else
                 {
@@ -123,32 +121,8 @@ public class ProcessServo : IDisposable
 
     public string Start(double pH, double pV, int pLaser)
     {
-        string output = "null";
-        try
-        {
-            Process oProcess = _PoolProcess.GetResource();
-            if (oProcess != null)
-            {
-                double H = pH;
-                double V = pV;
-                int laser = pLaser;
-                string parameter = H.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + V.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(laser);
-                oProcess.StartInfo.Arguments = parameter;
-                oProcess.Start();
-                output = oProcess.StandardOutput.ReadToEnd();
-                oProcess.WaitForExit();
-                _PoolProcess.SetResource(oProcess);
-            }
-            else
-            {
-                output = "recurso en uso";
-            }
-        }
-        catch (Exception ex)
-        {
-            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
-        }
-        return output;
+        string parameter = pH.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(pLaser);
+        return _PoolProcess.Start(parameter);
     }
     protected virtual void Dispose(bool disposing)
     {
@@ -189,29 +163,8 @@ public class ProcessLaser : IDisposable
 
     public string Start(int pIsRead, int pLaser)
     {
-        string output = "null";
-        try
-        {
-            Process oProcess = _PoolProcess.GetResource();
-            if (oProcess != null)
-            {
-                string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(pLaser);
-                oProcess.StartInfo.Arguments = parameter;
-                oProcess.Start();
-                output = oProcess.StandardOutput.ReadToEnd();
-                oProcess.WaitForExit();
-                _PoolProcess.SetResource(oProcess);
-            }
-            else
-            {
-                output = "recurso en uso";
-            }
-        }
-        catch (Exception ex)
-        {
-            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
-        }
-        return output;
+        string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(pLaser);
+        return _PoolProcess.Start(parameter);
     }
     protected virtual void Dispose(bool disposing)
     {
@@ -258,6 +211,31 @@ public class PoolProcess : IDisposable
                 recursosDisponibles.Enqueue(oProcess);
             }
         }
+    }
+    public string Start(string pParameter)
+    {
+        string output = "null";
+        try
+        {
+            Process oProcess = GetResource();
+            if (oProcess != null)
+            {
+                oProcess.StartInfo.Arguments = pParameter;
+                oProcess.Start();
+                output = oProcess.StandardOutput.ReadToEnd();
+                oProcess.WaitForExit();
+                SetResource(oProcess);
+            }
+            else
+            {
+                output = "Recurso no disponible o en uso";
+            }
+        }
+        catch (Exception ex)
+        {
+            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
+        }
+        return output;
     }
     public Process GetResource()
     {

@@ -58,8 +58,8 @@ pV.stop()
 pH.stop()
 
 #time.sleep(10)
-
-GPIO.cleanup()
+GPIO.output(21, GPIO.HIGH)
+#GPIO.cleanup()
 
 
 # Utilizar el parámetro recibido
