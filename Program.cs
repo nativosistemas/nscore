@@ -24,7 +24,7 @@ internal class Program
         DKbase.Helper.getConnectionStringSQL = builder.Configuration.GetConnectionString("ConnectionSQL");
         //
         nscore.AstroDbContext.initDbContext();
-          nscore.AstroDbContext.initTableStar();
+        nscore.AstroDbContext.initTableStar();
         //
 
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });

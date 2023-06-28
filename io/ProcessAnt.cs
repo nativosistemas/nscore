@@ -56,7 +56,7 @@ public class ProcessAnt : IDisposable
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "\n" + strHc + "\n";
                     result += moveTheAnt(oServoCoordinates);
-                    //actionLaser(0, 1);
+                    //_processLaser.Start(0, 1);
                 }
                 else
                 {
