@@ -3,6 +3,7 @@ namespace nscore;
 public class AstroDbContext : DbContext
 {
     public DbSet<nscore.Star> Stars { get; set; }
+    public DbSet<nscore.Log> Logs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

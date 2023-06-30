@@ -73,7 +73,7 @@ public class Util
                     {
                         cont++;
                         Star o = new Star();
-                       // o.id = cont;
+                        // o.id = cont;
                         o.nameBayer = Convert.ToInt32(line.Substring(0, 4).Replace(@",", string.Empty));
                         o.name = line.Substring(30, 18).Trim();
                         string[] ra = line.Substring(48, 6).Trim().Split(new Char[] { ' ' });
@@ -87,8 +87,9 @@ public class Util
         }
         catch (IOException e)
         {
-            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), e, DateTime.Now);
-            Console.WriteLine(e.Message);
+            log(e);
+            //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), e, DateTime.Now);
+            //Console.WriteLine(e.Message);
         }
         return l;
     }
@@ -101,22 +102,109 @@ public class Util
             var ddd = context.Stars.ToList();
             var canti = ddd.Count;
             var yyy = 5 + 7;
-             var l = getStars();
-              foreach (var item in l)
-              {
-                  context.Stars.Add(item);
-              }
-              try
-              {
-                  context.SaveChanges();
-              }
-              catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
-              {
-                  var innerException = ex.InnerException;
-                  // Examina la innerException para obtener más detalles sobre el error
-                  throw;
-              }
+            var l = getStars();
+            foreach (var item in l)
+            {
+                context.Stars.Add(item);
+            }
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
+            {
+                log(ex);
+            }
 
+        }
+    }
+    public static List<Log> getLogs()
+    {
+        List<Log> result = new List<Log>();
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                result = context.Logs.ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static void log(Exception pEx)
+    {
+        Console.WriteLine(pEx.Message);
+        Log log = new Log(pEx);
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                context.Logs.Add(log);
+                context.SaveChanges();
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine(ex);
+            log_file(log);
+        }
+    }
+    public static void log_file(Log pEx)
+    {
+        try
+        {
+            string nombreFile = pEx.fecha.Year.ToString("0000") + pEx.fecha.Month.ToString("00") + pEx.fecha.Day.ToString("00") + Helper.app + ".txt";
+            string path = Path.Combine(Helper.folder, "log");
+            var sb = new System.Text.StringBuilder();
+            sb.Append(pEx.Message);
+            sb.Append(Environment.NewLine);
+            if (pEx.InnerException != null)
+            {
+                sb.Append(pEx.InnerException);
+                sb.Append(Environment.NewLine);
+            }
+            if (!string.IsNullOrEmpty(pEx.StackTrace))
+            {
+                sb.Append(pEx.StackTrace);
+                sb.Append(Environment.NewLine);
+            }
+            if (!string.IsNullOrEmpty(pEx.info))
+            {
+                sb.Append(pEx.info);
+                sb.Append(Environment.NewLine);
+            }
+            sb.Append(pEx.fecha.ToString());
+            sb.Append(Environment.NewLine);
+            sb.Append(pEx.app);
+            string strLine = sb.ToString();
+            if (Directory.Exists(path) == false)
+            {
+                Directory.CreateDirectory(path);
+            }
+            string FilePath = Path.Combine(path, nombreFile);
+            if (!File.Exists(FilePath))
+            {
+                using (StreamWriter sw = File.CreateText(FilePath))
+                {
+                    sw.WriteLine(strLine);
+                    sw.Close();
+                }
+            }
+            else
+            {
+                using (StreamWriter sw = File.AppendText(FilePath))
+                {
+                    sw.WriteLine(strLine);
+                    sw.Close();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine(ex);
         }
     }
 }

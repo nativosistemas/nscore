@@ -76,6 +76,9 @@ public class ProcessAnt : IDisposable
     }
     public string moveTheAnt(double pH, double pV, int pLaser)
     {
+        var ddd = Util.getLogs();
+        Util.log(new Exception(DateTime.Now.Millisecond.ToString()));
+        Util.log_file(new Log(new Exception(DateTime.Now.Millisecond.ToString())));
         return _processServo.Start(pH, pV, pLaser);
     }
     public string actionLaser(int pIsRead, int pLaser)
@@ -233,7 +236,7 @@ public class PoolProcess : IDisposable
         }
         catch (Exception ex)
         {
-            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
+            Util.log(ex);
         }
         return output;
     }
