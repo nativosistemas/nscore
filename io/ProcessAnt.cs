@@ -52,9 +52,13 @@ public class ProcessAnt : IDisposable
                 ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
                 if (oServoCoordinates != null)
                 {
+                    HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
+                    //double hourAngle_astro = oHorariasCoordinates.HA;
+
                     string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
+                    string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
-                    result += strEq + "\n" + strHc + "\n";
+                    result += strEq + "\n" + strHC + "\n" + strHc + "\n";
                     result += moveTheAnt(oServoCoordinates);
                     //_processLaser.Start(0, 1);
                 }
@@ -76,9 +80,9 @@ public class ProcessAnt : IDisposable
     }
     public string moveTheAnt(double pH, double pV, int pLaser)
     {
-        var ddd = Util.getLogs();
-        Util.log(new Exception(DateTime.Now.Millisecond.ToString()));
-        Util.log_file(new Log(new Exception(DateTime.Now.Millisecond.ToString())));
+        //var ddd = Util.getLogs();
+        //Util.log(new Exception(DateTime.Now.Millisecond.ToString()));
+        //Util.log_file(new Log(new Exception(DateTime.Now.Millisecond.ToString())));
         return _processServo.Start(pH, pV, pLaser);
     }
     public string actionLaser(int pIsRead, int pLaser)

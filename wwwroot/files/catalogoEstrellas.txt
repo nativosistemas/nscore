@@ -1,0 +1,6 @@
+
+https://www.kaggle.com/datasets/konivat/tycho-star-catalog?resource=download
+
+parametro x criterio (para buscar sirio)
+ra > 101.27 & ra < 101.29 & dec > -16.72  & dec < -16.70
+http://simbad.cds.unistra.fr/simbad/sim-fsam

@@ -2,7 +2,37 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace nscore;
-
+public class AstronomicalObject
+{
+    [Key]
+    public Guid publicID { get; set; }
+    public int? idHD { get; set; }
+    public string? nameLatin { get; set; }
+    public string? name { get; set; }
+    public double ra { get; set; }
+    public double dec { get; set; }
+    public string getName()
+    {
+        string result = string.Empty;
+        if (!string.IsNullOrEmpty(name))
+        {
+            result = name;
+        }
+        else if (!string.IsNullOrEmpty(nameLatin))
+        {
+            result = nameLatin;
+        }
+        else if (idHD != null)
+        {
+            result = "HD " + idHD.Value.ToString();
+        }
+        else
+        {
+            result = "(Falta nombre): " + publicID.ToString();
+        }
+        return result;
+    }
+}
 //[Keyless]
 public class Star
 {
@@ -64,10 +94,10 @@ public class ServoCoordinates
         bool isAzimuthMas180 = false;
         double horizontal = pValue.Azimuth;
         double vertical = pValue.Altitude;// si es negativo
-        if (pValue.Altitude < 0.0)
+        /*if (pValue.Altitude < 0.0)
         {
             return null;
-        }
+        }*/
         if (pValue.Azimuth < 180.0)
         {
             isAzimuthMas180 = true;

@@ -149,6 +149,7 @@ public class Util
         catch (Exception ex)
         {
             System.Console.WriteLine(ex);
+            log_file( new Log(ex));
             log_file(log);
         }
     }
