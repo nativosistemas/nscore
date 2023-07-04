@@ -32,17 +32,17 @@ public class ProcessExcel : IDisposable
                             {
                                 var cellValues = oFirstOrDefault.Elements<Cell>().Select(c => GetCellValue(c, workbookPart)).ToList();
                                 DataTable oDataTable = new DataTable();
-                                for (int iType = 0; iType <= pIdColumn.Count; iType++)
+                                for (int iType = 0; iType < pIdColumn.Count; iType++)
                                 {
-                                    oDataTable.Columns.Add(new DataColumn(iType.ToString(), cellValues[iType].GetType()));
+                                    oDataTable.Columns.Add(new DataColumn(pIdColumn[iType].ToString(), cellValues[pIdColumn[iType]].GetType()));
                                 }
                                 foreach (Row excelRow in sheetData.Elements<Row>())
                                 {
                                     var cellValues_row = excelRow.Elements<Cell>().Select(c => GetCellValue(c, workbookPart)).ToList();
                                     DataRow fila = oDataTable.NewRow();
-                                    for (int i = 0; i <= pIdColumn.Count; i++)
+                                    for (int i = 0; i < pIdColumn.Count; i++)
                                     {
-                                        fila[i] = cellValues_row[i];
+                                        fila[pIdColumn[i].ToString()] = cellValues_row[pIdColumn[i]];
                                     }
                                     oDataTable.Rows.Add(fila);
                                 }
@@ -100,7 +100,7 @@ public class ProcessExcel : IDisposable
 
         return result;
     }
-    public static DataTable GetDataTable(List<int> pColumnName)
+   /* public static DataTable GetDataTable(List<int> pColumnName)
     {
         DataTable result = new DataTable();
         foreach (int c in pColumnName)//System.Type.GetType("System.String"))
@@ -108,14 +108,22 @@ public class ProcessExcel : IDisposable
             result.Columns.Add(new DataColumn(c.ToString(), System.Type.GetType("System.String")));
         }
         return result;
-    }
+    }*/
     public static DataTable GetDataTableAstronomy()
     {
-        List<int> l_column = new List<int> { 1, 2, 3, 4, 5 };
+        List<int> l_column = new List<int> { 5 };
         DataTable result = new DataTable();
         //
         string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "Estrellas más brillantes_tabla.xlsx");
         result = readExcel(pathAstronomy, l_column);
+        foreach (DataRow oRow in result.Rows)
+        {
+            if (oRow["5"] != DBNull.Value)
+            {
+                oRow["5"] = oRow["5"].ToString().Replace(" en SIMBAD.", "");
+            }
+        }
+
         //
         return result;
     }

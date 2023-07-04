@@ -4,13 +4,17 @@ using Microsoft.EntityFrameworkCore;
 namespace nscore;
 public class AstronomicalObject
 {
+    public AstronomicalObject()
+    {
+        publicID = Guid.NewGuid();
+    }
     [Key]
     public Guid publicID { get; set; }
     public int? idHD { get; set; }
     public string? nameLatin { get; set; }
     public string? name { get; set; }
-    public double ra { get; set; }
-    public double dec { get; set; }
+    public double? ra { get; set; }
+    public double? dec { get; set; }
     public string getName()
     {
         string result = string.Empty;
