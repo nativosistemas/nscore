@@ -81,7 +81,7 @@ public class AstronomyPython : IDisposable
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
-            DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
+            Util.log(ex);
         }
         return result;
     }

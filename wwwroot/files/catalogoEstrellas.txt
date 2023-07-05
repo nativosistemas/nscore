@@ -7,3 +7,15 @@ http://simbad.cds.unistra.fr/simbad/sim-fsam
 
 ejemplo con nombre latin
 http://simbad.cds.unistra.fr/simbad/sim-id?Ident=Sirius
+
+sacar info de la query
+http://simbad.cds.unistra.fr/simbad/sim-tap#
+-- Basic data from an object given one of its identifiers.
+SELECT basic.OID  AS "basic OID",
+       RA,
+       DEC,
+       main_id AS "Main identifier",
+ids
+FROM basic JOIN ident ON ident.oidref = oid
+JOIN IDS ON  IDS.oidref = oid
+WHERE id in ('HD 48915' ,'HD 45348');

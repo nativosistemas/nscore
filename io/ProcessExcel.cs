@@ -10,51 +10,48 @@ public class ProcessExcel : IDisposable
     public static DataTable readExcel(string pPath, List<int> pIdColumn)
     {
         DataTable result = null;
-        if (!string.IsNullOrWhiteSpace(pPath))
+        if (!string.IsNullOrWhiteSpace(pPath) && System.IO.File.Exists(pPath))
         {
-            if (System.IO.File.Exists(pPath))
+            try
             {
-                try
+                using (var document = SpreadsheetDocument.Open(pPath, false))
                 {
-                    using (var document = SpreadsheetDocument.Open(pPath, false))
-                    {
-                        WorkbookPart workbookPart = document.WorkbookPart;
-                        IEnumerable<Sheet> sheets = workbookPart.Workbook.Descendants<Sheet>();
-                        Sheet hojaDeseada = sheets.FirstOrDefault();
+                    WorkbookPart workbookPart = document.WorkbookPart;
+                    IEnumerable<Sheet> sheets = workbookPart.Workbook.Descendants<Sheet>();
+                    Sheet hojaDeseada = sheets.FirstOrDefault();
 
-                        WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(hojaDeseada.Id);
-                        Worksheet worksheet = worksheetPart.Worksheet;
-                        if (worksheet != null)
+                    WorksheetPart worksheetPart = (WorksheetPart)workbookPart.GetPartById(hojaDeseada.Id);
+                    Worksheet worksheet = worksheetPart.Worksheet;
+                    if (worksheet != null)
+                    {
+                        SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
+                        Row? oFirstOrDefault = sheetData.Elements<Row>().FirstOrDefault();
+                        if (oFirstOrDefault != null)
                         {
-                            SheetData sheetData = worksheetPart.Worksheet.Elements<SheetData>().First();
-                            Row? oFirstOrDefault = sheetData.Elements<Row>().FirstOrDefault();
-                            if (oFirstOrDefault != null)
+                            var cellValues = oFirstOrDefault.Elements<Cell>().Select(c => GetCellValue(c, workbookPart)).ToList();
+                            DataTable oDataTable = new DataTable();
+                            for (int iType = 0; iType < pIdColumn.Count; iType++)
                             {
-                                var cellValues = oFirstOrDefault.Elements<Cell>().Select(c => GetCellValue(c, workbookPart)).ToList();
-                                DataTable oDataTable = new DataTable();
-                                for (int iType = 0; iType < pIdColumn.Count; iType++)
-                                {
-                                    oDataTable.Columns.Add(new DataColumn(pIdColumn[iType].ToString(), cellValues[pIdColumn[iType]].GetType()));
-                                }
-                                foreach (Row excelRow in sheetData.Elements<Row>())
-                                {
-                                    var cellValues_row = excelRow.Elements<Cell>().Select(c => GetCellValue(c, workbookPart)).ToList();
-                                    DataRow fila = oDataTable.NewRow();
-                                    for (int i = 0; i < pIdColumn.Count; i++)
-                                    {
-                                        fila[pIdColumn[i].ToString()] = cellValues_row[pIdColumn[i]];
-                                    }
-                                    oDataTable.Rows.Add(fila);
-                                }
-                                result = oDataTable;
+                                oDataTable.Columns.Add(new DataColumn(pIdColumn[iType].ToString(), cellValues[pIdColumn[iType]].GetType()));
                             }
+                            foreach (Row excelRow in sheetData.Elements<Row>())
+                            {
+                                var cellValues_row = excelRow.Elements<Cell>().Select(c => GetCellValue(c, workbookPart)).ToList();
+                                DataRow fila = oDataTable.NewRow();
+                                for (int i = 0; i < pIdColumn.Count; i++)
+                                {
+                                    fila[pIdColumn[i].ToString()] = cellValues_row[pIdColumn[i]];
+                                }
+                                oDataTable.Rows.Add(fila);
+                            }
+                            result = oDataTable;
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    Util.log(ex);
-                }
+            }
+            catch (Exception ex)
+            {
+                Util.log(ex);
             }
         }
         return result;
@@ -80,6 +77,19 @@ public class ProcessExcel : IDisposable
         html += "</table>";
         return html;
     }
+    public static string ConvertDataTableToCSV(DataTable dt)
+    {
+        string result = string.Empty;
+
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            // result += "<tr>";
+            for (int j = 0; j < dt.Columns.Count; j++)
+                result += "'" + dt.Rows[i][j].ToString() + "',";//+ Environment.NewLine;
+            //result += "</tr>";
+        }
+        return result;
+    }
     public static string GetCellValue(Cell cell, WorkbookPart workbookPart)
     {
         string result = string.Empty;
@@ -100,15 +110,15 @@ public class ProcessExcel : IDisposable
 
         return result;
     }
-   /* public static DataTable GetDataTable(List<int> pColumnName)
-    {
-        DataTable result = new DataTable();
-        foreach (int c in pColumnName)//System.Type.GetType("System.String"))
-        {
-            result.Columns.Add(new DataColumn(c.ToString(), System.Type.GetType("System.String")));
-        }
-        return result;
-    }*/
+    /* public static DataTable GetDataTable(List<int> pColumnName)
+     {
+         DataTable result = new DataTable();
+         foreach (int c in pColumnName)//System.Type.GetType("System.String"))
+         {
+             result.Columns.Add(new DataColumn(c.ToString(), System.Type.GetType("System.String")));
+         }
+         return result;
+     }*/
     public static DataTable GetDataTableAstronomy()
     {
         List<int> l_column = new List<int> { 5 };

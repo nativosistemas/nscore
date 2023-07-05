@@ -10,7 +10,7 @@ public class Util
         //
         //  ServoController device = new ServoController();
         //  device.logica();
-        DKbase.generales.Log.LogErrorFile("HolaMundo", "ex.ToString()");
+
         // 
 
 
