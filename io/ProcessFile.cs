@@ -66,6 +66,14 @@ public class ProcessFile : IDisposable
         //
         return result;
     }
+    public static List<string> GetListStringAstronomy()
+    {
+        List<string> result = new List<string>();
+        string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "simbadEstrellas.csv");
+        IEnumerable<string> lines = File.ReadLines(pathAstronomy).ToList();
+        result = lines.ToList();
+        return result;
+    }
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)

@@ -149,7 +149,7 @@ public class Util
         catch (Exception ex)
         {
             System.Console.WriteLine(ex);
-            log_file( new Log(ex));
+            log_file(new Log(ex));
             log_file(log);
         }
     }
@@ -207,5 +207,74 @@ public class Util
         {
             System.Console.WriteLine(ex);
         }
+    }
+    public static List<AstronomicalObject> CargaInicialAstronomicalObject()
+    {
+        List<AstronomicalObject> result = new List<AstronomicalObject>();
+        try
+        {
+            System.Data.DataTable oDataTable = ProcessExcel.GetDataTableAstronomy();
+            List<string> oListString = ProcessFile.GetListStringAstronomy();
+            char systemSeparator = Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+            foreach (System.Data.DataRow oRow in oDataTable.Rows)
+            {
+                if (oRow["5"] != DBNull.Value)
+                {
+                    AstronomicalObject o = new AstronomicalObject();
+                    o.nameLatin = oRow["5"].ToString();
+                    o.name = o.nameLatin ;
+                    if (!string.IsNullOrEmpty(o.nameLatin) && oListString.FindAll(er => er.Contains(o.nameLatin)).Count > 0)
+                    {
+
+                        List<string> oAux = oListString.FindAll(er => er.Contains(o.nameLatin));
+                        if (oAux.Count == 1)
+                        {
+                            string oLine = oAux.FirstOrDefault();
+                            string[] words = oLine.Split(',');
+
+                            o.simbadOID = Convert.ToInt32(words[0]);
+
+                            o.ra = Convert.ToDouble(words[1].Replace(".", systemSeparator.ToString()));
+                            //o.ra = Convert.ToDouble(words[1]);
+                            //o.dec = Convert.ToDouble(words[2]);
+                            o.dec = Convert.ToDouble(words[2].Replace(".", systemSeparator.ToString()));
+                            o.simbadNameDefault = words[3];
+                            o.simbadNames = words[4];
+
+                            string[] names = words[4].Split('|');
+                            foreach (string oName in names)
+                            {
+                                if (("|" + oName).Contains("|HD "))
+                                {
+                                    string nroHD = oName.Replace("HD", "");
+                                    int n;
+                                    bool isNumeric = int.TryParse(nroHD, out n);
+                                    if (isNumeric)
+                                    {
+                                        o.idHD = Convert.ToInt32(nroHD);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            //throw new Exception("No deberia pasar por aca");
+                        }
+                    }
+                    using (var context = new AstroDbContext())
+                    {
+                        context.AstronomicalObjects.Add(o);
+                        context.SaveChanges();
+                    }
+                    result.Add(o);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
     }
 }

@@ -16,6 +16,7 @@ public class AstronomicalObject
     public double? ra { get; set; }
     public double? dec { get; set; }
     public string? simbadNames { get; set; }
+    public string? simbadNameDefault { get; set; }
     public int? simbadOID { get; set; }
     public string getName()
     {
