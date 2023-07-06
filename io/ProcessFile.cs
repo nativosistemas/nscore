@@ -66,10 +66,10 @@ public class ProcessFile : IDisposable
         //
         return result;
     }
-    public static List<string> GetListStringAstronomy()
+    public static List<string> GetListStringAstronomy(string pPath)
     {
         List<string> result = new List<string>();
-        string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "simbadEstrellas.csv");
+        string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", pPath);
         IEnumerable<string> lines = File.ReadLines(pathAstronomy).ToList();
         result = lines.ToList();
         return result;

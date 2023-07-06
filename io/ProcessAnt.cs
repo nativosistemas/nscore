@@ -5,6 +5,7 @@ public class ProcessAnt : IDisposable
 {
     private bool disposedValue = false;
     //private Process _controller = new Process();
+    private bool _versionNew = true;
     private ProcessServo _processServo = new ProcessServo();
     private ProcessLaser _processLaser = new ProcessLaser();
     //private Process _controllerLaser = new Process();
@@ -16,7 +17,27 @@ public class ProcessAnt : IDisposable
 
     public ProcessAnt()
     {
-        _l_Star = nscore.AstroDbContext.getStars();
+        if (_versionNew)
+        {
+            _l_Star = new List<Star>();
+            List<AstronomicalObject> l = nscore.Util.getAstronomicalObjects().Where(x => x.name != null && x.dec != null && x.ra != null).ToList();
+            //foreach (AstronomicalObject oStar in l){
+            for (int i = 0; i < l.Count; i++)
+            {
+                AstronomicalObject o = l[i];
+                Star oStar = new Star();
+                oStar.id = i + 1;
+                oStar.dec = o.dec.Value;
+                oStar.ra = o.ra.Value;
+                oStar.name = o.getName();
+                oStar.nameBayer = oStar.id;
+                _l_Star.Add(oStar);
+            }
+        }
+        else
+        {
+            _l_Star = nscore.AstroDbContext.getStars();
+        }
     }
     public List<Star> getStars()
     {
@@ -41,37 +62,46 @@ public class ProcessAnt : IDisposable
     {
         string result = string.Empty;
         //ObserverCoordinates city = ObserverCoordinates.cityRosario;
-        Star oStar = _l_Star.Where(x => x.nameBayer == pId).FirstOrDefault();
+        Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
         if (oStar != null)
         {
-            double siderealTime_local = AstronomyEngine.GetTSL(city);
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
-            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
-            if (hc != null)
-            {
-                ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
-                if (oServoCoordinates != null)
-                {
-                    HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
-                    //double hourAngle_astro = oHorariasCoordinates.HA;
-
-                    string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
-                    string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
-                    string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
-                    result += strEq + "\n" + strHC + "\n" + strHc + "\n";
-                    result += moveTheAnt(oServoCoordinates);
-                    //_processLaser.Start(0, 1);
-                }
-                else
-                {
-                    result = "Estrella no es visible";
-                }
-            }
+            result = actionAnt(eq);
         }
         else
         {
             result = "No se encontro estrella";
         }
+        return result;
+    }
+    public string actionAnt(EquatorialCoordinates eq)
+    {
+        string result = string.Empty;
+
+        double siderealTime_local = AstronomyEngine.GetTSL(city);
+
+        HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
+        if (hc != null)
+        {
+            ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
+            if (oServoCoordinates != null)
+            {
+                HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
+                //double hourAngle_astro = oHorariasCoordinates.HA;
+
+                string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
+                string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
+                string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
+                result += strEq + "\n" + strHC + "\n" + strHc + "\n";
+                result += moveTheAnt(oServoCoordinates);
+                //_processLaser.Start(0, 1);
+            }
+            else
+            {
+                result = "Estrella no es visible";
+            }
+        }
+
         return result;
     }
     public string moveTheAnt(ServoCoordinates pServoCoordinates)

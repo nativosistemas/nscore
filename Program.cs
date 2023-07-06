@@ -30,7 +30,9 @@ internal class Program
         app.MapGet("/laser", ((nscore.ProcessAnt pProcessAnt, int read, int on) => { return pProcessAnt.actionLaser(read, on); }));
         app.MapGet("/stars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getStars()); }));
         app.MapGet("/astro", ((nscore.ProcessAnt pProcessAnt, double h, double v, int laser) => { return pProcessAnt.moveTheAnt(h, v, laser); }));
-        app.MapGet("/", (nscore.ProcessAnt pProcessAnt) => { return nscore.Util.CargaInicialAstronomicalObject(); });//pProcessAnt.findStar(4);
+        app.MapGet("/simbad", () => { return nscore.Util.getAstronomicalObjects(); });
+          app.MapGet("/falta", () => { return nscore.Util.UpdateAstronomicalObject_HD_All(); });
+        app.MapGet("/", (nscore.ProcessAnt pProcessAnt) => { return pProcessAnt.findStar(4); });//pProcessAnt.findStar(4);
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";

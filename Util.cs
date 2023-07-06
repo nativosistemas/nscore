@@ -208,13 +208,29 @@ public class Util
             System.Console.WriteLine(ex);
         }
     }
-    public static List<AstronomicalObject> CargaInicialAstronomicalObject()
+    public static List<AstronomicalObject> getAstronomicalObjects()
+    {
+        List<AstronomicalObject> result = new List<AstronomicalObject>();
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                result = context.AstronomicalObjects.ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static List<AstronomicalObject> CargaInicialAstronomicalObject(bool pIsSaveBD = true)
     {
         List<AstronomicalObject> result = new List<AstronomicalObject>();
         try
         {
             System.Data.DataTable oDataTable = ProcessExcel.GetDataTableAstronomy();
-            List<string> oListString = ProcessFile.GetListStringAstronomy();
+            List<string> oListString = ProcessFile.GetListStringAstronomy("simbadEstrellas.csv");
             char systemSeparator = Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
             foreach (System.Data.DataRow oRow in oDataTable.Rows)
             {
@@ -222,7 +238,7 @@ public class Util
                 {
                     AstronomicalObject o = new AstronomicalObject();
                     o.nameLatin = oRow["5"].ToString();
-                    o.name = o.nameLatin ;
+                    o.name = o.nameLatin;
                     if (!string.IsNullOrEmpty(o.nameLatin) && oListString.FindAll(er => er.Contains(o.nameLatin)).Count > 0)
                     {
 
@@ -257,17 +273,126 @@ public class Util
                                 }
                             }
                         }
+                        else if (oAux.Count > 1)
+                        {
+                            o.simbadNameDefault = o.nameLatin;
+                        }
                         else
                         {
                             //throw new Exception("No deberia pasar por aca");
                         }
                     }
-                    using (var context = new AstroDbContext())
+                    if (pIsSaveBD)
                     {
-                        context.AstronomicalObjects.Add(o);
-                        context.SaveChanges();
+                        using (var context = new AstroDbContext())
+                        {
+                            context.AstronomicalObjects.Add(o);
+                            context.SaveChanges();
+                        }
                     }
                     result.Add(o);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static List<AstronomicalObject> CargaInicialAstronomicalObject_HD(bool pIsSaveBD = true)
+    {
+        List<AstronomicalObject> result = new List<AstronomicalObject>();
+        try
+        {
+            result = getAstronomicalObjects().Where(x => x.idHD != null && x.ra == null && x.dec == null).ToList();
+            //System.Data.DataTable oDataTable = ProcessExcel.GetDataTableAstronomy();
+            List<string> oListString = ProcessFile.GetListStringAstronomy("simbadEstrellas_falta.csv");
+            char systemSeparator = Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+            foreach (AstronomicalObject oAstro in result)
+            {
+
+                if (oAstro.idHD != null && oListString.FindAll(er => er.Contains(oAstro.idHD.ToString())).Count > 0)
+                {
+
+                    List<string> oAux = oListString.FindAll(er => er.Contains(oAstro.idHD.ToString()));
+                    if (oAux.Count == 1)
+                    {
+                        string oLine = oAux.FirstOrDefault();
+                        string[] words = oLine.Split(',');
+
+                        oAstro.simbadOID = Convert.ToInt32(words[0]);
+
+                        oAstro.ra = Convert.ToDouble(words[1].Replace(".", systemSeparator.ToString()));
+                        oAstro.dec = Convert.ToDouble(words[2].Replace(".", systemSeparator.ToString()));
+                        oAstro.simbadNameDefault = words[3];
+                        oAstro.simbadNames = words[4];
+                        if (pIsSaveBD)
+                        {
+                            using (var context = new AstroDbContext())
+                            {
+                                context.Update(oAstro);
+                                //context.AstronomicalObjects.Add(oAstro);
+                                context.SaveChanges();
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        //throw new Exception("No deberia pasar por aca");
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static AstronomicalObject UpdateAstronomicalObject_HD_onlyIdHD(string nameLatin, int idHD)
+    {
+        AstronomicalObject result = null;
+        try
+        {
+            result = getAstronomicalObjects().Where(x => x.nameLatin == nameLatin).FirstOrDefault();
+            if (result != null)
+            {
+                result.idHD = idHD;
+                using (var context = new AstroDbContext())
+                {
+                    context.Update(result);
+                    context.SaveChanges();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static string UpdateAstronomicalObject_HD_All()
+    {
+       // UpdateAstronomicalObject_HD_onlyIdHD("Arturus", 124897);
+       // UpdateAstronomicalObject_HD_onlyIdHD("Alfa Centauri A", 128620);
+        CargaInicialAstronomicalObject_HD(true);
+        return "Ok";
+    }
+    public static string getAstronomicalObjects_falta()
+    {
+        string result = string.Empty;
+        try
+        {
+            //sb.Append(Environment.NewLine);
+            using (var context = new AstroDbContext())
+            {
+                result += "";
+                foreach (var i in context.AstronomicalObjects.Where(x => x.idHD == null).ToList())
+                {
+                    result += i.nameLatin;
+                    result += Environment.NewLine;
                 }
             }
         }
