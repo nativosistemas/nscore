@@ -375,24 +375,71 @@ public class Util
     }
     public static string UpdateAstronomicalObject_HD_All()
     {
-       // UpdateAstronomicalObject_HD_onlyIdHD("Arturus", 124897);
-       // UpdateAstronomicalObject_HD_onlyIdHD("Alfa Centauri A", 128620);
+        /* UpdateAstronomicalObject_HD_onlyIdHD("Rigel", 34085);
+         UpdateAstronomicalObject_HD_onlyIdHD("Capella A", 34029);
+         UpdateAstronomicalObject_HD_onlyIdHD("Deneb", 197345);
+         UpdateAstronomicalObject_HD_onlyIdHD("Beta Crucis", 111123);
+         UpdateAstronomicalObject_HD_onlyIdHD("Acrux A", 108248);
+         UpdateAstronomicalObject_HD_onlyIdHD("Adara", 52089);
+         UpdateAstronomicalObject_HD_onlyIdHD("Gamma Crucis", 108903);
+         UpdateAstronomicalObject_HD_onlyIdHD("Beta Carinae", 80007);
+         UpdateAstronomicalObject_HD_onlyIdHD("Alnitak A", 37742);
+         UpdateAstronomicalObject_HD_onlyIdHD("Alfa Gruis", 209952);
+         UpdateAstronomicalObject_HD_onlyIdHD("Gamma2 Velorum", 68273);
+         UpdateAstronomicalObject_HD_onlyIdHD("Theta Scorpii", 159532);
+         UpdateAstronomicalObject_HD_onlyIdHD("Alfa Trianguli Australis", 150798);
+         UpdateAstronomicalObject_HD_onlyIdHD("Delta Velorum", 74956);
+         UpdateAstronomicalObject_HD_onlyIdHD("Beta Ceti", 4128);
+         UpdateAstronomicalObject_HD_onlyIdHD("Theta Centauri", 123139);
+         UpdateAstronomicalObject_HD_onlyIdHD("Mirach", 6860);
+         UpdateAstronomicalObject_HD_onlyIdHD("Acrux B", 108249);
+         UpdateAstronomicalObject_HD_onlyIdHD("Alfa Ophiuchi", 159561);
+         UpdateAstronomicalObject_HD_onlyIdHD("Beta Gruis", 214952);
+         UpdateAstronomicalObject_HD_onlyIdHD("Lambda Velorum", 78647);
+         UpdateAstronomicalObject_HD_onlyIdHD("Etamin", 164058);
+         UpdateAstronomicalObject_HD_onlyIdHD("Sadr", 194093);
+         UpdateAstronomicalObject_HD_onlyIdHD("Iota Carinae", 80404);
+         UpdateAstronomicalObject_HD_onlyIdHD("Epsilon Centauri", 118716);
+         UpdateAstronomicalObject_HD_onlyIdHD("Algieba", 89484);
+         UpdateAstronomicalObject_HD_onlyIdHD("Alfa Lupi", 129056);
+         UpdateAstronomicalObject_HD_onlyIdHD("Delta Scorpii", 143275);
+         UpdateAstronomicalObject_HD_onlyIdHD("Epsilon Scorpii", 151680);
+         UpdateAstronomicalObject_HD_onlyIdHD("Eta Centauri", 127973);
+         UpdateAstronomicalObject_HD_onlyIdHD("Alfa Phoenicis", 2261);
+         UpdateAstronomicalObject_HD_onlyIdHD("Kappa Scorpii", 160578);
+         UpdateAstronomicalObject_HD_onlyIdHD("Gamma Cassiopeiae", 5394);
+         UpdateAstronomicalObject_HD_onlyIdHD("Eta Canis Majoris", 58350);
+         UpdateAstronomicalObject_HD_onlyIdHD("Epsilon Carinae", 71129);
+         UpdateAstronomicalObject_HD_onlyIdHD("Kappa Velorum", 81188);
+         UpdateAstronomicalObject_HD_onlyIdHD("Epsilon Cygni", 197989);*/
         CargaInicialAstronomicalObject_HD(true);
         return "Ok";
     }
-    public static string getAstronomicalObjects_falta()
+    public static string getAstronomicalObjects_copia()
     {
         string result = string.Empty;
+        List<dynamic> dynamicList = new List<dynamic>();
         try
         {
             //sb.Append(Environment.NewLine);
             using (var context = new AstroDbContext())
             {
+
                 result += "";
-                foreach (var i in context.AstronomicalObjects.Where(x => x.idHD == null).ToList())
+                foreach (var i in context.AstronomicalObjects.Where(x => x.idHD != null && x.dec != null && x.ra != null).ToList())
                 {
-                    result += i.nameLatin;
-                    result += Environment.NewLine;
+                    // Crea un objeto dinámicamente utilizando ExpandoObject
+                    dynamic dynamicObject = new System.Dynamic.ExpandoObject();
+
+                    // Agrega propiedades dinámicamente
+                    dynamicObject.idHD = i.idHD;
+                    dynamicObject.name = i.name;
+                    dynamicObject.dec = i.dec;
+                    dynamicObject.ra = i.ra;
+                    dynamicObject.simbadOID = i.simbadOID;
+                    dynamicObject.simbadNameDefault = i.simbadNameDefault;
+                    // Agrega el segundo objeto dinámico a la lista
+                    dynamicList.Add(dynamicObject);
                 }
             }
         }
@@ -400,6 +447,8 @@ public class Util
         {
             log(ex);
         }
+        string json = System.Text.Json.JsonSerializer.Serialize(dynamicList);
+        result = json;
         return result;
     }
 }

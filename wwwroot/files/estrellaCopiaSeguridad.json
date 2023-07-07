@@ -1,0 +1,698 @@
+[
+    {
+        "idHD": 48915,
+        "name": "Sirius",
+        "dec": -16.71611586111111,
+        "ra": 101.28715533333335,
+        "simbadOID": 8399845,
+        "simbadNameDefault": "* alf CMa"
+    },
+    {
+        "idHD": 45348,
+        "name": "Canopus",
+        "dec": -52.69566138386201,
+        "ra": 95.98795782918306,
+        "simbadOID": 2997002,
+        "simbadNameDefault": "* alf Car"
+    },
+    {
+        "idHD": 124897,
+        "name": "Arturus",
+        "dec": 19.1824091615312,
+        "ra": 213.915300294925,
+        "simbadOID": 2252964,
+        "simbadNameDefault": "* alf Boo"
+    },
+    {
+        "idHD": 128620,
+        "name": "Alfa Centauri A",
+        "dec": -60.83399268831004,
+        "ra": 219.90205833170774,
+        "simbadOID": 3396054,
+        "simbadNameDefault": "* alf Cen A"
+    },
+    {
+        "idHD": 172167,
+        "name": "Vega",
+        "dec": 38.783688956244,
+        "ra": 279.234734787025,
+        "simbadOID": 2900336,
+        "simbadNameDefault": "* alf Lyr"
+    },
+    {
+        "idHD": 34085,
+        "name": "Rigel",
+        "dec": -8.201638364722209,
+        "ra": 78.63446706693006,
+        "simbadOID": 771345,
+        "simbadNameDefault": "* bet Ori"
+    },
+    {
+        "idHD": 61421,
+        "name": "Procyon",
+        "dec": 5.224987557059477,
+        "ra": 114.82549790798149,
+        "simbadOID": 988145,
+        "simbadNameDefault": "* alf CMi"
+    },
+    {
+        "idHD": 10144,
+        "name": "Achernar",
+        "dec": -57.236752805555554,
+        "ra": 24.428522833333336,
+        "simbadOID": 11684864,
+        "simbadNameDefault": "* alf Eri"
+    },
+    {
+        "idHD": 39801,
+        "name": "Betelgeuse",
+        "dec": 7.407063995272694,
+        "ra": 88.79293899077537,
+        "simbadOID": 843879,
+        "simbadNameDefault": "* alf Ori"
+    },
+    {
+        "idHD": 122451,
+        "name": "Agena",
+        "dec": -60.373035161541594,
+        "ra": 210.95585562281522,
+        "simbadOID": 3360143,
+        "simbadNameDefault": "* bet Cen"
+    },
+    {
+        "idHD": 34029,
+        "name": "Capella A",
+        "dec": 45.99799146983673,
+        "ra": 79.17232794433404,
+        "simbadOID": 284536,
+        "simbadNameDefault": "* alf Aur"
+    },
+    {
+        "idHD": 187642,
+        "name": "Altair",
+        "dec": 8.868321196436963,
+        "ra": 297.69582729638694,
+        "simbadOID": 2708379,
+        "simbadNameDefault": "* alf Aql"
+    },
+    {
+        "idHD": 29139,
+        "name": "Aldebaran",
+        "dec": 16.5093023507718,
+        "ra": 68.9801627900154,
+        "simbadOID": 719377,
+        "simbadNameDefault": "* alf Tau"
+    },
+    {
+        "idHD": 116658,
+        "name": "Spica",
+        "dec": -11.161319485111932,
+        "ra": 201.2982473615632,
+        "simbadOID": 2140887,
+        "simbadNameDefault": "* alf Vir"
+    },
+    {
+        "idHD": 148478,
+        "name": "Antares",
+        "dec": -26.432002611950832,
+        "ra": 247.3519154198264,
+        "simbadOID": 2401703,
+        "simbadNameDefault": "* alf Sco"
+    },
+    {
+        "idHD": 62509,
+        "name": "Pollux",
+        "dec": 28.02619889009357,
+        "ra": 116.32895777437875,
+        "simbadOID": 1003999,
+        "simbadNameDefault": "* bet Gem"
+    },
+    {
+        "idHD": 216956,
+        "name": "Fomalhaut",
+        "dec": -29.622237033389442,
+        "ra": 344.4126927211701,
+        "simbadOID": 1235748,
+        "simbadNameDefault": "* alf PsA"
+    },
+    {
+        "idHD": 197345,
+        "name": "Deneb",
+        "dec": 45.280338806527574,
+        "ra": 310.35797975307673,
+        "simbadOID": 92338,
+        "simbadNameDefault": "* alf Cyg"
+    },
+    {
+        "idHD": 111123,
+        "name": "Beta Crucis",
+        "dec": -59.68877199622606,
+        "ra": 191.9302865619529,
+        "simbadOID": 3312681,
+        "simbadNameDefault": "* bet Cru"
+    },
+    {
+        "idHD": 87901,
+        "name": "Regulus",
+        "dec": 11.967208776100023,
+        "ra": 152.09296243828146,
+        "simbadOID": 1689590,
+        "simbadNameDefault": "* alf Leo"
+    },
+    {
+        "idHD": 108248,
+        "name": "Acrux A",
+        "dec": -63.09909166666667,
+        "ra": 186.6495666666667,
+        "simbadOID": 11606360,
+        "simbadNameDefault": "* alf01 Cru"
+    },
+    {
+        "idHD": 52089,
+        "name": "Adara",
+        "dec": -28.972086157360806,
+        "ra": 104.65645315148348,
+        "simbadOID": 948520,
+        "simbadNameDefault": "* eps CMa"
+    },
+    {
+        "idHD": 158926,
+        "name": "Shaula",
+        "dec": -37.10382355111976,
+        "ra": 263.40216718438023,
+        "simbadOID": 2347504,
+        "simbadNameDefault": "* lam Sco"
+    },
+    {
+        "idHD": 108903,
+        "name": "Gamma Crucis",
+        "dec": -57.11321345705891,
+        "ra": 187.79149837560794,
+        "simbadOID": 3296515,
+        "simbadNameDefault": "* gam Cru"
+    },
+    {
+        "idHD": 35468,
+        "name": "Bellatrix",
+        "dec": 6.3497032644440665,
+        "ra": 81.28276355652378,
+        "simbadOID": 784400,
+        "simbadNameDefault": "* gam Ori"
+    },
+    {
+        "idHD": 35497,
+        "name": "Elnath",
+        "dec": 28.607451724998228,
+        "ra": 81.57297133176498,
+        "simbadOID": 794302,
+        "simbadNameDefault": "* bet Tau"
+    },
+    {
+        "idHD": 80007,
+        "name": "Beta Carinae",
+        "dec": -69.71720759721548,
+        "ra": 138.29990608310192,
+        "simbadOID": 3192543,
+        "simbadNameDefault": "* bet Car"
+    },
+    {
+        "idHD": 37128,
+        "name": "Alnilam",
+        "dec": -1.2019191358333312,
+        "ra": 84.05338894077023,
+        "simbadOID": 799866,
+        "simbadNameDefault": "* eps Ori"
+    },
+    {
+        "idHD": 37742,
+        "name": "Alnitak A",
+        "dec": -1.9425723222222224,
+        "ra": 85.18969642916667,
+        "simbadOID": 827500,
+        "simbadNameDefault": "* zet Ori A"
+    },
+    {
+        "idHD": 209952,
+        "name": "Alfa Gruis",
+        "dec": -46.96097438191952,
+        "ra": 332.05826969609114,
+        "simbadOID": 3420267,
+        "simbadNameDefault": "* alf Gru"
+    },
+    {
+        "idHD": 112185,
+        "name": "Alioth",
+        "dec": 55.95982295694445,
+        "ra": 193.5072899675,
+        "simbadOID": 530581,
+        "simbadNameDefault": "* eps UMa"
+    },
+    {
+        "idHD": 68273,
+        "name": "Gamma2 Velorum",
+        "dec": -47.336586329303486,
+        "ra": 122.38312555977059,
+        "simbadOID": 2994088,
+        "simbadNameDefault": "* gam02 Vel"
+    },
+    {
+        "idHD": 169022,
+        "name": "Kaus Australis",
+        "dec": -34.38461648586744,
+        "ra": 276.0429933505963,
+        "simbadOID": 2371233,
+        "simbadNameDefault": "* eps Sgr"
+    },
+    {
+        "idHD": 20902,
+        "name": "Mirfak",
+        "dec": 49.86117929305556,
+        "ra": 51.08070871833333,
+        "simbadOID": 180100,
+        "simbadNameDefault": "* alf Per"
+    },
+    {
+        "idHD": 54605,
+        "name": "Wezen",
+        "dec": -26.39319957888889,
+        "ra": 107.09785021416667,
+        "simbadOID": 962991,
+        "simbadNameDefault": "* del CMa"
+    },
+    {
+        "idHD": 120315,
+        "name": "Alcaid",
+        "dec": 49.31326672942533,
+        "ra": 206.88515734206297,
+        "simbadOID": 566010,
+        "simbadNameDefault": "* eta UMa"
+    },
+    {
+        "idHD": 159532,
+        "name": "Theta Scorpii",
+        "dec": -42.99782799333082,
+        "ra": 264.3297077207907,
+        "simbadOID": 2319253,
+        "simbadNameDefault": "* tet Sco"
+    },
+    {
+        "idHD": 95689,
+        "name": "Dubhe",
+        "dec": 61.751034687818226,
+        "ra": 165.9319646738126,
+        "simbadOID": 486427,
+        "simbadNameDefault": "* alf UMa"
+    },
+    {
+        "idHD": 47105,
+        "name": "Alhena",
+        "dec": 16.399280426663772,
+        "ra": 99.42796042942895,
+        "simbadOID": 902003,
+        "simbadNameDefault": "* gam Gem"
+    },
+    {
+        "idHD": 193924,
+        "name": "Peacock",
+        "dec": -56.73508972631689,
+        "ra": 306.4119043651986,
+        "simbadOID": 3435139,
+        "simbadNameDefault": "* alf Pav"
+    },
+    {
+        "idHD": 150798,
+        "name": "Alfa Trianguli Australis",
+        "dec": -69.02771184691984,
+        "ra": 252.1662295073803,
+        "simbadOID": 3400251,
+        "simbadNameDefault": "* alf TrA"
+    },
+    {
+        "idHD": 60179,
+        "name": "Castor A",
+        "dec": 31.88827619166667,
+        "ra": 113.64942845,
+        "simbadOID": 983635,
+        "simbadNameDefault": "* alf Gem A"
+    },
+    {
+        "idHD": 44743,
+        "name": "Mirzam",
+        "dec": -17.955918708888888,
+        "ra": 95.67493896958332,
+        "simbadOID": 895236,
+        "simbadNameDefault": "* bet CMa"
+    },
+    {
+        "idHD": 81797,
+        "name": "Alphard",
+        "dec": -8.658599531745583,
+        "ra": 141.89684459585948,
+        "simbadOID": 1634852,
+        "simbadNameDefault": "* alf Hya"
+    },
+    {
+        "idHD": 12929,
+        "name": "Hamal",
+        "dec": 23.46241755020095,
+        "ra": 31.79335709957655,
+        "simbadOID": 1495651,
+        "simbadNameDefault": "* alf Ari"
+    },
+    {
+        "idHD": 8890,
+        "name": "Polaris",
+        "dec": 89.26410896994187,
+        "ra": 37.954560670189856,
+        "simbadOID": 317713,
+        "simbadNameDefault": "* alf UMi"
+    },
+    {
+        "idHD": 74956,
+        "name": "Delta Velorum",
+        "dec": -54.70882101944444,
+        "ra": 131.1759432625,
+        "simbadOID": 5613427,
+        "simbadNameDefault": "* del01 Vel"
+    },
+    {
+        "idHD": 4128,
+        "name": "Beta Ceti",
+        "dec": -17.98660631592891,
+        "ra": 10.897378736003901,
+        "simbadOID": 1296450,
+        "simbadNameDefault": "* bet Cet"
+    },
+    {
+        "idHD": 38771,
+        "name": "Saiph",
+        "dec": -9.66960491861111,
+        "ra": 86.93912016833333,
+        "simbadOID": 830758,
+        "simbadNameDefault": "* kap Ori"
+    },
+    {
+        "idHD": 175191,
+        "name": "Nunki",
+        "dec": -26.29672411476388,
+        "ra": 283.81636040649323,
+        "simbadOID": 2503532,
+        "simbadNameDefault": "* sig Sgr"
+    },
+    {
+        "idHD": 123139,
+        "name": "Theta Centauri",
+        "dec": -36.369954742511496,
+        "ra": 211.670614682339,
+        "simbadOID": 2246195,
+        "simbadNameDefault": "* tet Cen"
+    },
+    {
+        "idHD": 358,
+        "name": "Alpheratz",
+        "dec": 29.090431118059698,
+        "ra": 2.0969161856756404,
+        "simbadOID": 1502055,
+        "simbadNameDefault": "* alf And"
+    },
+    {
+        "idHD": 6860,
+        "name": "Mirach",
+        "dec": 35.62055765052624,
+        "ra": 17.43301617293042,
+        "simbadOID": 1546016,
+        "simbadNameDefault": "* bet And"
+    },
+    {
+        "idHD": 131873,
+        "name": "Kochab",
+        "dec": 74.15550393675127,
+        "ra": 222.67635749796767,
+        "simbadOID": 390420,
+        "simbadNameDefault": "* bet UMi"
+    },
+    {
+        "idHD": 108249,
+        "name": "Acrux B",
+        "dec": -63.09952222222222,
+        "ra": 186.65184166666666,
+        "simbadOID": 11606361,
+        "simbadNameDefault": "* alf02 Cru"
+    },
+    {
+        "idHD": 159561,
+        "name": "Alfa Ophiuchi",
+        "dec": 12.560037391671425,
+        "ra": 263.73362272030505,
+        "simbadOID": 2715185,
+        "simbadNameDefault": "* alf Oph"
+    },
+    {
+        "idHD": 19356,
+        "name": "Algol",
+        "dec": 40.95564667027778,
+        "ra": 47.04221855625,
+        "simbadOID": 51431,
+        "simbadNameDefault": "* bet Per"
+    },
+    {
+        "idHD": 214952,
+        "name": "Beta Gruis",
+        "dec": -46.884576444824646,
+        "ra": 340.66687612556166,
+        "simbadOID": 3388654,
+        "simbadNameDefault": "* bet Gru"
+    },
+    {
+        "idHD": 102647,
+        "name": "Denebola",
+        "dec": 14.572058064829658,
+        "ra": 177.26490975591017,
+        "simbadOID": 1863953,
+        "simbadNameDefault": "* bet Leo"
+    },
+    {
+        "idHD": 66811,
+        "name": "Naos",
+        "dec": -40.003147798268934,
+        "ra": 120.89603140977576,
+        "simbadOID": 1035794,
+        "simbadNameDefault": "* zet Pup"
+    },
+    {
+        "idHD": 78647,
+        "name": "Lambda Velorum",
+        "dec": -43.432590908860746,
+        "ra": 136.99899113791412,
+        "simbadOID": 3004244,
+        "simbadNameDefault": "* lam Vel"
+    },
+    {
+        "idHD": 164058,
+        "name": "Etamin",
+        "dec": 51.48889561763423,
+        "ra": 269.1515411786243,
+        "simbadOID": 323363,
+        "simbadNameDefault": "* gam Dra"
+    },
+    {
+        "idHD": 139006,
+        "name": "Alphecca",
+        "dec": 26.714692780601993,
+        "ra": 233.6719500152086,
+        "simbadOID": 2831152,
+        "simbadNameDefault": "* alf CrB"
+    },
+    {
+        "idHD": 194093,
+        "name": "Sadr",
+        "dec": 40.25667915638889,
+        "ra": 305.55709098208337,
+        "simbadOID": 52992,
+        "simbadNameDefault": "* gam Cyg"
+    },
+    {
+        "idHD": 3712,
+        "name": "Schedar",
+        "dec": 56.53733115833333,
+        "ra": 10.126837782916667,
+        "simbadOID": 106481,
+        "simbadNameDefault": "* alf Cas"
+    },
+    {
+        "idHD": 80404,
+        "name": "Iota Carinae",
+        "dec": -59.275232029166666,
+        "ra": 139.27252857166667,
+        "simbadOID": 3101814,
+        "simbadNameDefault": "* iot Car"
+    },
+    {
+        "idHD": 12533,
+        "name": "Almach",
+        "dec": 42.32972842352701,
+        "ra": 30.97480120653972,
+        "simbadOID": 9999,
+        "simbadNameDefault": "* gam01 And"
+    },
+    {
+        "idHD": 116656,
+        "name": "Mizar A",
+        "dec": 54.925359883302775,
+        "ra": 200.98142616882203,
+        "simbadOID": 529550,
+        "simbadNameDefault": "* zet01 UMa"
+    },
+    {
+        "idHD": 432,
+        "name": "Caph",
+        "dec": 59.14978109800713,
+        "ra": 2.2945215777878776,
+        "simbadOID": 129059,
+        "simbadNameDefault": "* bet Cas"
+    },
+    {
+        "idHD": 118716,
+        "name": "Epsilon Centauri",
+        "dec": -53.466391146088995,
+        "ra": 204.97190723090242,
+        "simbadOID": 3376211,
+        "simbadNameDefault": "* eps Cen"
+    },
+    {
+        "idHD": 89484,
+        "name": "Algieba",
+        "dec": 19.84148521911754,
+        "ra": 154.99312733272745,
+        "simbadOID": 1710355,
+        "simbadNameDefault": "* gam Leo"
+    },
+    {
+        "idHD": 129056,
+        "name": "Alfa Lupi",
+        "dec": -47.38819874611111,
+        "ra": 220.4823157775,
+        "simbadOID": 3438793,
+        "simbadNameDefault": "* alf Lup"
+    },
+    {
+        "idHD": 143275,
+        "name": "Delta Scorpii",
+        "dec": -22.621706426005783,
+        "ra": 240.08335534565887,
+        "simbadOID": 2482381,
+        "simbadNameDefault": "* del Sco"
+    },
+    {
+        "idHD": 151680,
+        "name": "Epsilon Scorpii",
+        "dec": -34.29323159305555,
+        "ra": 252.54087838625,
+        "simbadOID": 2359912,
+        "simbadNameDefault": "* eps Sco"
+    },
+    {
+        "idHD": 127973,
+        "name": "Eta Centauri",
+        "dec": -42.15782521722222,
+        "ra": 218.8767673375,
+        "simbadOID": 3471875,
+        "simbadNameDefault": "* eta Cen"
+    },
+    {
+        "idHD": 95418,
+        "name": "Merak",
+        "dec": 56.38242608666667,
+        "ra": 165.46031890416668,
+        "simbadOID": 534420,
+        "simbadNameDefault": "* bet UMa"
+    },
+    {
+        "idHD": 160578,
+        "name": "Kappa Scorpii",
+        "dec": -39.02998307638737,
+        "ra": 265.62198000035505,
+        "simbadOID": 2348159,
+        "simbadNameDefault": "* kap Sco"
+    },
+    {
+        "idHD": 5394,
+        "name": "Gamma Cassiopeiae",
+        "dec": 60.71674002472222,
+        "ra": 14.17721289375,
+        "simbadOID": 132509,
+        "simbadNameDefault": "* gam Cas"
+    },
+    {
+        "idHD": 206778,
+        "name": "Enif",
+        "dec": 9.875008653333333,
+        "ra": 326.04648391416663,
+        "simbadOID": 1428414,
+        "simbadNameDefault": "* eps Peg"
+    },
+    {
+        "idHD": 58350,
+        "name": "Eta Canis Majoris",
+        "dec": -29.303105508471724,
+        "ra": 111.02375950100142,
+        "simbadOID": 980703,
+        "simbadNameDefault": "* eta CMa"
+    },
+    {
+        "idHD": 71129,
+        "name": "Epsilon Carinae",
+        "dec": -59.509480700000005,
+        "ra": 125.6284741,
+        "simbadOID": 9700385,
+        "simbadNameDefault": "* eps Car A"
+    },
+    {
+        "idHD": 217906,
+        "name": "Scheat",
+        "dec": 28.082787124606668,
+        "ra": 345.9435727452067,
+        "simbadOID": 1500441,
+        "simbadNameDefault": "* bet Peg"
+    },
+    {
+        "idHD": 103287,
+        "name": "Phecda",
+        "dec": 53.69475972916666,
+        "ra": 178.45769715249997,
+        "simbadOID": 550487,
+        "simbadNameDefault": "* gam UMa"
+    },
+    {
+        "idHD": 203280,
+        "name": "Alderamin",
+        "dec": 62.5855744637194,
+        "ra": 319.6448846972256,
+        "simbadOID": 219505,
+        "simbadNameDefault": "* alf Cep"
+    },
+    {
+        "idHD": 81188,
+        "name": "Kappa Velorum",
+        "dec": -55.01066713416667,
+        "ra": 140.52840670833334,
+        "simbadOID": 3062624,
+        "simbadNameDefault": "* kap Vel"
+    },
+    {
+        "idHD": 218045,
+        "name": "Markab",
+        "dec": 15.205267147927536,
+        "ra": 346.19022269142596,
+        "simbadOID": 1447433,
+        "simbadNameDefault": "* alf Peg"
+    },
+    {
+        "idHD": 197989,
+        "name": "Epsilon Cygni",
+        "dec": 33.97025692388889,
+        "ra": 311.5528431704166,
+        "simbadOID": 2933504,
+        "simbadNameDefault": "* eps Cyg"
+    }
+]

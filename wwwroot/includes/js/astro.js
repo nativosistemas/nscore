@@ -12,7 +12,7 @@ window.addEventListener("load", (event) => {
                 if (!element.visible) {
                     disabled = ' disabled list-group-item-dark ';
                 }
-                strHtml += '<li class="list-group-item' + disabled + '" value="' + element.nameBayer + '">' + element.name + '</li>';
+                strHtml += '<li class="list-group-item' + disabled + '" value="' + element.id + '">' + element.name + '</li>';
             }
         }
         );

@@ -10,30 +10,30 @@ Gamma Crucis - 	HD 108903
 Beta Carinae - HD 80007
 Alnitak A -  HD 37742
 Alfa Gruis - 	HD 209952
-Gamma2 Velorum
-Theta Scorpii
-Alfa Trianguli Australis
-Delta Velorum
-Beta Ceti
-Theta Centauri
-Mirach
-Acrux B
-Alfa Ophiuchi
-Beta Gruis
-Lambda Velorum
-Etamin
-Sadr
-Iota Carinae
-Epsilon Centauri
-Algieba
-Alfa Lupi
-Delta Scorpii
-Epsilon Scorpii
-Eta Centauri
-Alfa Phoenicis
-Kappa Scorpii
-Gamma Cassiopeiae
-Eta Canis Majoris
-Epsilon Carinae
-Kappa Velorum
-Epsilon Cygni
+Gamma2 Velorum -  HD 68273
+Theta Scorpii -  HD 159532
+Alfa Trianguli Australis - HD 150798
+Delta Velorum - HD 74956
+Beta Ceti - HD 4128
+Theta Centauri - HD 123139
+Mirach - 	HD 6860
+Acrux B - HD 108249
+Alfa Ophiuchi - HD 159561
+Beta Gruis - HD 214952
+Lambda Velorum - HD 78647
+Etamin - HD 164058
+Sadr - 	HD 194093
+Iota Carinae - HD 80404
+Epsilon Centauri - HD 118716 
+Algieba - HD 89484
+Alfa Lupi -HD 129056
+Delta Scorpii - HD 143275
+Epsilon Scorpii - HD 151680
+Eta Centauri - HD 127973
+Alfa Phoenicis - HD 2261
+Kappa Scorpii - HD 160578
+Gamma Cassiopeiae - HD 5394 
+Eta Canis Majoris - HD 58350
+Epsilon Carinae - HD 71129
+Kappa Velorum - HD 81188
+Epsilon Cygni - HD 197989
