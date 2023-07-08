@@ -31,7 +31,7 @@ internal class Program
         app.MapGet("/stars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getStars()); }));
         app.MapGet("/astro", ((nscore.ProcessAnt pProcessAnt, double h, double v, int laser) => { return pProcessAnt.moveTheAnt(h, v, laser); }));
         app.MapGet("/simbad", () => { return nscore.Util.getAstronomicalObjects(); });
-          app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_copia(); });
+        app.MapGet("/falta", () => {  return nscore.Util.getAstronomicalObjects_fileLoad(); });
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) => { return pProcessAnt.findStar(4); });//pProcessAnt.findStar(4);
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {

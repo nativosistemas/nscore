@@ -415,31 +415,70 @@ public class Util
         CargaInicialAstronomicalObject_HD(true);
         return "Ok";
     }
+    public static List<AstronomicalObject> getAstronomicalObjects_RestaurarJsonBD()
+    {
+        List<AstronomicalObject> l = getAstronomicalObjects_fileLoad();
+        using (var context = new AstroDbContext())
+        {
+            foreach (AstronomicalObject oFila in l)
+            {
+                context.AstronomicalObjects.Add(oFila);
+                context.SaveChanges();
+            }
+        }
+        return l;
+    }
     public static string getAstronomicalObjects_copia()
     {
         string result = string.Empty;
-        List<dynamic> dynamicList = new List<dynamic>();
+        List<AstronomicalObject> l_AstronomicalObject = getAstronomicalObjects_fileLoad();
         try
         {
-            //sb.Append(Environment.NewLine);
-            using (var context = new AstroDbContext())
+            /*
+            result += "";
+            foreach (var i in context.AstronomicalObjects.Where(x => x.idHD != null && x.dec != null && x.ra != null).ToList())
             {
+                // Crea un objeto dinámicamente utilizando ExpandoObject
+                dynamic dynamicObject = new System.Dynamic.ExpandoObject();
 
-                result += "";
-                foreach (var i in context.AstronomicalObjects.Where(x => x.idHD != null && x.dec != null && x.ra != null).ToList())
+                // Agrega propiedades dinámicamente
+                dynamicObject.idHD = i.idHD;
+                dynamicObject.name = i.name;
+                dynamicObject.dec = i.dec;
+                dynamicObject.ra = i.ra;
+                dynamicObject.simbadOID = i.simbadOID;
+                dynamicObject.simbadNameDefault = i.simbadNameDefault;
+                // Agrega el segundo objeto dinámico a la lista
+                dynamicList.Add(dynamicObject);}
+            }
+            */
+            char systemSeparator = Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+            System.Data.DataTable tb = ProcessExcel.GetDataTableAstronomy();
+            foreach (System.Data.DataRow oRow in tb.Rows)
+            {
+                string name = oRow["3"].ToString();//oRow["5"].ToString().Replace(" en SIMBAD.", "");
+                AstronomicalObject o = l_AstronomicalObject.Where(x => x.name == name).FirstOrDefault();
+                if (null != o)
                 {
-                    // Crea un objeto dinámicamente utilizando ExpandoObject
-                    dynamic dynamicObject = new System.Dynamic.ExpandoObject();
+                    //o.nameLatin = o.name;
+                    //o.name = oRow["3"].ToString();
+                    o.bayerDesignation = oRow["2"].ToString();
 
-                    // Agrega propiedades dinámicamente
-                    dynamicObject.idHD = i.idHD;
-                    dynamicObject.name = i.name;
-                    dynamicObject.dec = i.dec;
-                    dynamicObject.ra = i.ra;
-                    dynamicObject.simbadOID = i.simbadOID;
-                    dynamicObject.simbadNameDefault = i.simbadNameDefault;
-                    // Agrega el segundo objeto dinámico a la lista
-                    dynamicList.Add(dynamicObject);
+                    string numeroTexto = oRow["1"].ToString().Replace(" var", string.Empty).Replace(".", systemSeparator.ToString()).ToString();
+                    double? nroDouble = null;
+                    if (numeroTexto.Contains("+"))
+                    {
+                        nroDouble = Convert.ToDouble(numeroTexto.Replace("+", string.Empty));
+                    }
+                    else if (numeroTexto.Contains("−"))
+                    {
+                        nroDouble = Convert.ToDouble(numeroTexto.Replace("−", string.Empty)) * -1.0;
+                    }
+                    else
+                    {
+                        nroDouble = Convert.ToDouble(numeroTexto);
+                    }
+                    o.magnitudAparente = nroDouble;
                 }
             }
         }
@@ -447,8 +486,46 @@ public class Util
         {
             log(ex);
         }
-        string json = System.Text.Json.JsonSerializer.Serialize(dynamicList);
+        string json = System.Text.Json.JsonSerializer.Serialize(l_AstronomicalObject);
+        string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "estrellaCopiaSeguridad.json");
+        File.WriteAllText(pathAstronomy, json);
         result = json;
         return result;
+    }
+
+
+    public static string getAstronomicalObjects_fileSave()
+    {
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "estrellaCopiaSeguridad_test.json");
+                string json = System.Text.Json.JsonSerializer.Serialize(context.AstronomicalObjects.ToList());
+                File.WriteAllText(pathAstronomy, json);
+                return json;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return null;
+    }
+    public static List<AstronomicalObject> getAstronomicalObjects_fileLoad()
+    {
+        try
+        {
+            string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "estrellaCopiaSeguridad.json");
+            string json = File.ReadAllText(pathAstronomy);
+            List<AstronomicalObject> instancia = System.Text.Json.JsonSerializer.Deserialize<List<AstronomicalObject>>(json);
+            return instancia;
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return null;
     }
 }

@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace nscore;
+[Index(nameof(idHD), IsUnique = true)]
 public class AstronomicalObject
 {
     public AstronomicalObject()
@@ -10,8 +11,11 @@ public class AstronomicalObject
     }
     [Key]
     public Guid publicID { get; set; }
-    public int? idHD { get; set; }
+    [Required]
+    public int idHD { get; set; }
     public string? nameLatin { get; set; }
+    public double? magnitudAparente { get; set; }
+    public string? bayerDesignation { get; set; }
     public string? name { get; set; }
     public double? ra { get; set; }
     public double? dec { get; set; }
@@ -21,7 +25,11 @@ public class AstronomicalObject
     public string getName()
     {
         string result = string.Empty;
-        if (!string.IsNullOrEmpty(name))
+        if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(bayerDesignation))
+        {
+            result = name + " (" + bayerDesignation + ")";
+        }
+        else if (!string.IsNullOrEmpty(name))
         {
             result = name;
         }
@@ -29,14 +37,11 @@ public class AstronomicalObject
         {
             result = nameLatin;
         }
-        else if (idHD != null)
+        else 
         {
-            result = "HD " + idHD.Value.ToString();
+            result = "HD " + idHD.ToString();
         }
-        else
-        {
-            result = "(Falta nombre): " + publicID.ToString();
-        }
+
         return result;
     }
 }

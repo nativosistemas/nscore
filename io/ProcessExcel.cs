@@ -121,20 +121,20 @@ public class ProcessExcel : IDisposable
      }*/
     public static DataTable GetDataTableAstronomy()
     {
-        List<int> l_column = new List<int> { 5 };
+        List<int> l_column = new List<int> { 1, 2, 3, 4, 5 };
         DataTable result = new DataTable();
-        //
+
         string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "Estrellas más brillantes_tabla.xlsx");
         result = readExcel(pathAstronomy, l_column);
-        foreach (DataRow oRow in result.Rows)
-        {
-            if (oRow["5"] != DBNull.Value)
-            {
-                oRow["5"] = oRow["5"].ToString().Replace(" en SIMBAD.", "");
-            }
-        }
-
-        //
+        /*
+       foreach (DataRow oRow in result.Rows)
+       {
+           if (oRow["5"] != DBNull.Value)
+           {
+               oRow["5"] = oRow["5"].ToString().Replace(" en SIMBAD.", "");
+           }
+       }
+        */
         return result;
     }
     protected virtual void Dispose(bool disposing)

@@ -20,17 +20,17 @@ public class ProcessAnt : IDisposable
         if (_versionNew)
         {
             _l_Star = new List<Star>();
-            List<AstronomicalObject> l = nscore.Util.getAstronomicalObjects().Where(x => x.name != null && x.dec != null && x.ra != null).ToList();
+            List<AstronomicalObject> l = nscore.Util.getAstronomicalObjects().Where(x => x.magnitudAparente != null).OrderBy(x => x.magnitudAparente).ToList();
             //foreach (AstronomicalObject oStar in l){
             for (int i = 0; i < l.Count; i++)
             {
                 AstronomicalObject o = l[i];
                 Star oStar = new Star();
-                oStar.id = i + 1;
+                oStar.id = o.idHD;
                 oStar.dec = o.dec.Value;
                 oStar.ra = o.ra.Value;
                 oStar.name = o.getName();
-                oStar.nameBayer = oStar.id;
+                //oStar.nameBayer = oStar.id;
                 _l_Star.Add(oStar);
             }
         }
