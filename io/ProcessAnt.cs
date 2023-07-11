@@ -10,6 +10,7 @@ public class ProcessAnt : IDisposable
     private ProcessLaser _processLaser = new ProcessLaser();
     //private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
+    private List<ObserverCoordinates> _l_City = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
     //private static Semaphore _semaphore_ant = new Semaphore(0, 1);
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
@@ -19,6 +20,7 @@ public class ProcessAnt : IDisposable
     {
         if (_versionNew)
         {
+            _city = getCitys().FirstOrDefault();
             _l_Star = new List<Star>();
             List<AstronomicalObject> l = nscore.Util.getAstronomicalObjects().Where(x => x.magnitudAparente != null).OrderBy(x => x.magnitudAparente).ToList();
             //foreach (AstronomicalObject oStar in l){
@@ -38,6 +40,22 @@ public class ProcessAnt : IDisposable
         {
             _l_Star = nscore.AstroDbContext.getStars();
         }
+    }
+    public ObserverCoordinates setCity(int id, string pName, double pLatitude, double pLongitude)
+    {
+        _city = new ObserverCoordinates() { id = id, name = pName, latitude = pLatitude, longitude = pLongitude, altitude = 0 };
+        return _city;
+    }
+    public List<ObserverCoordinates> getCitys()
+    {
+        if (_l_City == null)
+        {
+            _l_City = new List<ObserverCoordinates>();
+            _l_City.Add(new ObserverCoordinates() { id = 1, name = "Rosario", latitude = -32.9575, longitude = -60.639444, altitude = 0 });
+            _l_City.Add(new ObserverCoordinates() { id = 2, name = "Quito", latitude = -0.22, longitude = -78.5125, altitude = 0 });
+            _l_City.Add(new ObserverCoordinates() { id = 3, name = "Atenas", latitude = 37.984167, longitude = 23.728056, altitude = 0 });//,
+        }
+        return _l_City;
     }
     public List<Star> getStars()
     {
@@ -65,7 +83,7 @@ public class ProcessAnt : IDisposable
         Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
         if (oStar != null)
         {
-            EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
+            EquatorialCoordinates eq = new EquatorialCoordinates() { idHD = oStar.id, dec = oStar.dec, ra = oStar.ra };
             result = actionAnt(eq);
         }
         else
@@ -87,14 +105,12 @@ public class ProcessAnt : IDisposable
             if (oServoCoordinates != null)
             {
                 HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
-                //double hourAngle_astro = oHorariasCoordinates.HA;
-
                 string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
                 string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
                 string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
-                result += strEq + "\n" + strHC + "\n" + strHc + "\n";
-                result += moveTheAnt(oServoCoordinates);
-                //_processLaser.Start(0, 1);
+                result += strEq + "<br/>" + strHC + "<br/>" + strHc + "<br/>";
+                result += "HD " + eq.idHD.ToString() + "<br/>";
+                result += "Servo: " + moveTheAnt(oServoCoordinates);
             }
             else
             {

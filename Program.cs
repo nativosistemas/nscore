@@ -29,9 +29,12 @@ internal class Program
         app.MapGet("/servo", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findStar(id); }));
         app.MapGet("/laser", ((nscore.ProcessAnt pProcessAnt, int read, int on) => { return pProcessAnt.actionLaser(read, on); }));
         app.MapGet("/stars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getStars()); }));
+        app.MapGet("/citys", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getCitys()); }));
+        app.MapGet("/setcity", ((nscore.ProcessAnt pProcessAnt, int id, string name, double lat, double lon) => { return Results.Json(pProcessAnt.setCity(id,name, lat, lon)); }));
+        app.MapGet("/getcity", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.city);}));
         app.MapGet("/astro", ((nscore.ProcessAnt pProcessAnt, double h, double v, int laser) => { return pProcessAnt.moveTheAnt(h, v, laser); }));
         app.MapGet("/simbad", () => { return nscore.Util.getAstronomicalObjects(); });
-        app.MapGet("/falta", () => {  return nscore.Util.getAstronomicalObjects_fileLoad(); });
+        app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_fileLoad(); });
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) => { return pProcessAnt.findStar(4); });//pProcessAnt.findStar(4);
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {

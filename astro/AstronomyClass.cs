@@ -37,7 +37,7 @@ public class AstronomicalObject
         {
             result = nameLatin;
         }
-        else 
+        else
         {
             result = "HD " + idHD.ToString();
         }
@@ -64,6 +64,8 @@ public class Star
 }
 public class ObserverCoordinates
 {
+    public int id { get; set; }
+    public string name { get; set; }
     // Coordenadas geográficas del observador
     public double latitude { get; set; }//= 19.4326; // en grados
     public double longitude { get; set; }//= -99.1332; // en grados
@@ -79,6 +81,7 @@ public class HorizontalCoordinates
 }
 public class EquatorialCoordinates
 {
+    public int idHD { get; set; }
     public double ra = 0; // en horas
     public double dec = 0; // en grados
     public double epoch = 2000.0; // en años julianos

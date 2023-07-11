@@ -1,5 +1,58 @@
+var l_citys = [];
+var city = null;
 window.addEventListener("load", (event) => {
     console.log("page is fully loaded");
+
+    loadConfig();
+    loadIndex();
+    fetchGetCity().then(el_city => {
+        city = el_city;
+    }).then(c => {
+
+        if (document.getElementById("divMsgHead") !== null && city != null) {
+            document.getElementById("divMsgHead").innerHTML = 'Lugar: ' + city.name;
+        }
+        if (document.getElementById("miCombo") !== null) {
+            let element = document.getElementById("miCombo");
+            element.value = city.id;
+        }
+    });
+});
+
+function onchangeCity() {
+    //result.textContent = `You like ${event.target.value}`;
+    var city_aux = l_citys.find(checkValue);
+    if (city_aux != null) {
+        fetchSetCity(city_aux.id, city_aux.name, String(city_aux.latitude), String(city_aux.longitude)).then(x => {
+            city = x;
+        });
+    }
+};
+function checkValue(cmb) {
+    return cmb.id == document.getElementById("miCombo").value;
+}
+
+function loadConfig() {
+    fetchGetCitys().then(el_city => {
+        var strHtml = '';
+        l_citys = el_city;
+        if (l_citys != null && l_citys.length > 0) {
+            /*if (city == null) {
+                city = l_citys[0];
+            }*/
+            const select = document.querySelector('select');
+            l_citys.forEach(element => {
+                strHtml += '<option  class="list-group-item" value="' + element.id + '">' + element.name + '</option >';
+            }
+            );
+            if (document.getElementById("miCombo") !== null) {
+                document.getElementById("miCombo").innerHTML = strHtml;
+            }
+        }
+
+    })
+}
+function loadIndex() {
     //$("#spinner").hide();
     document.getElementById("spinner").style.display = "none";
     fetchStarsJSON().then(stars => {
@@ -30,10 +83,15 @@ window.addEventListener("load", (event) => {
         });
     });
 
-
-
-
-});
+}
+function onClickIrIndex() {
+    window.location.href = "index.html";
+    return false;
+}
+function onClickIrConfig() {
+    window.location.href = "config.html";
+    return false;
+}
 function quitarActiveLi() {
 
     var elementosLi = document.querySelectorAll("#miLista li");
@@ -68,6 +126,22 @@ function onClickApagarLaser() {
 async function fetchLaser(pRead, pOn) {
     const response = await fetch('/laser?read=' + pRead + '&on=' + pOn);
     const text = await response.text();
+    return text;
+}
+
+async function fetchGetCitys() {
+    const response = await fetch('/citys');
+    const text = await response.json();
+    return text;
+}
+async function fetchGetCity() {
+    const response = await fetch('/getcity');
+    const text = await response.json();
+    return text;
+}
+async function fetchSetCity(pId, pName, pLat, pLon) {// string name, double lat, double lon
+    const response = await fetch('/setcity?id=' + pId + '&name=' + pName + '&lat=' + pLat + '&lon=' + pLon);
+    const text = await response.json();
     return text;
 }
 var isOnClickStar = false;
