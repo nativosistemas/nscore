@@ -109,10 +109,10 @@ public class ServoCoordinates
         bool isAzimuthMas180 = false;
         double horizontal = pValue.Azimuth;
         double vertical = pValue.Altitude;// si es negativo
-        /*if (pValue.Altitude < 0.0)
+        if (pValue.Altitude < 0.0)
         {
             return null;
-        }*/
+        }
         if (pValue.Azimuth < 180.0)
         {
             isAzimuthMas180 = true;
