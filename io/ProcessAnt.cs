@@ -79,17 +79,22 @@ public class ProcessAnt : IDisposable
     public string findStar(int pId)
     {
         string result = string.Empty;
-        //ObserverCoordinates city = ObserverCoordinates.cityRosario;
         Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
         if (oStar != null)
         {
-            EquatorialCoordinates eq = new EquatorialCoordinates() { idHD = oStar.id, dec = oStar.dec, ra = oStar.ra };
-            result = actionAnt(eq);
+            result = findStar(oStar.id, oStar.dec,oStar.ra);
         }
         else
         {
             result = "No se encontro estrella";
         }
+        return result;
+    }
+    public string findStar(int pIdHD, double pDec, double pRa)
+    {
+        string result = string.Empty;
+        EquatorialCoordinates eq = new EquatorialCoordinates() { idHD = pIdHD, dec = pDec, ra = pRa };
+        result = actionAnt(eq);
         return result;
     }
     public string actionAnt(EquatorialCoordinates eq)
