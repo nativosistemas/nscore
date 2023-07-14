@@ -500,7 +500,7 @@ public class Util
         {
             using (var context = new AstroDbContext())
             {
-                string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "estrellaCopiaSeguridad_test.json");
+                string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "estrellaCopiaSeguridad.json");
                 string json = System.Text.Json.JsonSerializer.Serialize(context.AstronomicalObjects.ToList());
                 File.WriteAllText(pathAstronomy, json);
                 return json;
