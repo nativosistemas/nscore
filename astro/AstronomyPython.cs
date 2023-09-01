@@ -20,7 +20,7 @@ public class AstronomyPython : IDisposable
         Star oStar = nscore.Util.getStars().Where(x => x.nameBayer == pId).FirstOrDefault();
         if (oStar != null)
         {
-            double siderealTime_local = AstronomyEngine.GetTSL(city);
+            double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow,city);
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             if (hc != null)

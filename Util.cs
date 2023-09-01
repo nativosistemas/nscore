@@ -1,3 +1,5 @@
+using DocumentFormat.OpenXml.Vml.Spreadsheet;
+
 namespace nscore;
 //using System.Collections.Generic;
 
@@ -16,7 +18,7 @@ public class Util
 
         ObserverCoordinates ciudad = ObserverCoordinates.cityRosario;//ObserverCoordinates.cityQuito  cityRosario
         //double julianDateGreenwich = AstronomyEngine.GetJulianDate();
-        double siderealTime_local = AstronomyEngine.GetTSL(ciudad);
+        double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, ciudad);
         double sirio_Dec = -16.7280; // -16° 42' 58.017''
         double sirio_RA = 101.28326; // 06h 45m 08.9173s
         EquatorialCoordinates sirio_eq = new EquatorialCoordinates() { dec = sirio_Dec, ra = sirio_RA };
@@ -152,6 +154,21 @@ public class Util
             log_file(new Log(ex));
             log_file(log);
         }
+    }
+    public static void saveDHT(double Temperature, double Humidity, string pNameIoT, string chipID)
+    {
+        DHT o = new DHT();
+        o.PublicID = Guid.NewGuid();
+        o.Temperature = Temperature;
+        o.Humidity = Humidity;
+        o.chipID = chipID;
+        o.NameIoT = pNameIoT;
+        o.fecha = DateTime.Now;
+        ProcessESP8266.saveDHT(o);
+    }
+    public static List<DHT> getDHT()
+    {
+        return ProcessESP8266.getDHT();
     }
     public static void log_file(Log pEx)
     {
@@ -527,5 +544,18 @@ public class Util
             log(ex);
         }
         return null;
+    }
+    public static string Test(nscore.ProcessAnt pProcessAnt)
+    {
+        DateTime date = new DateTime(2023, 7, 17, 1, 30, 0).ToUniversalTime();
+        double siderealTime_local = AstronomyEngine.GetTSL(date, ObserverCoordinates.cityRosario);
+        //AstronomyEngine.ConvertirAFechaJuliana_Main();
+        //Estrella Vega
+        // (J2000.0) 213.90946 / 19.1708 { idHD = 124897, dec = 19.1708 , ra = 213.90946  };
+        // (en fecha)  214.18467 / 19.0616  { idHD = 124897, dec =  19.0616, ra = 214.18467 };
+        EquatorialCoordinates arturo_eq = new EquatorialCoordinates() { idHD = 124897, dec = 19.0616, ra = 214.18467 };
+        // DateTime date = DateTime.UtcNow;
+        //DateTime date = new DateTime(2023, 7, 17, 1, 30, 0).ToUniversalTime();
+        return pProcessAnt.findStar(date, arturo_eq.idHD, arturo_eq.dec, arturo_eq.ra);
     }
 }

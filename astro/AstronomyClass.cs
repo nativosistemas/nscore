@@ -69,10 +69,12 @@ public class ObserverCoordinates
     // Coordenadas geográficas del observador
     public double latitude { get; set; }//= 19.4326; // en grados
     public double longitude { get; set; }//= -99.1332; // en grados
-    public double altitude { get; set; }//= 0.0; // en metros
-
-    public static ObserverCoordinates cityRosario = new ObserverCoordinates() { latitude = -32.9575, longitude = -60.639444, altitude = 0 };
-    public static ObserverCoordinates cityQuito = new ObserverCoordinates() { latitude = -0.22, longitude = -78.5125, altitude = 0 };
+    public double altitude { get; set; }//= 0.0; // en metros        32.94681944444444         60.6393194444444
+                                        // {cityRosario} latitude = -32.94681944, longitude = -60.63931944   (stellarium)
+                                        // {cityRosario} latitude = -32.9575, longitude = -60.639444   (internet)
+    public static ObserverCoordinates cityRosario = new ObserverCoordinates() { id = 1, name = "Rosario",latitude = -32.94681944444444, longitude = -60.6393194444444 , altitude = 0 }; //latitude = -32.9575, longitude = -60.639444
+    public static ObserverCoordinates cityQuito = new ObserverCoordinates() { id = 2, name = "Quito", latitude = -0.22, longitude = -78.5125, altitude = 0 };
+    public static ObserverCoordinates cityAtenas = new ObserverCoordinates() { id = 3, name = "Atenas", latitude = 37.984167, longitude = 23.728056, altitude = 0 };
 }
 public class HorizontalCoordinates
 {
@@ -82,9 +84,10 @@ public class HorizontalCoordinates
 public class EquatorialCoordinates
 {
     public int idHD { get; set; }
-    public double ra = 0; // en horas
-    public double dec = 0; // en grados
-    public double epoch = 2000.0; // en años julianos
+    public double ra { get; set; } // en horas
+    public double dec { get; set; }// en grados
+    public double _epoch = 2000.0; // en años julianos
+     public double epoch { get{return _epoch;} set{_epoch = value;} }
 
     // public double ra_radianes { get { return ra * Math.PI / 180.0; } }
     //public double dec_radianes { get { return dec * Math.PI / 180.0; } }
@@ -93,8 +96,8 @@ public class EquatorialCoordinates
 }
 public class HorariasCoordinates
 {
-    public double dec = 0; // en grados
-    public double HA = 0; // en grados
+    public double dec { get; set; } // en grados
+    public double HA { get; set; } // en grados
 }
 public class ServoCoordinates
 {
@@ -109,10 +112,10 @@ public class ServoCoordinates
         bool isAzimuthMas180 = false;
         double horizontal = pValue.Azimuth;
         double vertical = pValue.Altitude;// si es negativo
-        if (pValue.Altitude < 0.0)
+        /*if (pValue.Altitude < 0.0)
         {
             return null;
-        }
+        }*/
         if (pValue.Azimuth < 180.0)
         {
             isAzimuthMas180 = true;

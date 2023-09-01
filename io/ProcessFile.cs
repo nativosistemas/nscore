@@ -7,6 +7,34 @@ public class ProcessFile : IDisposable
 {
     private bool disposedValue = false;
 
+    public static void ffff()
+    {
+
+        HorariasCoordinates dept = new HorariasCoordinates() { dec = 101, HA = 33 };
+        string strJson = Serializador.SerializarAJson(dept);
+        //System.Text.Json.JsonSerializer.Serialize(dept);
+
+        byte[] byteArray_strJson = System.Text.Encoding.UTF8.GetBytes(strJson);
+
+        HorariasCoordinates ex = System.Text.Json.JsonSerializer.Deserialize<HorariasCoordinates>(byteArray_strJson);
+        string jsonData = "{\"_id\":\"test121\", " +
+                     "\"username\":\"test123\", " +
+                      "\"password\": \"test123\"}";
+        byte[] byteArray = System.Text.Encoding.UTF8.GetBytes(jsonData);
+        //  nscore.Helper.folder
+        File.WriteAllBytes(@"C:\data.dmp", byteArray_strJson);
+    }
+    public static void saveFile(string pNameFile, byte[] pBuffer)
+    {
+        try
+        {
+            File.WriteAllBytes(Path.Combine(nscore.Helper.folder, @"files", pNameFile), pBuffer);
+        }
+        catch (Exception ex)
+        {
+            Util.log(ex);
+        }
+    }
     public static IEnumerable<string> ReadLines(string pPath)
     {
         IEnumerable<string> result = null;

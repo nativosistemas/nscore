@@ -51,15 +51,15 @@ public class ProcessAnt : IDisposable
         if (_l_City == null)
         {
             _l_City = new List<ObserverCoordinates>();
-            _l_City.Add(new ObserverCoordinates() { id = 1, name = "Rosario", latitude = -32.9575, longitude = -60.639444, altitude = 0 });
-            _l_City.Add(new ObserverCoordinates() { id = 2, name = "Quito", latitude = -0.22, longitude = -78.5125, altitude = 0 });
-            _l_City.Add(new ObserverCoordinates() { id = 3, name = "Atenas", latitude = 37.984167, longitude = 23.728056, altitude = 0 });//,
+            _l_City.Add(ObserverCoordinates.cityRosario);
+            _l_City.Add(ObserverCoordinates.cityQuito);
+            _l_City.Add(ObserverCoordinates.cityAtenas);
         }
         return _l_City;
     }
     public List<Star> getStars()
     {
-        double siderealTime_local = AstronomyEngine.GetTSL(city);
+        double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
         foreach (Star oStar in _l_Star)
         {
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
@@ -82,7 +82,7 @@ public class ProcessAnt : IDisposable
         Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
         if (oStar != null)
         {
-            result = findStar(oStar.id, oStar.dec,oStar.ra);
+            result = findStar(DateTime.UtcNow, oStar.id, oStar.dec, oStar.ra);
         }
         else
         {
@@ -90,18 +90,18 @@ public class ProcessAnt : IDisposable
         }
         return result;
     }
-    public string findStar(int pIdHD, double pDec, double pRa)
+    public string findStar(DateTime pDate, int pIdHD, double pDec, double pRa)
     {
         string result = string.Empty;
         EquatorialCoordinates eq = new EquatorialCoordinates() { idHD = pIdHD, dec = pDec, ra = pRa };
-        result = actionAnt(eq);
+        result = actionAnt(pDate, eq);
         return result;
     }
-    public string actionAnt(EquatorialCoordinates eq)
+    public string actionAnt(DateTime pDate, EquatorialCoordinates eq)
     {
         string result = string.Empty;
 
-        double siderealTime_local = AstronomyEngine.GetTSL(city);
+        double siderealTime_local = AstronomyEngine.GetTSL(pDate, city);
 
         HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
         if (hc != null)

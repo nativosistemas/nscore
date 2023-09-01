@@ -29,13 +29,13 @@ public class AstronomyEngine
         return julianDate;
     }
     // Tiempo Sideral de Greenwich
-    public static double GetTSGreenwich()
+    public static double GetTSGreenwich(DateTime pDate)
     {
         // Fecha y hora actual en UTC
-        DateTime fechaHora = DateTime.UtcNow;
+        // DateTime fechaHora = DateTime.UtcNow;
 
         // Calcular el número de días transcurridos desde el 1 de enero de 2000 a las 12:00 UT
-        TimeSpan ts = fechaHora - new DateTime(2000, 1, 1, 12, 0, 0, DateTimeKind.Utc);
+        TimeSpan ts = pDate - new DateTime(2000, 1, 1, 12, 0, 0, DateTimeKind.Utc);
         double diasTranscurridos = ts.TotalDays;
 
         // Calcular el tiempo sideral de Greenwich
@@ -52,9 +52,9 @@ public class AstronomyEngine
         return gst;
     }
     // Tiempo Sideral Local
-    public static double GetTSL(ObserverCoordinates pCity)
+    public static double GetTSL(DateTime pDate, ObserverCoordinates pCity)
     {
-        double TSGreenwich = GetTSGreenwich();
+        double TSGreenwich = GetTSGreenwich(pDate);
 
         // Calcular el tiempo sideral local
         double lst = TSGreenwich + pCity.longitude;
@@ -89,8 +89,8 @@ public class AstronomyEngine
         HorariasCoordinates oHorariasCoordinates = ToHorariasCoordinates(pSiderealTimeLocal, pEq);
         double hourAngle_astro = oHorariasCoordinates.HA;
 
-        double altitude = Math.Asin(Math.Sin(pEq.dec * Math.PI / 180) * Math.Sin(pCity.latitude * Math.PI / 180) + Math.Cos(pEq.dec * Math.PI / 180) * Math.Cos(pCity.latitude * Math.PI / 180) * Math.Cos(hourAngle_astro * Math.PI / 180)) * 180 / Math.PI;
-        double azimuth = Math.Atan2(Math.Sin(hourAngle_astro * Math.PI / 180), Math.Cos(hourAngle_astro * Math.PI / 180) * Math.Sin(pCity.latitude * Math.PI / 180) - Math.Tan(pEq.dec * Math.PI / 180) * Math.Cos(pCity.latitude * Math.PI / 180)) * 180 / Math.PI;
+        double altitude = Math.Asin(Math.Sin(pEq.dec * Math.PI / 180.0) * Math.Sin(pCity.latitude * Math.PI / 180.0) + Math.Cos(pEq.dec * Math.PI / 180.0) * Math.Cos(pCity.latitude * Math.PI / 180.0) * Math.Cos(hourAngle_astro * Math.PI / 180.0)) * 180.0 / Math.PI;
+        double azimuth = Math.Atan2(Math.Sin(hourAngle_astro * Math.PI / 180.0), Math.Cos(hourAngle_astro * Math.PI / 180.0) * Math.Sin(pCity.latitude * Math.PI / 180.0) - Math.Tan(pEq.dec * Math.PI / 180.0) * Math.Cos(pCity.latitude * Math.PI / 180.0)) * 180.0 / Math.PI;
 
         // azimut desde el norte
         azimuth -= 180.0;
@@ -103,5 +103,33 @@ public class AstronomyEngine
 
         return new HorizontalCoordinates() { Altitude = altitude, Azimuth = azimuth };
     }
+    public static void ConvertirAFechaJuliana_Main()
+    {
+          DateTime date = new DateTime(2023, 7, 17, 1, 30, 0).ToUniversalTime();
+ double numeroDecimal_fec = date.ToOADate();
 
+        double numeroDecimal = 60142.18785; // Ejemplo de número decimal con el día de fecha juliana
+
+DateTime fecha = DateTime.FromOADate(numeroDecimal);
+
+        DateTime fechaJuliana = ConvertirAFechaJuliana(numeroDecimal);
+
+        Console.WriteLine("Fecha juliana convertida a DateTime: " + fechaJuliana);
+    }
+
+    public static DateTime ConvertirAFechaJuliana(double numeroDecimal)
+    {
+        // Obtener la parte entera y decimal del número decimal
+        int anio = (int)numeroDecimal;
+        double parteDecimal = numeroDecimal - anio;
+
+        // Obtener el primer día del año en función del año
+        DateTime primerDiaDelAnio = new DateTime(anio, 1, 1);
+
+        // Calcular el día del año sumando la parte decimal como días adicionales al primer día del año
+        int diasAdicionales = (int)Math.Round(parteDecimal * 365);
+        DateTime fechaResultado = primerDiaDelAnio.AddDays(diasAdicionales);
+
+        return fechaResultado;
+    }
 }

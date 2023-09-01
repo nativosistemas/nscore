@@ -36,7 +36,7 @@ internal class Program
         app.MapGet("/simbad", () => { return nscore.Util.getAstronomicalObjects(); });
         app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_fileLoad(); });
          app.MapGet("/restore", () => { return nscore.Util.getAstronomicalObjects_RestaurarJsonBD(); });
-        app.MapGet("/", (nscore.ProcessAnt pProcessAnt) => { return pProcessAnt.findStar(124897,19.0616,214.18489); });//pProcessAnt.findStar(4);
+        app.MapGet("/", (nscore.ProcessAnt pProcessAnt) => {  nscore.ProcessFile.ffff(); return  nscore.Util.Test(pProcessAnt); });//pProcessAnt.findStar(4);
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";
