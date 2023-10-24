@@ -7,6 +7,7 @@ public class ProcessAnt : IDisposable
     //private Process _controller = new Process();
     private bool _versionNew = true;
     private ProcessServo _processServo = new ProcessServo();
+    private ProcessServoRango _processServoRango = new ProcessServoRango();
     private ProcessLaser _processLaser = new ProcessLaser();
     //private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
@@ -125,6 +126,14 @@ public class ProcessAnt : IDisposable
 
         return result;
     }
+    public string actionAnt_servo(double pHorizontal, double pVertical, double pH_min, double pH_max, double pV_min, double pV_max, bool pOnLaser)
+    {
+        string result = string.Empty;
+        ServoCoordinates oServoCoordinates = new ServoCoordinates() { servoH = Math.Round(pHorizontal, 6), servoV = Math.Round(pVertical, 6) };//ServoCoordinates.convertServoCoordinates(hc);
+        string strHc = "Horizontal/Vertical: " + AstronomyEngine.GetSexagesimal(pHorizontal) + "/" + AstronomyEngine.GetSexagesimal(pVertical);
+        result += "Servo: " + moveTheAnt_rango(oServoCoordinates.servoH, oServoCoordinates.servoV, Math.Round(pH_min, 6), Math.Round(pH_max, 6), Math.Round(pV_min, 6), Math.Round(pV_max, 6), pOnLaser ? 1 : 0);
+        return result;
+    }
     public string moveTheAnt(ServoCoordinates pServoCoordinates)
     {
         return _processServo.Start(pServoCoordinates.servoH, pServoCoordinates.servoV, 1);
@@ -135,6 +144,10 @@ public class ProcessAnt : IDisposable
         //Util.log(new Exception(DateTime.Now.Millisecond.ToString()));
         //Util.log_file(new Log(new Exception(DateTime.Now.Millisecond.ToString())));
         return _processServo.Start(pH, pV, pLaser);
+    }
+    public string moveTheAnt_rango(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser)
+    {
+        return _processServoRango.Start(pH, pV, pH_min, pH_max, pV_min, pV_max, pLaser);
     }
     public string actionLaser(int pIsRead, int pLaser)
     {
@@ -148,6 +161,7 @@ public class ProcessAnt : IDisposable
             {
                 _processServo.Dispose();
                 _processLaser.Dispose();
+                _processServoRango.Dispose();
             }
 
             disposedValue = true;
@@ -180,6 +194,50 @@ public class ProcessServo : IDisposable
     public string Start(double pH, double pV, int pLaser)
     {
         string parameter = pH.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(pLaser);
+        return _PoolProcess.Start(parameter);
+    }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                _PoolProcess.Dispose();
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+    }
+}
+public class ProcessServoRango : IDisposable
+{
+    private bool disposedValue = false;
+    private PoolProcess _PoolProcess;
+    public ProcessServoRango()
+    {
+        string nameFile = string.Empty;
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            nameFile = "py_astro_servos";
+        }
+        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            nameFile = "py_astro_servos.exe";
+        }
+        _PoolProcess = new PoolProcess(1, nameFile);
+    }
+
+    public string Start(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser)
+    {
+        string parameter = pH.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
+        + Convert.ToString(pLaser) + " " + pH_min.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
+         + pH_max.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV_min.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
+         + pV_max.ToString(System.Globalization.CultureInfo.InvariantCulture);
         return _PoolProcess.Start(parameter);
     }
     protected virtual void Dispose(bool disposing)

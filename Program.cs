@@ -21,22 +21,23 @@ internal class Program
 
         //
         nscore.AstroDbContext.initDbContext();
-        nscore.AstroDbContext.initTableStar();
+        //nscore.AstroDbContext.initTableStar();
         //
         app.MapGet("/logs", () => { return nscore.Util.getLogs(); });
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
         app.MapGet("/servo", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findStar(id); }));
+        app.MapGet("/servomover", ((nscore.ProcessAnt pProcessAnt, double pH,double pV,double pH_min, double pH_max, double pV_min, double pV_max,bool pOnLaser) => { return pProcessAnt.actionAnt_servo(pH, pV, pH_min,  pH_max,  pV_min,  pV_max,pOnLaser); }));
         app.MapGet("/laser", ((nscore.ProcessAnt pProcessAnt, int read, int on) => { return pProcessAnt.actionLaser(read, on); }));
         app.MapGet("/stars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getStars()); }));
         app.MapGet("/citys", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getCitys()); }));
-        app.MapGet("/setcity", ((nscore.ProcessAnt pProcessAnt, int id, string name, double lat, double lon) => { return Results.Json(pProcessAnt.setCity(id,name, lat, lon)); }));
-        app.MapGet("/getcity", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.city);}));
+        app.MapGet("/setcity", ((nscore.ProcessAnt pProcessAnt, int id, string name, double lat, double lon) => { return Results.Json(pProcessAnt.setCity(id, name, lat, lon)); }));
+        app.MapGet("/getcity", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.city); }));
         app.MapGet("/astro", ((nscore.ProcessAnt pProcessAnt, double h, double v, int laser) => { return pProcessAnt.moveTheAnt(h, v, laser); }));
         app.MapGet("/simbad", () => { return nscore.Util.getAstronomicalObjects(); });
         app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_fileLoad(); });
-         app.MapGet("/restore", () => { return nscore.Util.getAstronomicalObjects_RestaurarJsonBD(); });
-        app.MapGet("/", (nscore.ProcessAnt pProcessAnt) => {  nscore.ProcessFile.ffff(); return  nscore.Util.Test(pProcessAnt); });//pProcessAnt.findStar(4);
+        app.MapGet("/restore", () => { return nscore.Util.getAstronomicalObjects_RestaurarJsonBD(); });
+        app.MapGet("/", (nscore.ProcessAnt pProcessAnt) => { return nscore.Util.TestServoPosicionCero(pProcessAnt); });//pProcessAnt.findStar(4);
         app.MapGet("/image/{strImage}", (string r, string n, string an, string al, string c, string re, HttpContext http, CancellationToken token) =>
         {
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";

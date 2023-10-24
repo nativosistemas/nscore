@@ -2,6 +2,28 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace nscore;
+[Index(nameof(id), IsUnique = true)]
+public class Constellation
+{
+    public Constellation()
+    {
+        publicID = Guid.NewGuid();
+    }
+    [Key]
+    public Guid publicID { get; set; }
+    [Required]
+    public int id { get; set; }
+    public string? nameLatin { get; set; }
+    public string? name { get; set; }
+    public string? abbreviation { get; set; }
+    public string? Genitivo { get; set; }
+    public string? Origen { get; set; }
+    public string? DescritaPor { get; set; }
+    public double? Extension { get; set; }
+
+    //Nombre en latín b 	Nombre en español c 	Abreviatura d 	Genitivo e 	Origen 	Descrita por 	Extensión f 	Símbolo propuestoa
+
+}
 [Index(nameof(idHD), IsUnique = true)]
 public class AstronomicalObject
 {
@@ -72,7 +94,7 @@ public class ObserverCoordinates
     public double altitude { get; set; }//= 0.0; // en metros        32.94681944444444         60.6393194444444
                                         // {cityRosario} latitude = -32.94681944, longitude = -60.63931944   (stellarium)
                                         // {cityRosario} latitude = -32.9575, longitude = -60.639444   (internet)
-    public static ObserverCoordinates cityRosario = new ObserverCoordinates() { id = 1, name = "Rosario",latitude = -32.94681944444444, longitude = -60.6393194444444 , altitude = 0 }; //latitude = -32.9575, longitude = -60.639444
+    public static ObserverCoordinates cityRosario = new ObserverCoordinates() { id = 1, name = "Rosario", latitude = -32.94681944444444, longitude = -60.6393194444444, altitude = 0 }; //latitude = -32.9575, longitude = -60.639444
     public static ObserverCoordinates cityQuito = new ObserverCoordinates() { id = 2, name = "Quito", latitude = -0.22, longitude = -78.5125, altitude = 0 };
     public static ObserverCoordinates cityAtenas = new ObserverCoordinates() { id = 3, name = "Atenas", latitude = 37.984167, longitude = 23.728056, altitude = 0 };
 }
@@ -87,7 +109,7 @@ public class EquatorialCoordinates
     public double ra { get; set; } // en horas
     public double dec { get; set; }// en grados
     public double _epoch = 2000.0; // en años julianos
-     public double epoch { get{return _epoch;} set{_epoch = value;} }
+    public double epoch { get { return _epoch; } set { _epoch = value; } }
 
     // public double ra_radianes { get { return ra * Math.PI / 180.0; } }
     //public double dec_radianes { get { return dec * Math.PI / 180.0; } }

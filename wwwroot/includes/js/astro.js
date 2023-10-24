@@ -2,22 +2,36 @@ var l_citys = [];
 var city = null;
 window.addEventListener("load", (event) => {
     console.log("page is fully loaded");
+    var pagina = getNamePage();
+    if (pagina == 'estrellas.html') {
+        loadConfig();
+        loadIndex();
+        fetchGetCity().then(el_city => {
+            city = el_city;
+        }).then(c => {
 
-    loadConfig();
-    loadIndex();
-    fetchGetCity().then(el_city => {
-        city = el_city;
-    }).then(c => {
+            if (document.getElementById("divMsgHead") !== null && city != null) {
+                document.getElementById("divMsgHead").innerHTML = 'Lugar: ' + city.name;
+            }
+            if (document.getElementById("miCombo") !== null) {
+                let element = document.getElementById("miCombo");
+                element.value = city.id;
+            }
+        });
+    } else if (pagina == 'constelaciones.html') {
+        document.getElementById("spinner").style.display = "none";
 
-        if (document.getElementById("divMsgHead") !== null && city != null) {
-            document.getElementById("divMsgHead").innerHTML = 'Lugar: ' + city.name;
-        }
-        if (document.getElementById("miCombo") !== null) {
-            let element = document.getElementById("miCombo");
-            element.value = city.id;
-        }
-    });
+    }
+    else if (pagina == 'servos.html') {
+        document.getElementById("spinner").style.display = "none";
+
+    }
 });
+function getNamePage() {
+    var url = location.href;
+    var pagina = url.substring(url.lastIndexOf('/') + 1);
+    return pagina;
+}
 
 function onchangeCity() {
     //result.textContent = `You like ${event.target.value}`;
@@ -54,7 +68,7 @@ function loadConfig() {
 }
 function loadIndex() {
     //$("#spinner").hide();
-    document.getElementById("spinner").style.display = "none";
+    //document.getElementById("spinner").style.display = "none";
     fetchStarsJSON().then(stars => {
         var strHtml = '';
         //stars; // fetched movies
@@ -144,6 +158,11 @@ async function fetchSetCity(pId, pName, pLat, pLon) {// string name, double lat,
     const text = await response.json();
     return text;
 }
+async function fetchSetServoMover(pH, pV, pH_min, pH_max, pV_min, pV_max, pOnLaser) {
+    const response = await fetch('/servomover?pH=' + pH + '&pV=' + pV + '&pH_min=' + pH_min + '&pH_max=' + pH_max + '&pV_min=' + pV_min + '&pV_max=' + pV_max + '&pOnLaser=' + pOnLaser);
+    const text = await response.text();
+    return text;
+}
 var isOnClickStar = false;
 
 function onClickStar(pId) {
@@ -160,4 +179,57 @@ function onClickStar(pId) {
             document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
         });
     }
+}
+var isOnClickMoverServo = false;
+function onClickMoverServo() {
+    if (!isOnClickMoverServo) {
+        isOnClickMoverServo = true;
+        document.getElementById("spinner").style.display = '';
+        var horizontal = 0;
+        var vertical = 0;
+        var horizontal_min = 0;
+        var horizontal_max = 0;
+        var vertical_min = 0;
+        var vertical_max = 0;
+        var laserOn = false;
+        var inputElement_horizontal = document.getElementById('inputServoH');
+        if (inputElement_horizontal.value.trim() !== '') {
+            horizontal = inputElement_horizontal.value;
+        }
+        var inputElement_vertical = document.getElementById('inputServoV');
+        if (inputElement_vertical.value.trim() !== '') {
+            vertical = inputElement_vertical.value;
+        }
+        var inputElement_horizontal_min = document.getElementById('inputServoHmin');
+        if (inputElement_horizontal_min.value.trim() !== '') {
+            horizontal_min = inputElement_horizontal_min.value;
+        }
+        var inputElement_horizontal_max = document.getElementById('inputServoHmax');
+        if (inputElement_horizontal_max.value.trim() !== '') {
+            horizontal_max = inputElement_horizontal_max.value;
+        }
+        var inputElement_vertical_min = document.getElementById('inputServoVmin');
+        if (inputElement_vertical_min.value.trim() !== '') {
+            vertical_min = inputElement_vertical_min.value;
+        }
+        var inputElement_vertical_max = document.getElementById('inputServoVmax');
+        if (inputElement_vertical_max.value.trim() !== '') {
+            vertical_max = inputElement_vertical_max.value;
+        }
+
+        var checkboxLaserOn = document.getElementById('checkboxLaserOn');
+
+        if (checkboxLaserOn.checked) {
+            laserOn = true;
+        }
+        fetchSetServoMover(horizontal, vertical, horizontal_min, horizontal_max, vertical_min, vertical_max, laserOn).then(text => {
+            var strHtml = '';
+            strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
+            document.getElementById("divMsg").innerHTML = strHtml;
+            isOnClickMoverServo = false;
+            document.getElementById("spinner").style.display = "none";
+
+        })
+    }
+    return false;
 }

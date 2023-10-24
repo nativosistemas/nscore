@@ -558,4 +558,46 @@ public class Util
         //DateTime date = new DateTime(2023, 7, 17, 1, 30, 0).ToUniversalTime();
         return pProcessAnt.findStar(date, arturo_eq.idHD, arturo_eq.dec, arturo_eq.ra);
     }
+    public static string TestServoPosicionCero(nscore.ProcessAnt pProcessAnt)
+    {
+        return pProcessAnt.actionAnt_servo(0, 0, 2.5, 12, 2.5, 12,true);
+    }
+    public static List<Constellation> CargaInicialConstelación(bool pIsSaveBD = true)
+    {
+        List<Constellation> result = new List<Constellation>();
+        try
+        {
+            System.Data.DataTable oDataTable = ProcessExcel.GetDataTableAstronomy();
+            // List<string> oListString = ProcessFile.GetListStringAstronomy("simbadEstrellas.csv");
+            //char systemSeparator = Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+            foreach (System.Data.DataRow oRow in oDataTable.Rows)
+            {
+                if (oRow["5"] != DBNull.Value)
+                {
+                    Constellation o = new Constellation();
+                    o.nameLatin = oRow["1"].ToString();
+                    o.name = oRow["2"].ToString();
+                    o.abbreviation = oRow["3"].ToString();
+                    o.Genitivo = oRow["4"].ToString();
+                    o.Origen = oRow["5"].ToString();
+                    o.DescritaPor = oRow["6"].ToString();
+                    o.Extension = Convert.ToDouble(oRow["7"].ToString().Replace(",", ".")); ;
+                    if (pIsSaveBD)
+                    {
+                        using (var context = new AstroDbContext())
+                        {
+                            context.Constellations.Add(o);
+                            context.SaveChanges();
+                        }
+                    }
+                    result.Add(o);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
 }

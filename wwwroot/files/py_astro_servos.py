@@ -20,6 +20,14 @@ def calcular_ciclo_de_trabajo(angulo):
     ciclo = ciclo_minimo + ((rango / 180.0) * angulo)
     return ciclo
 
+# Función para calcular el ciclo de trabajo correspondiente a un ángulo dado
+def calcular_ciclo_de_trabajo_rango(angulo,ciclo_minimo,ciclo_maximo):
+    #ciclo_minimo = 2.5
+    #ciclo_maximo = 12.0
+    rango = ciclo_maximo - ciclo_minimo
+    ciclo = ciclo_minimo + ((rango / 180.0) * angulo)
+    return ciclo
+
 # Verificar si se proporcionaron suficientes argumentos
 if len(sys.argv) < 2:
     print("Se esperaba al menos un argumento.")
@@ -29,6 +37,10 @@ if len(sys.argv) < 2:
 parametroH = float(sys.argv[1])
 parametroV = float(sys.argv[2])
 parametroLaser = int(sys.argv[3])
+parametroH_rango_min = float(sys.argv[4])
+parametroH_rango_max = float(sys.argv[5])
+parametroV_rango_min = float(sys.argv[6])
+parametroV_rango_max = float(sys.argv[7])
 #suma = parametroH + parametroV + parametroLaser
 
 
@@ -37,20 +49,20 @@ parametroLaser = int(sys.argv[3])
 #time.sleep(1)
 ## pV.stop()
 ## pH.stop()
-valorH = calcular_ciclo_de_trabajo(parametroH)
+valorH = calcular_ciclo_de_trabajo_rango(parametroH,parametroH_rango_min,parametroH_rango_max)
 pH.start(valorH)#pH.ChangeDutyCycle(valorH)
 
-valorV = calcular_ciclo_de_trabajo(parametroV)
+valorV = calcular_ciclo_de_trabajo_rango(parametroV,parametroV_rango_min,parametroV_rango_max)
 pV.start(valorV)#pV.ChangeDutyCycle(valorV)
 
 # timer
 # ¿aca va un timer?
 time.sleep(1)
 
-#if bool(parametroLaser):
-#    GPIO.output(21, GPIO.HIGH)  # led on
-#else:
-#    GPIO.output(21, GPIO.LOW)  # led off
+if bool(parametroLaser):
+    GPIO.output(21, GPIO.HIGH)  # led on
+else:
+    GPIO.output(21, GPIO.LOW)  # led off
 
 
 
@@ -58,7 +70,7 @@ pV.stop()
 pH.stop()
 
 #time.sleep(10)
-GPIO.output(21, GPIO.HIGH)
+#GPIO.output(21, GPIO.HIGH)
 #GPIO.cleanup()
 
 
