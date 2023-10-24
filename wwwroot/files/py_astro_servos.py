@@ -57,17 +57,17 @@ pV.start(valorV)#pV.ChangeDutyCycle(valorV)
 
 # timer
 # ¿aca va un timer?
-time.sleep(1)
+time.sleep(5)
+
+
+pV.stop()
+pH.stop()
+
 
 if bool(parametroLaser):
     GPIO.output(21, GPIO.HIGH)  # led on
 else:
     GPIO.output(21, GPIO.LOW)  # led off
-
-
-
-pV.stop()
-pH.stop()
 
 #time.sleep(10)
 #GPIO.output(21, GPIO.HIGH)
