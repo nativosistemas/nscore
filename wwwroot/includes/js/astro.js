@@ -1,9 +1,10 @@
 var l_citys = [];
 var city = null;
 window.addEventListener("load", (event) => {
-    console.log("page is fully loaded");
+    document.getElementById("spinner").style.display = "none";
+
     var pagina = getNamePage();
-    if (pagina == 'estrellas.html') {
+    if (pagina == 'estrellas.html' || pagina == 'index.html') {
         loadConfig();
         loadIndex();
         fetchGetCity().then(el_city => {
@@ -19,11 +20,11 @@ window.addEventListener("load", (event) => {
             }
         });
     } else if (pagina == 'constelaciones.html') {
-        document.getElementById("spinner").style.display = "none";
+      //  document.getElementById("spinner").style.display = "none";
 
     }
     else if (pagina == 'servos.html') {
-        document.getElementById("spinner").style.display = "none";
+       // document.getElementById("spinner").style.display = "none";
 
     }
 });
