@@ -57,7 +57,7 @@ pV.start(valorV)#pV.ChangeDutyCycle(valorV)
 
 # timer
 # ¿aca va un timer?
-time.sleep(5)
+time.sleep(3)
 
 
 pV.stop()
