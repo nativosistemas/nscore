@@ -182,8 +182,22 @@ function capturarEvento(elemento) {
 function capturarEvento_ConstellationsConstellations(elemento) {
     quitarActiveLi();
     elemento.classList.add("active");
-    //onClickStar(elemento.value);
-
+    onClickConstellation(elemento.value);
+}
+function onClickConstellation(pId) {
+    if (!isOnClickStar) {
+        isOnClickStar = true;
+        // $("#spinner").show();
+        document.getElementById("spinner").style.display = '';
+        var id = pId;
+        fetchServoConstellation(id).then(text => {
+            var strHtml = '';
+            strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
+            document.getElementById("divMsg").innerHTML = strHtml;
+            isOnClickStar = false;
+            document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
+        });
+    }
 }
 async function fetchStarsJSON() {
     const response = await fetch('/stars');
@@ -197,6 +211,11 @@ async function fetchConstellationsJSON() {
 }
 async function fetchServo(pId) {
     const response = await fetch('/servo?id=' + pId);
+    const text = await response.text();
+    return text;
+}
+async function fetchServoConstellation(pId) {
+    const response = await fetch('/servoconstellations?id=' + pId);
     const text = await response.text();
     return text;
 }

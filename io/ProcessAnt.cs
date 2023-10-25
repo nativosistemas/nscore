@@ -84,13 +84,13 @@ public class ProcessAnt : IDisposable
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
             if (hc.Altitude < 32.0)
             {
-               // o.visible = false;
+                // o.visible = false;
             }
             else
             {
                 //copiaObjeto = (MiClase)o.Clone();
-               //o.name =   o.name + " Altitude: " + hc.Altitude;
-               l.Add(o);
+                //o.name =   o.name + " Altitude: " + hc.Altitude;
+                l.Add(o);
             }
         }
         return l;
@@ -109,6 +109,48 @@ public class ProcessAnt : IDisposable
         }
         return result;
     }
+    public string findConstellation(int pId)
+    {
+        string result = string.Empty;
+        Constellation o = _l_Constellation.Where(x => x.id == pId).FirstOrDefault();
+        if (o != null)
+        {
+            EquatorialCoordinates eq = new EquatorialCoordinates() { dec = o.dec.Value, ra = o.ra.Value };
+            double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
+            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
+            if (hc != null)
+            {
+                ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
+                if (oServoCoordinates != null)
+                {
+                    HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
+                    string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
+                    string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
+                    string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
+                    result += strEq + "<br/>" + strHC + "<br/>" + strHc + "<br/>";
+                    //result += "HD " + eq.idHD.ToString() + "<br/>";
+                    result += "Servo: " + moveTheAnt_rango(oServoCoordinates.servoH, oServoCoordinates.servoV, Math.Round(2.9, 6), Math.Round(12.5, 6), Math.Round(2.5, 6), Math.Round(12.0, 6), 1);
+                    //moveTheAnt(oServoCoordinates);
+                }
+                else
+                {
+                    result = "La constelación no es visible";
+                }
+            }
+        }
+        else
+        {
+            result = "No se encontro la constelación";
+        }
+        return result;
+    }
+    /*public string findConstellation(DateTime pDate, int pIdHD, double pDec, double pRa)
+  {
+      string result = string.Empty;
+      EquatorialCoordinates eq = new EquatorialCoordinates() { idHD = pIdHD, dec = pDec, ra = pRa };
+      result = actionAnt(pDate, eq);
+      return result;
+  }*/
     public string findStar(DateTime pDate, int pIdHD, double pDec, double pRa)
     {
         string result = string.Empty;
