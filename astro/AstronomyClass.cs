@@ -20,7 +20,8 @@ public class Constellation
     public string? Origen { get; set; }
     public string? DescritaPor { get; set; }
     public double? Extension { get; set; }
-
+    public double? ra { get; set; }
+    public double? dec { get; set; }
     //Nombre en latín b 	Nombre en español c 	Abreviatura d 	Genitivo e 	Origen 	Descrita por 	Extensión f 	Símbolo propuestoa
 
 }

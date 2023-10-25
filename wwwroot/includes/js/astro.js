@@ -99,12 +99,25 @@ function loadIndex() {
     });
 
 }
-function onClickIrIndex() {
-    window.location.href = "index.html";
+function onClickVolver() {
+    //window.location.href = "index.html";
+    history.back();
     return false;
 }
 function onClickIrConfig() {
     window.location.href = "config.html";
+    return false;
+}
+function onClickIrEstrellas() {
+    window.location.href = "estrellas.html";
+    return false;
+}
+function onClickIrConstelaciones() {
+    window.location.href = "constelaciones.html";
+    return false;
+}
+function onClickIrServos() {
+    window.location.href = "servos.html";
     return false;
 }
 function quitarActiveLi() {

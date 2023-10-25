@@ -137,6 +137,15 @@ public class ProcessExcel : IDisposable
         */
         return result;
     }
+    public static DataTable GetDataTableConstelaciones()
+    {
+        List<int> l_column = new List<int> {0, 1, 2, 3, 4, 5,6,7,8,9};
+        DataTable result = new DataTable();
+
+        string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "Constelaciones.xlsx");
+        result = readExcel(pathAstronomy, l_column);
+        return result;
+    }
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)

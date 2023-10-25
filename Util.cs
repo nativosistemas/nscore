@@ -560,37 +560,41 @@ public class Util
     }
     public static string TestServoPosicionCero(nscore.ProcessAnt pProcessAnt)
     {
-        return pProcessAnt.actionAnt_servo(0, 0, 2.5, 12, 2.5, 12,true);
+        return pProcessAnt.actionAnt_servo(0, 0, 2.5, 12, 2.5, 12, true);
     }
     public static List<Constellation> CargaInicialConstelación(bool pIsSaveBD = true)
     {
+
         List<Constellation> result = new List<Constellation>();
         try
         {
-            System.Data.DataTable oDataTable = ProcessExcel.GetDataTableAstronomy();
-            // List<string> oListString = ProcessFile.GetListStringAstronomy("simbadEstrellas.csv");
-            //char systemSeparator = Thread.CurrentThread.CurrentCulture.NumberFormat.CurrencyDecimalSeparator[0];
+            System.Data.DataTable oDataTable = ProcessExcel.GetDataTableConstelaciones();
+            // int id = 0;
             foreach (System.Data.DataRow oRow in oDataTable.Rows)
             {
-                if (oRow["5"] != DBNull.Value)
+                // id++;
+                // if (oRow["0"] != DBNull.Value)
+                //{
+                Constellation o = new Constellation();
+                o.id = Convert.ToInt32(oRow["0"].ToString());
+                o.nameLatin = oRow["1"].ToString();
+                o.name = oRow["2"].ToString();
+                o.abbreviation = oRow["3"].ToString();
+                o.Genitivo = oRow["4"].ToString();
+                o.Origen = oRow["5"].ToString();
+                o.DescritaPor = oRow["6"].ToString();
+                o.Extension = Convert.ToDouble(oRow["7"].ToString().Replace(".", ","));
+                o.ra = Convert.ToDouble(oRow["8"].ToString().Replace(".", ","));
+                o.dec = Convert.ToDouble(oRow["9"].ToString().Replace(".", ","));
+                result.Add(o);
+                //   }
+            }
+            if (pIsSaveBD)
+            {
+                using (var context = new AstroDbContext())
                 {
-                    Constellation o = new Constellation();
-                    o.nameLatin = oRow["1"].ToString();
-                    o.name = oRow["2"].ToString();
-                    o.abbreviation = oRow["3"].ToString();
-                    o.Genitivo = oRow["4"].ToString();
-                    o.Origen = oRow["5"].ToString();
-                    o.DescritaPor = oRow["6"].ToString();
-                    o.Extension = Convert.ToDouble(oRow["7"].ToString().Replace(",", ".")); ;
-                    if (pIsSaveBD)
-                    {
-                        using (var context = new AstroDbContext())
-                        {
-                            context.Constellations.Add(o);
-                            context.SaveChanges();
-                        }
-                    }
-                    result.Add(o);
+                    context.Constellations.AddRange(result);
+                    context.SaveChanges();
                 }
             }
         }
@@ -599,5 +603,59 @@ public class Util
             log(ex);
         }
         return result;
+    }
+
+    public static string fileSave_Constelaciones()
+    {
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "Constellations.json");
+                string json = System.Text.Json.JsonSerializer.Serialize(context.Constellations.ToList());
+                File.WriteAllText(pathAstronomy, json);
+                return json;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return null;
+    }
+    public static List<Constellation> fileLoad_Constelaciones()
+    {
+        try
+        {
+            string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "Constellations.json");
+            string json = File.ReadAllText(pathAstronomy);
+            List<Constellation> instancia = System.Text.Json.JsonSerializer.Deserialize<List<Constellation>>(json);
+            return instancia;
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return null;
+    }
+    public static List<Constellation> restaurarJsonBD_Constelaciones()
+    {
+        List<Constellation> l = fileLoad_Constelaciones();
+        using (var context = new AstroDbContext())
+        {
+            foreach (Constellation oFila in l)
+            {
+                context.Constellations.Add(oFila);
+                context.SaveChanges();
+            }
+        }
+        return l;
+    }
+    public static string restaurarJsonBD()
+    {
+        restaurarJsonBD_Constelaciones();
+        getAstronomicalObjects_RestaurarJsonBD();
+        return "Ok";
     }
 }
