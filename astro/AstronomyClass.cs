@@ -22,7 +22,7 @@ public class Constellation
     public double? Extension { get; set; }
     public double? ra { get; set; }
     public double? dec { get; set; }
-    //Nombre en latín b 	Nombre en español c 	Abreviatura d 	Genitivo e 	Origen 	Descrita por 	Extensión f 	Símbolo propuestoa
+   //public bool visible { get; set; }
 
 }
 [Index(nameof(idHD), IsUnique = true)]

@@ -5,13 +5,14 @@ public class ProcessAnt : IDisposable
 {
     private bool disposedValue = false;
     //private Process _controller = new Process();
-    private bool _versionNew = true;
+    // private bool _versionNew = true;
     private ProcessServo _processServo = new ProcessServo();
     private ProcessServoRango _processServoRango = new ProcessServoRango();
     private ProcessLaser _processLaser = new ProcessLaser();
     //private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
     private List<ObserverCoordinates> _l_City = null;
+    private List<Constellation> _l_Constellation = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
     //private static Semaphore _semaphore_ant = new Semaphore(0, 1);
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
@@ -19,28 +20,22 @@ public class ProcessAnt : IDisposable
 
     public ProcessAnt()
     {
-        if (_versionNew)
+        _city = getCitys().FirstOrDefault();
+        _l_Star = new List<Star>();
+        List<AstronomicalObject> l = nscore.Util.getAstronomicalObjects().Where(x => x.magnitudAparente != null).OrderBy(x => x.magnitudAparente).ToList();
+        //foreach (AstronomicalObject oStar in l){
+        for (int i = 0; i < l.Count; i++)
         {
-            _city = getCitys().FirstOrDefault();
-            _l_Star = new List<Star>();
-            List<AstronomicalObject> l = nscore.Util.getAstronomicalObjects().Where(x => x.magnitudAparente != null).OrderBy(x => x.magnitudAparente).ToList();
-            //foreach (AstronomicalObject oStar in l){
-            for (int i = 0; i < l.Count; i++)
-            {
-                AstronomicalObject o = l[i];
-                Star oStar = new Star();
-                oStar.id = o.idHD;
-                oStar.dec = o.dec.Value;
-                oStar.ra = o.ra.Value;
-                oStar.name = o.getName();
-                //oStar.nameBayer = oStar.id;
-                _l_Star.Add(oStar);
-            }
+            AstronomicalObject o = l[i];
+            Star oStar = new Star();
+            oStar.id = o.idHD;
+            oStar.dec = o.dec.Value;
+            oStar.ra = o.ra.Value;
+            oStar.name = o.getName();
+            //oStar.nameBayer = oStar.id;
+            _l_Star.Add(oStar);
         }
-        else
-        {
-            _l_Star = nscore.AstroDbContext.getStars();
-        }
+        _l_Constellation = nscore.Util.getConstelaciones();
     }
     public ObserverCoordinates setCity(int id, string pName, double pLatitude, double pLongitude)
     {
@@ -66,16 +61,39 @@ public class ProcessAnt : IDisposable
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
-            if (oServoCoordinates != null)
-            {
-                oStar.visible = true;
-            }
-            else
+
+            if (hc.Altitude < 0.0)
             {
                 oStar.visible = false;
             }
+            else
+            {
+                oStar.visible = true;
+            }
         }
         return _l_Star;
+    }
+    public List<Constellation> getConstellations()
+    {
+        List<Constellation> l = new List<Constellation>();
+        double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
+        foreach (Constellation o in _l_Constellation)
+        {
+            EquatorialCoordinates eq = new EquatorialCoordinates() { dec = o.dec.Value, ra = o.ra.Value };
+            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
+            ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
+            if (hc.Altitude < 32.0)
+            {
+               // o.visible = false;
+            }
+            else
+            {
+                //copiaObjeto = (MiClase)o.Clone();
+               //o.name =   o.name + " Altitude: " + hc.Altitude;
+               l.Add(o);
+            }
+        }
+        return l;
     }
     public string findStar(int pId)
     {

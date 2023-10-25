@@ -432,7 +432,7 @@ public class Util
         CargaInicialAstronomicalObject_HD(true);
         return "Ok";
     }
-    public static List<AstronomicalObject> getAstronomicalObjects_RestaurarJsonBD()
+    public static List<AstronomicalObject> RestaurarJsonBD_AstronomicalObjects()
     {
         List<AstronomicalObject> l = getAstronomicalObjects_fileLoad();
         using (var context = new AstroDbContext())
@@ -604,7 +604,22 @@ public class Util
         }
         return result;
     }
-
+    public static List<Constellation> getConstelaciones()
+    {
+        List<Constellation> result = new List<Constellation>();
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                result = context.Constellations.ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
     public static string fileSave_Constelaciones()
     {
         try
@@ -655,7 +670,7 @@ public class Util
     public static string restaurarJsonBD()
     {
         restaurarJsonBD_Constelaciones();
-        getAstronomicalObjects_RestaurarJsonBD();
+        RestaurarJsonBD_AstronomicalObjects();
         return "Ok";
     }
 }

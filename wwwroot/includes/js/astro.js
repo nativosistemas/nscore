@@ -4,9 +4,26 @@ window.addEventListener("load", (event) => {
     document.getElementById("spinner").style.display = "none";
 
     var pagina = getNamePage();
-    if (pagina == 'estrellas.html' || pagina == 'index.html') {
-        loadConfig();
+    //|| pagina == 'index.html'
+
+    if (pagina == 'estrellas.html') {
+
         loadIndex();
+
+    } else if (pagina == 'config.html') {
+        loadConfig();
+
+    }
+    else if (pagina == 'constelaciones.html') {
+        loadConstelaciones();
+
+    }
+    else if (pagina == 'servos.html') {
+        // document.getElementById("spinner").style.display = "none";
+
+    }
+
+    if (pagina == 'estrellas.html' || pagina == 'config.html' || pagina == 'constelaciones.html') {
         fetchGetCity().then(el_city => {
             city = el_city;
         }).then(c => {
@@ -19,13 +36,6 @@ window.addEventListener("load", (event) => {
                 element.value = city.id;
             }
         });
-    } else if (pagina == 'constelaciones.html') {
-      //  document.getElementById("spinner").style.display = "none";
-
-    }
-    else if (pagina == 'servos.html') {
-       // document.getElementById("spinner").style.display = "none";
-
     }
 });
 function getNamePage() {
@@ -99,6 +109,38 @@ function loadIndex() {
     });
 
 }
+function loadConstelaciones() {
+    //$("#spinner").hide();
+    //document.getElementById("spinner").style.display = "none";
+    fetchConstellationsJSON().then(stars => {
+        var strHtml = '';
+        //stars; // fetched movies
+
+        stars.forEach(element => {
+            if (element.name != null && element.name != '') {
+                var disabled = '';
+                /*if (!element.visible) {
+                    disabled = ' disabled list-group-item-dark ';
+                }*/
+                strHtml += '<li class="list-group-item' + disabled + '" value="' + element.id + '">' + element.name   + ' (' + element.nameLatin + ')'+ '</li>';
+            }
+        }
+        );
+        // document.getElementById("datalistOptionsStar").innerHTML = strHtml;
+        document.getElementById("miLista").innerHTML = strHtml;
+
+        // Obtén una referencia a la lista de elementos <li>
+        var elementosLi = document.querySelectorAll("#miLista li");
+
+        // Asigna un controlador de eventos a cada elemento <li>
+        elementosLi.forEach(function (li) {
+            li.addEventListener("click", function (event) {
+                capturarEvento_ConstellationsConstellations(li);
+            });
+        });
+    });
+
+}
 function onClickVolver() {
     //window.location.href = "index.html";
     history.back();
@@ -137,12 +179,22 @@ function capturarEvento(elemento) {
     //  alert("Se hizo clic en el elemento: " + elemento.textContent + " id: " + elemento.value);
     // Aquí puedes realizar las acciones que desees al capturar el evento
 }
+function capturarEvento_ConstellationsConstellations(elemento) {
+    quitarActiveLi();
+    elemento.classList.add("active");
+    //onClickStar(elemento.value);
+
+}
 async function fetchStarsJSON() {
     const response = await fetch('/stars');
     const stars = await response.json();
     return stars;
 }
-
+async function fetchConstellationsJSON() {
+    const response = await fetch('/constellations');
+    const stars = await response.json();
+    return stars;
+}
 async function fetchServo(pId) {
     const response = await fetch('/servo?id=' + pId);
     const text = await response.text();
