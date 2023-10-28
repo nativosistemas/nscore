@@ -21,8 +21,9 @@ window.addEventListener("load", (event) => {
     else if (pagina == 'servos.html') {
         // document.getElementById("spinner").style.display = "none";
 
+    } else if (pagina == 'espaciolab.html') { 
+        loadIndex();
     }
-
     if (pagina == 'estrellas.html' || pagina == 'config.html' || pagina == 'constelaciones.html') {
         fetchGetCity().then(el_city => {
             city = el_city;
@@ -122,7 +123,7 @@ function loadConstelaciones() {
                 /*if (!element.visible) {
                     disabled = ' disabled list-group-item-dark ';
                 }*/
-                strHtml += '<li class="list-group-item' + disabled + '" value="' + element.id + '">' + element.name   + ' (' + element.nameLatin + ')'+ '</li>';
+                strHtml += '<li class="list-group-item' + disabled + '" value="' + element.id + '">' + element.name + ' (' + element.nameLatin + ')' + '</li>';
             }
         }
         );
@@ -160,6 +161,10 @@ function onClickIrConstelaciones() {
 }
 function onClickIrServos() {
     window.location.href = "servos.html";
+    return false;
+}
+function onClickIrEspacioLab() {
+    window.location.href = "espaciolab.html";
     return false;
 }
 function quitarActiveLi() {

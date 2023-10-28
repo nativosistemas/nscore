@@ -26,7 +26,7 @@ internal class Program
         app.MapGet("/logs", () => { return nscore.Util.getLogs(); });
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
-        app.MapGet("/servo", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findStar(id); }));
+        app.MapGet("/servo", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findStar(id, true); }));
         app.MapGet("/servomover", ((nscore.ProcessAnt pProcessAnt, double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, bool pOnLaser) => { return pProcessAnt.actionAnt_servo(pH, pV, pH_min, pH_max, pV_min, pV_max, pOnLaser); }));
          app.MapGet("/servoconstellations", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findConstellation(id); }));
         app.MapGet("/laser", ((nscore.ProcessAnt pProcessAnt, int read, int on) => { return pProcessAnt.actionLaser(read, on); }));
@@ -39,6 +39,7 @@ internal class Program
         app.MapGet("/simbad", () => { return nscore.Util.getAstronomicalObjects(); });
         app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_fileLoad(); });
         app.MapGet("/restore", () => { return nscore.Util.restaurarJsonBD(); });
+        app.MapGet("/cargaInicial", () => { return nscore.Util.CargaInicialConstelación(); });
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>
         {
             string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index.html");
