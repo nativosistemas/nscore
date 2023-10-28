@@ -76,95 +76,48 @@ public class ProcessAnt : IDisposable
 
     public List<Constellation> getConstellations()
     {
-        List<Constellation> l = new List<Constellation>();
+        // List<Constellation> l = new List<Constellation>();
         double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
         foreach (Constellation o in _l_Constellation)
         {
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = o.dec.Value, ra = o.ra.Value };
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
-            if (hc.Altitude < 32.0)
-            {
-                // o.visible = false;
-            }
-            else
-            {
-                //copiaObjeto = (MiClase)o.Clone();
-                //o.name =   o.name + " Altitude: " + hc.Altitude;
-                l.Add(o);
-            }
-        }
-        return l;
-    }
-    public string findStar(int pId, bool isNew = false)
+            /* if (hc.Altitude < 32.0)
+             {
+                 o.visible = false;
+             }
+             else
+             {
+                 o.visible = true;
+                 // l.Add(o);
+             }*/
+            o.visible = true;
+        }    
+        return _l_Constellation.Where(x => x.visible).ToList();
+}
+public string findStar(int pId, bool isNew = false)
+{
+    string result = string.Empty;
+    Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
+    if (oStar != null)
     {
-        string result = string.Empty;
-        Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
-        if (oStar != null)
-        {
-            result = findStar(DateTime.UtcNow, oStar.id, oStar.dec, oStar.ra, isNew);
-        }
-        else
-        {
-            result = "No se encontro estrella";
-        }
-        return result;
+        result = findStar(DateTime.UtcNow, oStar.id, oStar.dec, oStar.ra, isNew);
     }
-    public string findConstellation(int pId)
+    else
     {
-        string result = string.Empty;
-        Constellation o = _l_Constellation.Where(x => x.id == pId).FirstOrDefault();
-        if (o != null)
-        {
-            EquatorialCoordinates eq = new EquatorialCoordinates() { dec = o.dec.Value, ra = o.ra.Value };
-            double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
-            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
-            if (hc != null)
-            {
-                ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
-                if (oServoCoordinates != null)
-                {
-                    HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
-                    string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
-                    string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
-                    string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
-                    result += strEq + "<br/>" + strHC + "<br/>" + strHc + "<br/>";
-                    //result += "HD " + eq.idHD.ToString() + "<br/>";
-                    result += "Servo: " + moveTheAnt_rango(oServoCoordinates);
-                    //moveTheAnt(oServoCoordinates);
-                }
-                else
-                {
-                    result = "La constelación no es visible";
-                }
-            }
-        }
-        else
-        {
-            result = "No se encontro la constelación";
-        }
-        return result;
+        result = "No se encontro estrella";
     }
-    /*public string findConstellation(DateTime pDate, int pIdHD, double pDec, double pRa)
-  {
-      string result = string.Empty;
-      EquatorialCoordinates eq = new EquatorialCoordinates() { idHD = pIdHD, dec = pDec, ra = pRa };
-      result = actionAnt(pDate, eq);
-      return result;
-  }*/
-    public string findStar(DateTime pDate, int pIdHD, double pDec, double pRa, bool isNew = false)
+    return result;
+}
+public string findConstellation(int pId)
+{
+    string result = string.Empty;
+    Constellation o = _l_Constellation.Where(x => x.id == pId).FirstOrDefault();
+    if (o != null)
     {
-        string result = string.Empty;
-        EquatorialCoordinates eq = new EquatorialCoordinates() { idHD = pIdHD, dec = pDec, ra = pRa };
-        result = actionAnt(pDate, eq, isNew);
-        return result;
-    }
-    public string actionAnt(DateTime pDate, EquatorialCoordinates eq, bool isNew = false)
-    {
-        string result = string.Empty;
-
-        double siderealTime_local = AstronomyEngine.GetTSL(pDate, city);
-
+        EquatorialCoordinates eq = new EquatorialCoordinates() { dec = o.dec.Value, ra = o.ra.Value };
+        double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
         HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
         if (hc != null)
         {
@@ -176,67 +129,114 @@ public class ProcessAnt : IDisposable
                 string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
                 string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                 result += strEq + "<br/>" + strHC + "<br/>" + strHc + "<br/>";
-                result += "HD " + eq.idHD.ToString() + "<br/>";
-                result += "Servo: " + (isNew ? moveTheAnt_rango(oServoCoordinates) : moveTheAnt(oServoCoordinates));
+                //result += "HD " + eq.idHD.ToString() + "<br/>";
+                result += "Servo: " + moveTheAnt_rango(oServoCoordinates);
+                //moveTheAnt(oServoCoordinates);
             }
             else
             {
-                result = "Estrella no es visible";
+                result = "La constelación no es visible";
             }
         }
+    }
+    else
+    {
+        result = "No se encontro la constelación";
+    }
+    return result;
+}
+/*public string findConstellation(DateTime pDate, int pIdHD, double pDec, double pRa)
+{
+  string result = string.Empty;
+  EquatorialCoordinates eq = new EquatorialCoordinates() { idHD = pIdHD, dec = pDec, ra = pRa };
+  result = actionAnt(pDate, eq);
+  return result;
+}*/
+public string findStar(DateTime pDate, int pIdHD, double pDec, double pRa, bool isNew = false)
+{
+    string result = string.Empty;
+    EquatorialCoordinates eq = new EquatorialCoordinates() { idHD = pIdHD, dec = pDec, ra = pRa };
+    result = actionAnt(pDate, eq, isNew);
+    return result;
+}
+public string actionAnt(DateTime pDate, EquatorialCoordinates eq, bool isNew = false)
+{
+    string result = string.Empty;
 
-        return result;
-    }
-    public string actionAnt_servo(double pHorizontal, double pVertical, double pH_min, double pH_max, double pV_min, double pV_max, bool pOnLaser)
+    double siderealTime_local = AstronomyEngine.GetTSL(pDate, city);
+
+    HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
+    if (hc != null)
     {
-        string result = string.Empty;
-        ServoCoordinates oServoCoordinates = new ServoCoordinates() { servoH = Math.Round(pHorizontal, 6), servoV = Math.Round(pVertical, 6) };//ServoCoordinates.convertServoCoordinates(hc);
-        string strHc = "Horizontal/Vertical: " + AstronomyEngine.GetSexagesimal(pHorizontal) + "/" + AstronomyEngine.GetSexagesimal(pVertical);
-        result += "Servo: " + moveTheAnt_rango(oServoCoordinates.servoH, oServoCoordinates.servoV, Math.Round(pH_min, 6), Math.Round(pH_max, 6), Math.Round(pV_min, 6), Math.Round(pV_max, 6), pOnLaser ? 1 : 0);
-        return result;
-    }
-    public string moveTheAnt(ServoCoordinates pServoCoordinates)
-    {
-        return _processServo.Start(pServoCoordinates.servoH, pServoCoordinates.servoV, 1);
-    }
-    public string moveTheAnt(double pH, double pV, int pLaser)
-    {
-        //var ddd = Util.getLogs();
-        //Util.log(new Exception(DateTime.Now.Millisecond.ToString()));
-        //Util.log_file(new Log(new Exception(DateTime.Now.Millisecond.ToString())));
-        return _processServo.Start(pH, pV, pLaser);
-    }
-    public string moveTheAnt_rango(ServoCoordinates pServoCoordinates)
-    {
-        return moveTheAnt_rango(pServoCoordinates.servoH, pServoCoordinates.servoV, Math.Round(2.9, 6), Math.Round(12.5, 6), Math.Round(2.5, 6), Math.Round(12.0, 6), 1);
-    }
-    public string moveTheAnt_rango(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser)
-    {
-        return _processServoRango.Start(pH, pV, pH_min, pH_max, pV_min, pV_max, pLaser);
-    }
-    public string actionLaser(int pIsRead, int pLaser)
-    {
-        return _processLaser.Start(pIsRead, pLaser);
-    }
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
+        ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
+        if (oServoCoordinates != null)
         {
-            if (disposing)
-            {
-                _processServo.Dispose();
-                _processLaser.Dispose();
-                _processServoRango.Dispose();
-            }
-
-            disposedValue = true;
+            HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
+            string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
+            string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
+            string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
+            result += strEq + "<br/>" + strHC + "<br/>" + strHc + "<br/>";
+            result += "HD " + eq.idHD.ToString() + "<br/>";
+            result += "Servo: " + (isNew ? moveTheAnt_rango(oServoCoordinates) : moveTheAnt(oServoCoordinates));
+        }
+        else
+        {
+            result = "Estrella no es visible";
         }
     }
 
-    public void Dispose()
+    return result;
+}
+public string actionAnt_servo(double pHorizontal, double pVertical, double pH_min, double pH_max, double pV_min, double pV_max, bool pOnLaser)
+{
+    string result = string.Empty;
+    ServoCoordinates oServoCoordinates = new ServoCoordinates() { servoH = Math.Round(pHorizontal, 6), servoV = Math.Round(pVertical, 6) };//ServoCoordinates.convertServoCoordinates(hc);
+    string strHc = "Horizontal/Vertical: " + AstronomyEngine.GetSexagesimal(pHorizontal) + "/" + AstronomyEngine.GetSexagesimal(pVertical);
+    result += "Servo: " + moveTheAnt_rango(oServoCoordinates.servoH, oServoCoordinates.servoV, Math.Round(pH_min, 6), Math.Round(pH_max, 6), Math.Round(pV_min, 6), Math.Round(pV_max, 6), pOnLaser ? 1 : 0);
+    return result;
+}
+public string moveTheAnt(ServoCoordinates pServoCoordinates)
+{
+    return _processServo.Start(pServoCoordinates.servoH, pServoCoordinates.servoV, 1);
+}
+public string moveTheAnt(double pH, double pV, int pLaser)
+{
+    //var ddd = Util.getLogs();
+    //Util.log(new Exception(DateTime.Now.Millisecond.ToString()));
+    //Util.log_file(new Log(new Exception(DateTime.Now.Millisecond.ToString())));
+    return _processServo.Start(pH, pV, pLaser);
+}
+public string moveTheAnt_rango(ServoCoordinates pServoCoordinates)
+{
+    return moveTheAnt_rango(pServoCoordinates.servoH, pServoCoordinates.servoV, Math.Round(2.9, 6), Math.Round(12.5, 6), Math.Round(2.5, 6), Math.Round(12.0, 6), 1);
+}
+public string moveTheAnt_rango(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser)
+{
+    return _processServoRango.Start(pH, pV, pH_min, pH_max, pV_min, pV_max, pLaser);
+}
+public string actionLaser(int pIsRead, int pLaser)
+{
+    return _processLaser.Start(pIsRead, pLaser);
+}
+protected virtual void Dispose(bool disposing)
+{
+    if (!disposedValue)
     {
-        Dispose(true);
+        if (disposing)
+        {
+            _processServo.Dispose();
+            _processLaser.Dispose();
+            _processServoRango.Dispose();
+        }
+
+        disposedValue = true;
     }
+}
+
+public void Dispose()
+{
+    Dispose(true);
+}
 }
 public class ProcessServo : IDisposable
 {

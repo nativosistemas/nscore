@@ -22,7 +22,7 @@ public class Constellation
     public double? Extension { get; set; }
     public double? ra { get; set; }
     public double? dec { get; set; }
-   //public bool visible { get; set; }
+   public bool visible { get; set; }
 
 }
 [Index(nameof(idHD), IsUnique = true)]

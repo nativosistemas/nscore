@@ -118,7 +118,7 @@ function loadConstelaciones() {
         //stars; // fetched movies
 
         stars.forEach(element => {
-            if (element.name != null && element.name != '') {
+            if (element.name != null && element.name != '' && element.visible) {
                 var disabled = '';
                 /*if (!element.visible) {
                     disabled = ' disabled list-group-item-dark ';

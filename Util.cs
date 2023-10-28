@@ -440,7 +440,14 @@ public class Util
             foreach (AstronomicalObject oFila in l)
             {
                 context.AstronomicalObjects.Add(oFila);
+            }
+            try
+            {
                 context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                log(ex);
             }
         }
         return l;
@@ -586,6 +593,7 @@ public class Util
                 o.Extension = Convert.ToDouble(oRow["7"].ToString().Replace(".", ","));
                 o.ra = Convert.ToDouble(oRow["8"].ToString().Replace(".", ","));
                 o.dec = Convert.ToDouble(oRow["9"].ToString().Replace(".", ","));
+                o.visible = true;
                 result.Add(o);
                 //   }
             }
@@ -662,7 +670,14 @@ public class Util
             foreach (Constellation oFila in l)
             {
                 context.Constellations.Add(oFila);
+            }
+            try
+            {
                 context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                log(ex);
             }
         }
         return l;
