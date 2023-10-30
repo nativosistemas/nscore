@@ -86,7 +86,7 @@ function loadIndex() {
         //stars; // fetched movies
 
         stars.forEach(element => {
-            if (element.name != null && element.name != '') {
+            if (element.name != null && element.name != ''  ) {//&& element.visible
                 var disabled = '';
                 if (!element.visible) {
                     disabled = ' disabled list-group-item-dark ';
@@ -226,6 +226,9 @@ async function fetchServoConstellation(pId) {
 }
 function onClickApagarLaser() {
     fetchLaser(0, 0);
+}
+function onClickEncenderLaser() {
+    fetchLaser(0, 1);
 }
 async function fetchLaser(pRead, pOn) {
     const response = await fetch('/laser?read=' + pRead + '&on=' + pOn);

@@ -688,4 +688,35 @@ public class Util
         RestaurarJsonBD_AstronomicalObjects();
         return "Ok";
     }
+    public static string AsignarConstelacionAEstrellas()
+    {
+        string result = string.Empty;
+        List<Constellation> l_Constellation = new List<Constellation>();
+        List<AstronomicalObject> l_AstronomicalObject = new List<AstronomicalObject>();
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                l_Constellation = context.Constellations.ToList();
+                l_AstronomicalObject = context.AstronomicalObjects.ToList();
+                foreach (Constellation oItem in l_Constellation)
+                {
+                    List<AstronomicalObject> l_AstronomicalObject_temp = l_AstronomicalObject.Where(x => x.nameLatin.Contains(oItem.Genitivo)).ToList();
+                    int cant = l_AstronomicalObject_temp.Count;
+                    result += " { ";
+                    result += "nombre: " + oItem.name + " - Cantidad: " + cant;
+                    foreach (AstronomicalObject oItem_detalle in l_AstronomicalObject_temp)
+                    {
+                        result += " [ " + oItem_detalle.name + " ] ";
+                    }
+                    result += " }";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
 }
