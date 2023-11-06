@@ -62,14 +62,15 @@ public class ProcessAnt : IDisposable
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
 
-            if (hc.Altitude < 25.0)
+           /* if (hc.Altitude < 25.0)
             {
                 oStar.visible = false;
             }
             else
             {
                 oStar.visible = true;
-            }
+            }*/
+             oStar.visible = true;
         }
         return _l_Star.Where(x => x.visible).ToList();
     }
