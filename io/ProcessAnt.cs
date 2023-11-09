@@ -62,7 +62,7 @@ public class ProcessAnt : IDisposable
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
 
-            if (hc.Altitude < 0.0)
+            if (hc.Altitude < 1.0)
             {
                 oStar.visible = false;
             }
@@ -84,7 +84,7 @@ public class ProcessAnt : IDisposable
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = o.dec.Value, ra = o.ra.Value };
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
-            if (hc.Altitude < 0.0)
+            if (hc.Altitude < 1.0)
             {
                 o.visible = false;
             }
