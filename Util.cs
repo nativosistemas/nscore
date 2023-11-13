@@ -95,31 +95,6 @@ public class Util
         }
         return l;
     }
-    public static void initDbContext()
-    {
-        string strDataSource = Path.Combine(nscore.Helper.folder, nscore.Helper.sqllite);
-        using (var context = new AstroDbContext())
-        {
-            context.Database.EnsureCreated(); // Crea la base de datos si no existe
-            var ddd = context.Stars.ToList();
-            var canti = ddd.Count;
-            var yyy = 5 + 7;
-            var l = getStars();
-            foreach (var item in l)
-            {
-                context.Stars.Add(item);
-            }
-            try
-            {
-                context.SaveChanges();
-            }
-            catch (Microsoft.EntityFrameworkCore.DbUpdateException ex)
-            {
-                log(ex);
-            }
-
-        }
-    }
     public static List<Log> getLogs()
     {
         List<Log> result = new List<Log>();
@@ -620,6 +595,50 @@ public class Util
             using (var context = new AstroDbContext())
             {
                 result = context.Constellations.ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static List<Star> getAllStars()
+    {
+        List<Star> result = new List<Star>();
+        List<AstronomicalObject> l = nscore.Util.getAstronomicalObjects().Where(x => x.magnitudAparente != null).OrderBy(x => x.magnitudAparente).ToList();
+        //foreach (AstronomicalObject oStar in l){
+        for (int i = 0; i < l.Count; i++)
+        {
+            AstronomicalObject o = l[i];
+            Star oStar = new Star();
+            oStar.id = o.idHD;
+            oStar.dec = o.dec.Value;
+            oStar.ra = o.ra.Value;
+            oStar.name = o.getName();
+            oStar.idHD = o.idHD;
+            result.Add(oStar);
+        }
+        return result;
+    }
+    public static string updateConstelacion(int id, int idHD, string pName)
+    {
+        string result = "!Ok";
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                Constellation o = context.Constellations.Where(x => x.id == id).FirstOrDefault();
+                if (o != null)
+                {
+                    o.idHD_startRef = idHD;
+                    if (!string.IsNullOrEmpty(pName))
+                    { o.name = pName; }
+                    context.Constellations.Update(o);
+                    context.SaveChanges();
+                    result = "Ok";
+                }
+
             }
         }
         catch (Exception ex)

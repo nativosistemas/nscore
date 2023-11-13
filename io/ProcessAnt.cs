@@ -21,7 +21,7 @@ public class ProcessAnt : IDisposable
     public ProcessAnt()
     {
         _city = getCitys().FirstOrDefault();
-        _l_Star = new List<Star>();
+        /*_l_Star = new List<Star>();
         List<AstronomicalObject> l = nscore.Util.getAstronomicalObjects().Where(x => x.magnitudAparente != null).OrderBy(x => x.magnitudAparente).ToList();
         //foreach (AstronomicalObject oStar in l){
         for (int i = 0; i < l.Count; i++)
@@ -32,9 +32,10 @@ public class ProcessAnt : IDisposable
             oStar.dec = o.dec.Value;
             oStar.ra = o.ra.Value;
             oStar.name = o.getName();
-            //oStar.nameBayer = oStar.id;
+            oStar.idHD = o.idHD;
             _l_Star.Add(oStar);
-        }
+        }*/
+        _l_Star = nscore.Util.getAllStars();
         _l_Constellation = nscore.Util.getConstelaciones();
     }
     public ObserverCoordinates setCity(int id, string pName, double pLatitude, double pLongitude)
@@ -77,9 +78,9 @@ public class ProcessAnt : IDisposable
 
     public List<Constellation> getConstellations()
     {
-        // List<Constellation> l = new List<Constellation>();
+        List<Constellation> l = nscore.Util.getConstelaciones();
         double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
-        foreach (Constellation o in _l_Constellation)
+        foreach (Constellation o in l)
         {
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = o.dec.Value, ra = o.ra.Value };
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
@@ -95,7 +96,7 @@ public class ProcessAnt : IDisposable
             }
             //o.visible = true;
         }
-        return _l_Constellation.Where(x => x.visible).ToList();
+        return l.Where(x => x.visible).ToList();//
     }
     public string findStar(int pId, bool isNew = false, bool isLaserOn = false)
     {
@@ -115,9 +116,12 @@ public class ProcessAnt : IDisposable
     {
         string result = string.Empty;
         Constellation o = _l_Constellation.Where(x => x.id == pId).FirstOrDefault();
-        if (o != null)
+          Star oStar = _l_Star.Where(x => x.idHD == o.idHD_startRef).FirstOrDefault();
+        if (o != null && oStar != null)
         {
-            EquatorialCoordinates eq = new EquatorialCoordinates() { dec = o.dec.Value, ra = o.ra.Value };
+
+         EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
+               // EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
             double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             if (hc != null)
@@ -131,18 +135,19 @@ public class ProcessAnt : IDisposable
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "<br/>" + strHC + "<br/>" + strHc + "<br/>";
                     //result += "HD " + eq.idHD.ToString() + "<br/>";
+                     result += "Estrella más brillante " + oStar.name +  "  -  HD " +o.idHD_startRef.ToString()+ "<br/>";
                     result += "Servo: " + moveTheAnt_rango(oServoCoordinates);
                     //moveTheAnt(oServoCoordinates);
                 }
                 else
                 {
-                    result = "La constelación no es visible";
+                    result = "La estrella de la constelación constelación no es visible";
                 }
             }
         }
         else
         {
-            result = "No se encontro la constelación";
+            result = "No se encontro la estrella de la constelación o no esta cargada";
         }
         return result;
     }
@@ -209,7 +214,7 @@ public class ProcessAnt : IDisposable
     }
     public string moveTheAnt_rango(ServoCoordinates pServoCoordinates, bool isLaserOn = false)
     {
-        return moveTheAnt_rango(pServoCoordinates.servoH, pServoCoordinates.servoV, Math.Round(2.9, 6), Math.Round(12.5, 6), Math.Round(2.5, 6), Math.Round(12.0, 6), isLaserOn ? 1 : 0);
+        return moveTheAnt_rango(pServoCoordinates.servoH, pServoCoordinates.servoV, Math.Round(2.9, 6), Math.Round(12.7, 6), Math.Round(2.5, 6), Math.Round(12.2, 6), isLaserOn ? 1 : 0);
     }
     public string moveTheAnt_rango(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser)
     {

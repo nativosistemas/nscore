@@ -13,14 +13,6 @@ GPIO.output(21, GPIO.LOW)
 
 
 # Función para calcular el ciclo de trabajo correspondiente a un ángulo dado
-def calcular_ciclo_de_trabajo(angulo):
-    ciclo_minimo = 2.5
-    ciclo_maximo = 12.0
-    rango = ciclo_maximo - ciclo_minimo
-    ciclo = ciclo_minimo + ((rango / 180.0) * angulo)
-    return ciclo
-
-# Función para calcular el ciclo de trabajo correspondiente a un ángulo dado
 def calcular_ciclo_de_trabajo_rango(angulo,ciclo_minimo,ciclo_maximo):
     #ciclo_minimo = 2.5
     #ciclo_maximo = 12.0

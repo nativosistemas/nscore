@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Estrellas</title>
+    <title>Constelaciones</title>
     <link href="../includes/css/bootstrap.min.css" rel="stylesheet">
     <link href="../includes/css/astro.css" rel="stylesheet">
     <script src="../includes/js/astro.js?n=2" type="text/javascript"></script>
@@ -22,10 +22,10 @@
             </div>
             <div class="col-2">
                 <button type="button" class="btn btn-success" onclick="onClickEncenderLaser()">Encender Laser</button>
-            </div>            
+            </div>
             <div class="col-2">
                 <button type="button" class="btn btn-secondary" onclick="onClickApagarLaser()">Apagar Laser</button>
-            </div>   
+            </div>
             <div class="col-2">
                 <button type="button" class="btn btn-info" onclick="onClickIrConfig()" title="Configuración"> <svg
                         xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear"
@@ -38,33 +38,51 @@
 
             </div>
         </div>
-        <br />
- 
+
         <div class="row">
             <div class="col">
-                <div  class="alert alert-primary" role="alert">
+                <div class="alert alert-primary" role="alert">
                     Constelaciones
                 </div>
             </div>
         </div>
-        <br />
+    
         <div class="row">
             <div class="col">
                 <ul id="miLista" class="list-group scrollable-list">
                 </ul>
             </div>
-        </div>
-
-        <br />
-        <div class="row">
-            <div id="divMsg" class="col">
+            <div class="col">
+                <div id="divMsg" class="col">
 
 
+                </div>
             </div>
-
         </div>
+        <br />
 
 
+        <div id="cardDetalle" class="card" style="display: none;"  >
+            <div class="card-body">
+              <h5 class="card-title">Detalle</h5>
+              <div id="divMsg_detalle" class="col">
+
+                <div class="mb-3">
+                    <label for="selectStar" class="form-label">Estrella Default</label>
+                    <!--<select  id="selectStar" class="form-select" aria-label="Default select">
+                        <option selected>Abre el menú desplegable</option>
+
+                      </select>-->
+                      <input type="number" class="form-control" id="selectStar" placeholder="">
+                  </div>
+                  <div class="mb-3">
+                    <label for="inputName" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="inputName" placeholder="">
+                  </div>
+                  <button type="button" class="btn  btn-info" onclick="onClickGuardarConstellation()">Grabar</button>
+            </div>
+            </div>
+          </div>
 
     </div>
 </body>

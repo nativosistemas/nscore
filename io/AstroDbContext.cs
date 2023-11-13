@@ -4,7 +4,7 @@ public class AstroDbContext : DbContext
 {
     public DbSet<nscore.AstronomicalObject> AstronomicalObjects { get; set; }
     public DbSet<nscore.Constellation> Constellations { get; set; }
-    public DbSet<nscore.Star> Stars { get; set; }
+    //public DbSet<nscore.Star> Stars { get; set; }
     public DbSet<nscore.Log> Logs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -50,7 +50,7 @@ public class AstroDbContext : DbContext
              Console.WriteLine(ex.Message);
          }
      }*/
-    public static List<Star> getStars()
+    /*public static List<Star> getStars()
     {
         List<Star> result = new List<Star>();
         try
@@ -82,4 +82,6 @@ public class AstroDbContext : DbContext
         }
         return result;
     }
+    */
 }
+

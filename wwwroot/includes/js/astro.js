@@ -1,5 +1,7 @@
 var l_citys = [];
 var city = null;
+var idConstellationSelect = null;
+var l_constellations = [];
 window.addEventListener("load", (event) => {
     document.getElementById("spinner").style.display = "none";
 
@@ -21,7 +23,7 @@ window.addEventListener("load", (event) => {
     else if (pagina == 'servos.html') {
         // document.getElementById("spinner").style.display = "none";
 
-    } else if (pagina == 'espaciolab.html') { 
+    } else if (pagina == 'espaciolab.html') {
         loadIndex();
     }
     if (pagina == 'estrellas.html' || pagina == 'config.html' || pagina == 'constelaciones.html') {
@@ -86,7 +88,7 @@ function loadIndex() {
         //stars; // fetched movies
 
         stars.forEach(element => {
-            if (element.name != null && element.name != ''  ) {//&& element.visible
+            if (element.name != null && element.name != '') {//&& element.visible
                 var disabled = '';
                 if (!element.visible) {
                     disabled = ' disabled list-group-item-dark ';
@@ -113,11 +115,11 @@ function loadIndex() {
 function loadConstelaciones() {
     //$("#spinner").hide();
     //document.getElementById("spinner").style.display = "none";
-    fetchConstellationsJSON().then(stars => {
+    fetchConstellationsJSON().then(l => {
         var strHtml = '';
         //stars; // fetched movies
-
-        stars.forEach(element => {
+        l_constellations = l;
+        l.forEach(element => {
             if (element.name != null && element.name != '' && element.visible) {
                 var disabled = '';
                 /*if (!element.visible) {
@@ -140,6 +142,20 @@ function loadConstelaciones() {
             });
         });
     });
+   /* fetchAllStarsJSON().then(l => {
+        var strHtml = '';
+
+        l.forEach(element => {
+            if (element.name != null && element.name != '') {
+  
+
+                strHtml += '<option value="' + element.idHD + '">' + element.name + ' [HD ' + element.idHD + ']' + '</option>';
+            }
+        }
+        );
+        document.getElementById("selectStar").innerHTML = strHtml;
+
+    });*/
 
 }
 function onClickVolver() {
@@ -189,12 +205,18 @@ function capturarEvento_ConstellationsConstellations(elemento) {
     elemento.classList.add("active");
     onClickConstellation(elemento.value);
 }
+
 function onClickConstellation(pId) {
     if (!isOnClickStar) {
         isOnClickStar = true;
         // $("#spinner").show();
         document.getElementById("spinner").style.display = '';
+        document.getElementById("cardDetalle").style.display = '';
+        document.getElementById("selectStar").value = 0;
+        document.getElementById("inputName").value = '';
         var id = pId;
+        idConstellationSelect = pId;
+        cargarDetalleConstellation();
         fetchServoConstellation(id).then(text => {
             var strHtml = '';
             strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
@@ -204,8 +226,31 @@ function onClickConstellation(pId) {
         });
     }
 }
+function cargarDetalleConstellation() {
+    //idConstellationSelect
+
+    var arrayConst = l_constellations.filter(f => f.id == idConstellationSelect);
+    var constelacion = arrayConst[0];
+    document.getElementById("inputName").value = constelacion.name;
+    if (constelacion.idHD_startRef != 0) {
+        document.getElementById("selectStar").value = constelacion.idHD_startRef;
+    }
+
+}
+function onClickGuardarConstellation() {
+    // idConstellationSelect
+    var id = idConstellationSelect;
+    var idHD = document.getElementById("selectStar").value;
+    var oName = document.getElementById("inputName").value;
+    fetchUpdateConstelacion(id, idHD, oName);//.then(l => {
+}
 async function fetchStarsJSON() {
     const response = await fetch('/stars');
+    const stars = await response.json();
+    return stars;
+}
+async function fetchAllStarsJSON() {
+    const response = await fetch('/allstars');
     const stars = await response.json();
     return stars;
 }
@@ -216,6 +261,11 @@ async function fetchConstellationsJSON() {
 }
 async function fetchServo(pId) {
     const response = await fetch('/servo?id=' + pId);
+    const text = await response.text();
+    return text;
+}
+async function fetchUpdateConstelacion(id, idHD, name) {
+    const response = await fetch('/updateconstellation?id=' + id + '&idHD=' + idHD + '&name=' + name);// id, int idHD, string name
     const text = await response.text();
     return text;
 }

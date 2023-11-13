@@ -13,6 +13,7 @@ public class Constellation
     public Guid publicID { get; set; }
     [Required]
     public int id { get; set; }
+    public int idHD_startRef { get; set; }
     public string? nameLatin { get; set; }
     public string? name { get; set; }
     public string? abbreviation { get; set; }
@@ -22,7 +23,7 @@ public class Constellation
     public double? Extension { get; set; }
     public double? ra { get; set; }
     public double? dec { get; set; }
-   public bool visible { get; set; }
+    public bool visible { get; set; }
 
 }
 [Index(nameof(idHD), IsUnique = true)]
@@ -44,6 +45,7 @@ public class AstronomicalObject
     public double? dec { get; set; }
     public string? simbadNames { get; set; }
     public string? simbadNameDefault { get; set; }
+    public string? abbreviationConstellation { get; set; }
     public int? simbadOID { get; set; }
     public string getName()
     {
@@ -84,6 +86,7 @@ public class Star
     public double ra { get; set; }
     public double dec { get; set; }
     public bool visible { get; set; }
+      public int idHD { get; set; }
 }
 public class ObserverCoordinates
 {
