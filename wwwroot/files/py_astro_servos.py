@@ -33,6 +33,7 @@ parametroH_rango_min = float(sys.argv[4])
 parametroH_rango_max = float(sys.argv[5])
 parametroV_rango_min = float(sys.argv[6])
 parametroV_rango_max = float(sys.argv[7])
+sleep_secs = float(sys.argv[8])
 #suma = parametroH + parametroV + parametroLaser
 
 
@@ -49,7 +50,7 @@ pV.start(valorV)#pV.ChangeDutyCycle(valorV)
 
 # timer
 # ¿aca va un timer?
-time.sleep(3)
+time.sleep(sleep_secs)
 
 
 pV.stop()
@@ -68,4 +69,4 @@ else:
 
 # Utilizar el parámetro recibido
 print("H: " + str(parametroH) + " ("+str(valorH)+")"+ " - V: " +
-      str(parametroV) + " ("+str(valorV)+")"+ " - laser: " + str(parametroLaser))
+      str(parametroV) + " ("+str(valorV)+")"+ " - laser: " + str(parametroLaser) + " - sleep_secs: " + str(sleep_secs))

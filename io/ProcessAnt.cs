@@ -17,6 +17,9 @@ public class ProcessAnt : IDisposable
     //private static Semaphore _semaphore_ant = new Semaphore(0, 1);
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
 
+    public double _Horizontal_grados = 0;
+    public double _Vertical_grados = 0;
+
 
     public ProcessAnt()
     {
@@ -116,12 +119,12 @@ public class ProcessAnt : IDisposable
     {
         string result = string.Empty;
         Constellation o = _l_Constellation.Where(x => x.id == pId).FirstOrDefault();
-          Star oStar = _l_Star.Where(x => x.idHD == o.idHD_startRef).FirstOrDefault();
+        Star oStar = _l_Star.Where(x => x.idHD == o.idHD_startRef).FirstOrDefault();
         if (o != null && oStar != null)
         {
 
-         EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
-               // EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
+            EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
+            // EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
             double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             if (hc != null)
@@ -135,7 +138,7 @@ public class ProcessAnt : IDisposable
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "<br/>" + strHC + "<br/>" + strHc + "<br/>";
                     //result += "HD " + eq.idHD.ToString() + "<br/>";
-                     result += "Estrella más brillante " + oStar.name +  "  -  HD " +o.idHD_startRef.ToString()+ "<br/>";
+                    result += "Estrella más brillante " + oStar.name + "  -  HD " + o.idHD_startRef.ToString() + "<br/>";
                     result += "Servo: " + moveTheAnt_rango(oServoCoordinates);
                     //moveTheAnt(oServoCoordinates);
                 }
@@ -218,7 +221,38 @@ public class ProcessAnt : IDisposable
     }
     public string moveTheAnt_rango(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser)
     {
-        return _processServoRango.Start(pH, pV, pH_min, pH_max, pV_min, pV_max, pLaser);
+        double horizontal = 0;
+        double vertical = 0;
+        if (_Horizontal_grados > pH)
+        {
+            horizontal = Math.Abs(_Horizontal_grados - pH);
+        }
+        else
+        {
+            horizontal = Math.Abs(pH - _Horizontal_grados);
+        }
+        if (_Vertical_grados > pV)
+        {
+            vertical = Math.Abs(_Vertical_grados - pV);
+        }
+        else
+        {
+            vertical = Math.Abs(pV - _Vertical_grados);
+        }
+        _Horizontal_grados = pH;
+        _Vertical_grados = pV;
+        double sleep_secs = 3;
+        if (horizontal > vertical)
+        {
+            sleep_secs = double.Round((sleep_secs * horizontal) / 180.0, 2);
+        }
+        else
+        {  
+            sleep_secs = double.Round((sleep_secs * vertical)  / 180.0, 2);
+        }
+
+
+        return _processServoRango.Start(pH, pV, pH_min, pH_max, pV_min, pV_max, pLaser, sleep_secs);
     }
     public string actionLaser(int pIsRead, int pLaser)
     {
@@ -303,12 +337,12 @@ public class ProcessServoRango : IDisposable
         _PoolProcess = new PoolProcess(1, nameFile);
     }
 
-    public string Start(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser)
+    public string Start(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser, double pSleep_secs)
     {
         string parameter = pH.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
         + Convert.ToString(pLaser) + " " + pH_min.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
          + pH_max.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV_min.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
-         + pV_max.ToString(System.Globalization.CultureInfo.InvariantCulture);
+         + pV_max.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pSleep_secs.ToString(System.Globalization.CultureInfo.InvariantCulture);
         return _PoolProcess.Start(parameter);
     }
     protected virtual void Dispose(bool disposing)
