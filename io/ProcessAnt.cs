@@ -247,10 +247,13 @@ public class ProcessAnt : IDisposable
             sleep_secs = double.Round((sleep_secs * horizontal) / 180.0, 2);
         }
         else
-        {  
-            sleep_secs = double.Round((sleep_secs * vertical)  / 180.0, 2);
+        {
+            sleep_secs = double.Round((sleep_secs * vertical) / 180.0, 2);
         }
-
+        if (sleep_secs < 0.5)
+        {
+            sleep_secs = 0.5;
+        }
 
         return _processServoRango.Start(pH, pV, pH_min, pH_max, pV_min, pV_max, pLaser, sleep_secs);
     }
