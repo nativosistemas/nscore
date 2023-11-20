@@ -2,7 +2,19 @@ var l_citys = [];
 var city = null;
 var idConstellationSelect = null;
 var l_constellations = [];
+
 window.addEventListener("load", (event) => {
+
+    /*var bodyElement = document.body;
+    bodyElement.onload = () => {
+       
+       pageMainLoad();
+      };*/
+      pageMainLoad();
+
+
+});
+function pageMainLoad(){
     document.getElementById("spinner").style.display = "none";
 
     var pagina = getNamePage();
@@ -21,7 +33,7 @@ window.addEventListener("load", (event) => {
 
     }
     else if (pagina == 'servos.html') {
-        // document.getElementById("spinner").style.display = "none";
+        loadServos();
 
     } else if (pagina == 'espaciolab.html') {
         loadIndex();
@@ -40,7 +52,8 @@ window.addEventListener("load", (event) => {
             }
         });
     }
-});
+}
+
 function getNamePage() {
     var url = location.href;
     var pagina = url.substring(url.lastIndexOf('/') + 1);
@@ -142,25 +155,61 @@ function loadConstelaciones() {
             });
         });
     });
-   /* fetchAllStarsJSON().then(l => {
-        var strHtml = '';
+    /* fetchAllStarsJSON().then(l => {
+         var strHtml = '';
+ 
+         l.forEach(element => {
+             if (element.name != null && element.name != '') {
+   
+ 
+                 strHtml += '<option value="' + element.idHD + '">' + element.name + ' [HD ' + element.idHD + ']' + '</option>';
+             }
+         }
+         );
+         document.getElementById("selectStar").innerHTML = strHtml;
+ 
+     });*/
+}
+function loadServos() {
+    actulizarGradosServos();
+    var rangeH = document.getElementById("rangeHorizontal");
+    var bubbleH = document.getElementById("bubbleHorizontal");
+    rangeH.addEventListener("input", () => {
+        setBubble(rangeH, bubbleH);
+    });
+    var rangeV = document.getElementById("rangeVertical");
+    var bubbleV = document.getElementById("bubbleVertical");
+    rangeV.addEventListener("input", () => {
+        setBubble(rangeV, bubbleV);
+    });
+}
+//
+function onchangeRange(newVal){
+   // document.getElementById("valBox").innerHTML=newVal;
+  // actulizarGradosServos();
 
-        l.forEach(element => {
-            if (element.name != null && element.name != '') {
-  
+   onchangeRangeMoverServo();
+}
 
-                strHtml += '<option value="' + element.idHD + '">' + element.name + ' [HD ' + element.idHD + ']' + '</option>';
-            }
-        }
-        );
-        document.getElementById("selectStar").innerHTML = strHtml;
+function setBubble(range, bubble) {
+    const val = range.value;
+    const min = range.min ? range.min : 0;
+    const max = range.max ? range.max : 100;
+    const newVal = Number(((val - min) * 100) / (max - min));
+    bubble.innerHTML = val;
 
-    });*/
-
+    // Sorta magic numbers based on size of the native UI thumb
+   // bubble.style.left = newVal = "%";
 }
 function onClickVolver() {
     //window.location.href = "index.html";
+   // location.reload();
     history.back();
+    //
+    /*setTimeout(function() {
+
+        location.reload();
+    }, 5000);*/
     return false;
 }
 function onClickIrConfig() {
@@ -244,6 +293,36 @@ function onClickGuardarConstellation() {
     var oName = document.getElementById("inputName").value;
     fetchUpdateConstelacion(id, idHD, oName);//.then(l => {
 }
+function actulizarGradosServos() {
+
+    fetchGetServos().then(response => {
+        var strHtml = '';
+        /*const o = response.json();
+        const json = '{"result":true, "count":42}';*/
+        const o = JSON.parse(response);
+        document.getElementById("inputServoH").value = o.horizontal;
+        document.getElementById("inputServoV").value = o.vertical;
+        //
+        //document.getElementById("rangeHorizontal").value = o.horizontal;
+        var rangeH = document.getElementById("rangeHorizontal");
+        rangeH.value = o.horizontal;
+        var bubbleH = document.getElementById("bubbleHorizontal");
+        var rangeV = document.getElementById("rangeVertical");
+        rangeV.value = o.vertical;
+        var bubbleV = document.getElementById("bubbleVertical");
+
+        setBubble(rangeH, bubbleH);
+        setBubble(rangeV, bubbleV);
+        //
+
+
+        document.getElementById("inputServoHmin").value = o.horizontal_min;
+        document.getElementById("inputServoHmax").value = o.horizontal_max;
+        document.getElementById("inputServoVmin").value = o.vertical_min;
+        document.getElementById("inputServoVmax").value = o.vertical_max;
+        // document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
+    });
+}
 async function fetchStarsJSON() {
     const response = await fetch('/stars');
     const stars = await response.json();
@@ -306,6 +385,12 @@ async function fetchSetServoMover(pH, pV, pH_min, pH_max, pV_min, pV_max, pOnLas
     const text = await response.text();
     return text;
 }
+async function fetchGetServos() {
+    const response = await fetch('/getservos');
+    const text = await response.text();
+    return text;
+}
+
 var isOnClickStar = false;
 
 function onClickStar(pId) {
@@ -366,6 +451,62 @@ function onClickMoverServo() {
             laserOn = true;
         }
         fetchSetServoMover(horizontal, vertical, horizontal_min, horizontal_max, vertical_min, vertical_max, laserOn).then(text => {
+            actulizarGradosServos();
+            var strHtml = '';
+            strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
+            document.getElementById("divMsg").innerHTML = strHtml;
+            isOnClickMoverServo = false;
+            document.getElementById("spinner").style.display = "none";
+
+        })
+    }
+    return false;
+}
+function onchangeRangeMoverServo() {
+    if (!isOnClickMoverServo) {
+        isOnClickMoverServo = true;
+        document.getElementById("spinner").style.display = '';
+        var horizontal = 0;
+        var vertical = 0;
+        var horizontal_min = 0;
+        var horizontal_max = 0;
+        var vertical_min = 0;
+        var vertical_max = 0;
+        var laserOn = false;
+        var inputElement_horizontal = document.getElementById('rangeHorizontal');
+        if (inputElement_horizontal.value.trim() !== '') {
+            horizontal = inputElement_horizontal.value;
+        }
+        var inputElement_vertical = document.getElementById('rangeVertical');
+        if (inputElement_vertical.value.trim() !== '') {
+            vertical = inputElement_vertical.value;
+        }
+
+
+        var inputElement_horizontal_min = document.getElementById('inputServoHmin');
+        if (inputElement_horizontal_min.value.trim() !== '') {
+            horizontal_min = inputElement_horizontal_min.value;
+        }
+        var inputElement_horizontal_max = document.getElementById('inputServoHmax');
+        if (inputElement_horizontal_max.value.trim() !== '') {
+            horizontal_max = inputElement_horizontal_max.value;
+        }
+        var inputElement_vertical_min = document.getElementById('inputServoVmin');
+        if (inputElement_vertical_min.value.trim() !== '') {
+            vertical_min = inputElement_vertical_min.value;
+        }
+        var inputElement_vertical_max = document.getElementById('inputServoVmax');
+        if (inputElement_vertical_max.value.trim() !== '') {
+            vertical_max = inputElement_vertical_max.value;
+        }
+
+        //var checkboxLaserOn = document.getElementById('checkboxLaserOn');
+
+        //if (checkboxLaserOn.checked) {
+           // laserOn = true;
+       // }
+        fetchSetServoMover(horizontal, vertical, horizontal_min, horizontal_max, vertical_min, vertical_max, laserOn).then(text => {
+            actulizarGradosServos();
             var strHtml = '';
             strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
             document.getElementById("divMsg").innerHTML = strHtml;

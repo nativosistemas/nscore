@@ -125,3 +125,11 @@
     max-height: 20em; /* Establece la altura máxima deseada */
     overflow: auto; /* Habilita la barra de desplazamiento en caso de exceder la altura máxima */
   }
+
+  .range-vertical {
+    width: 150px;
+    height: 20px;
+    margin: 0;
+    transform-origin: 75px 75px;
+    transform: rotate(-90deg);
+  }

@@ -19,7 +19,10 @@ public class ProcessAnt : IDisposable
 
     public double _Horizontal_grados = 0;
     public double _Vertical_grados = 0;
-
+    public double _Horizontal_grados_min = Math.Round(2.9, 6);
+    public double _Horizontal_grados_max = Math.Round(12.7, 6);
+    public double _Vertical_grados_min = Math.Round(2.5, 6);
+    public double _Vertical_grados_max = Math.Round(12.2, 6);
 
     public ProcessAnt()
     {
@@ -56,6 +59,17 @@ public class ProcessAnt : IDisposable
             _l_City.Add(ObserverCoordinates.cityAtenas);
         }
         return _l_City;
+    }
+    public string getValoresServos()
+    {
+        string result = "{ \"horizontal\":" + _Horizontal_grados.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+        ", \"vertical\":" + _Vertical_grados.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+          ", \"horizontal_min\":" + _Horizontal_grados_min.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                    ", \"horizontal_max\":" + _Horizontal_grados_max.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                              ", \"vertical_min\":" + _Vertical_grados_min.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                    ", \"vertical_max\":" + _Vertical_grados_max.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+        " }";
+        return result;
     }
     public List<Star> getStars()
     {
@@ -199,6 +213,7 @@ public class ProcessAnt : IDisposable
     public string actionAnt_servo(double pHorizontal, double pVertical, double pH_min, double pH_max, double pV_min, double pV_max, bool pOnLaser)
     {
         string result = string.Empty;
+
         ServoCoordinates oServoCoordinates = new ServoCoordinates() { servoH = Math.Round(pHorizontal, 6), servoV = Math.Round(pVertical, 6) };//ServoCoordinates.convertServoCoordinates(hc);
         string strHc = "Horizontal/Vertical: " + AstronomyEngine.GetSexagesimal(pHorizontal) + "/" + AstronomyEngine.GetSexagesimal(pVertical);
         result += "Servo: " + moveTheAnt_rango(oServoCoordinates.servoH, oServoCoordinates.servoV, Math.Round(pH_min, 6), Math.Round(pH_max, 6), Math.Round(pV_min, 6), Math.Round(pV_max, 6), pOnLaser ? 1 : 0);
@@ -217,7 +232,7 @@ public class ProcessAnt : IDisposable
     }
     public string moveTheAnt_rango(ServoCoordinates pServoCoordinates, bool isLaserOn = false)
     {
-        return moveTheAnt_rango(pServoCoordinates.servoH, pServoCoordinates.servoV, Math.Round(2.9, 6), Math.Round(12.7, 6), Math.Round(2.5, 6), Math.Round(12.2, 6), isLaserOn ? 1 : 0);
+        return moveTheAnt_rango(pServoCoordinates.servoH, pServoCoordinates.servoV, _Horizontal_grados_min, _Horizontal_grados_max, _Vertical_grados_min, _Vertical_grados_max, isLaserOn ? 1 : 0);
     }
     public string moveTheAnt_rango(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser)
     {
@@ -241,14 +256,18 @@ public class ProcessAnt : IDisposable
         }
         _Horizontal_grados = pH;
         _Vertical_grados = pV;
+        _Horizontal_grados_min = pH_min;
+        _Horizontal_grados_max = pH_max;
+        _Vertical_grados_min = pV_min;
+        _Vertical_grados_max = pV_max;
         double sleep_secs = 3;
         if (horizontal > vertical)
         {
-            sleep_secs = double.Round((sleep_secs * horizontal) / 180.0, 2);
+            sleep_secs = double.Round((sleep_secs * horizontal) / 180.0, 1);
         }
         else
         {
-            sleep_secs = double.Round((sleep_secs * vertical) / 180.0, 2);
+            sleep_secs = double.Round((sleep_secs * vertical) / 180.0, 1);
         }
         if (sleep_secs < 0.5)
         {
