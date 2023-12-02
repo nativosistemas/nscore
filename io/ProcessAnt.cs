@@ -8,6 +8,7 @@ public class ProcessAnt : IDisposable
     // private bool _versionNew = true;
     private ProcessServo _processServo = new ProcessServo();
     private ProcessServoRango _processServoRango = new ProcessServoRango();
+    private ProcessCoordinatesStar _processCoordinatesStar = new ProcessCoordinatesStar();
     private ProcessLaser _processLaser = new ProcessLaser();
     //private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
@@ -182,23 +183,112 @@ public class ProcessAnt : IDisposable
         result = actionAnt(pDate, eq, isNew, isLaserOn);
         return result;
     }
+    public Guid saveAstroTracking(double pRa, double pDec)
+    {
+        Guid oGuid = Guid.NewGuid();
+        using (var context = new AstroDbContext())
+        {
+
+            nscore.AstroTracking o = new nscore.AstroTracking(oGuid, pRa, pDec);
+            context.AstroTrackings.Add(o);
+
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                nscore.Util.log(ex);
+            }
+        }
+        return oGuid;
+    }
+    public async Task<HorizontalCoordinates> getAstroTracking_HorizontalCoordinates(Guid pGuid)
+    {
+        HorizontalCoordinates resault = null;
+        using (var context = new AstroDbContext())
+        {
+            int contador = 0;
+
+            while (contador < 5)
+            {
+                AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid && x.estado == 2).FirstOrDefault();
+                if (oAstroTracking != null)
+                {
+                    resault = new HorizontalCoordinates() { Altitude = oAstroTracking.Altitude.Value, Azimuth = oAstroTracking.Azimuth.Value };
+                    break;
+                }
+                await Task.Delay(500);
+                contador++;
+            }
+        }
+        return resault;
+    }
+    public bool changeAstroTrackingEstado(Guid pGuid, int pEstado)
+    {
+        bool result = false;
+        // Crear e inicializar el contexto
+        using (var context = new AstroDbContext())
+        {
+            // Buscar el usuario por ID
+            AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
+
+
+            if (oAstroTracking != null)
+            {
+                // Actualizar los valores
+                oAstroTracking.estado = pEstado;
+
+                // Guardar los cambios en la base de datos
+                context.SaveChanges();
+                result = true;
+            }
+        }
+        return result;
+    }
+    public bool removeAstroTrackingEstado(Guid pGuid)
+    {
+        bool result = false;
+        // Crear e inicializar el contexto
+        using (var context = new AstroDbContext())
+        {
+            // Buscar el usuario por ID
+            AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
+
+
+            if (oAstroTracking != null)
+            {
+                context.AstroTrackings.Remove(oAstroTracking);
+                // Guardar los cambios en la base de datos
+                context.SaveChanges();
+                result = true;
+            }
+        }
+        return result;
+    }
     public string actionAnt(DateTime pDate, EquatorialCoordinates eq, bool isNew = false, bool isLaserOn = false)
     {
         string result = string.Empty;
 
         double siderealTime_local = AstronomyEngine.GetTSL(pDate, city);
 
-        HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
+        // var fff = _processCoordinatesStar.Start(eq.ra, eq.dec);
+        Guid oAstroTracking = saveAstroTracking(eq.ra, eq.dec);
+
+
+        //HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
+        HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(oAstroTracking).Result;
+        removeAstroTrackingEstado(oAstroTracking);
         if (hc != null)
         {
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
             if (oServoCoordinates != null)
             {
-                HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
+                //HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
                 string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
-                string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
+                //string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
                 string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
-                result += strEq + "<br/>" + strHC + "<br/>" + strHc + "<br/>";
+                result += strEq + "<br/>" + strHc + "<br/>";
                 result += "HD " + eq.idHD.ToString() + "<br/>";
                 result += "Servo: " + (isNew ? moveTheAnt_rango(oServoCoordinates, isLaserOn) : moveTheAnt(oServoCoordinates));
             }
@@ -365,6 +455,47 @@ public class ProcessServoRango : IDisposable
         + Convert.ToString(pLaser) + " " + pH_min.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
          + pH_max.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV_min.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
          + pV_max.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pSleep_secs.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        return _PoolProcess.Start(parameter);
+    }
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
+        {
+            if (disposing)
+            {
+                _PoolProcess.Dispose();
+            }
+
+            disposedValue = true;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+    }
+}
+public class ProcessCoordinatesStar : IDisposable
+{
+    private bool disposedValue = false;
+    private PoolProcess _PoolProcess;
+    public ProcessCoordinatesStar()
+    {
+        string nameFile = string.Empty;
+        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+        {
+            nameFile = "py_coordinatesStar";
+        }
+        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+        {
+            nameFile = "python";// py_coordinatesStar.py "py_coordinatesStar.exe";
+        }
+        _PoolProcess = new PoolProcess(1, nameFile);
+    }
+
+    public string Start(double pRa, double pDec)
+    {
+        string parameter = "py_coordinatesStar.py " + pRa.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pDec.ToString(System.Globalization.CultureInfo.InvariantCulture);
         return _PoolProcess.Start(parameter);
     }
     protected virtual void Dispose(bool disposing)

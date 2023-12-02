@@ -1,0 +1,8 @@
+skyfield
+//instalar (si no lo estan)
+pip install skyfield
+pip install pandas
+
+// codigo ejemplo
+
+pyinstaller --onefile --add-data "C:\Python39\Lib\site-packages\skyfield\data\nutation.npz;." py_coordinatesStar.py

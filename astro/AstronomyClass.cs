@@ -2,6 +2,37 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace nscore;
+
+[Index(nameof(publicID), IsUnique = true)]
+public class AstroTracking
+{
+
+    public AstroTracking()
+    {
+
+    }
+    public AstroTracking(Guid pPublicID, double pRa, double pDec)
+    {
+        publicID = pPublicID;
+        fecha = DateTime.Now;
+        ra = pRa;
+        dec = pDec;
+        estado = 1;
+    }
+    public Guid publicID { get; set; }
+    [Key]
+    [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+    public int id { get; set; }
+    public DateTime fecha { get; set; }
+    public double? ra { get; set; }
+    public double? dec { get; set; }
+    public double? Altitude { get; set; }
+    public double? Azimuth { get; set; }
+    public string? info { get; set; }
+    public int estado { get; set; }
+
+
+}
 [Index(nameof(id), IsUnique = true)]
 public class Constellation
 {
@@ -86,7 +117,7 @@ public class Star
     public double ra { get; set; }
     public double dec { get; set; }
     public bool visible { get; set; }
-      public int idHD { get; set; }
+    public int idHD { get; set; }
 }
 public class ObserverCoordinates
 {
@@ -135,27 +166,24 @@ public class ServoCoordinates
 
     public static ServoCoordinates convertServoCoordinates(HorizontalCoordinates pValue)
     {
-        bool isAzimuthMas180 = false;
+        // bool isAzimuthMenos180 = false;
         double horizontal = pValue.Azimuth;
-        double vertical = pValue.Altitude;// si es negativo
-        /*if (pValue.Altitude < 0.0)
-        {
-            return null;
-        }*/
+        double vertical = pValue.Altitude;
         if (pValue.Azimuth < 180.0)
         {
-            isAzimuthMas180 = true;
+            // isAzimuthMenos180 = true;
             horizontal = 180.0 - pValue.Azimuth;
+            vertical = 180.0 - pValue.Altitude;
         }
         else
         {
             horizontal = 360.0 - pValue.Azimuth;
         }
 
-        if (isAzimuthMas180)
+        /*if (isAzimuthMenos180)
         {
             vertical = 180.0 - pValue.Altitude;
-        }
+        }*/
         return new ServoCoordinates() { servoH = Math.Round(horizontal, 6), servoV = Math.Round(vertical, 6) };
     }
 }

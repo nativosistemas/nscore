@@ -105,12 +105,12 @@ public class AstronomyEngine
     }
     public static void ConvertirAFechaJuliana_Main()
     {
-          DateTime date = new DateTime(2023, 7, 17, 1, 30, 0).ToUniversalTime();
- double numeroDecimal_fec = date.ToOADate();
+        DateTime date = new DateTime(2023, 7, 17, 1, 30, 0).ToUniversalTime();
+        double numeroDecimal_fec = date.ToOADate();
 
         double numeroDecimal = 60142.18785; // Ejemplo de número decimal con el día de fecha juliana
 
-DateTime fecha = DateTime.FromOADate(numeroDecimal);
+        DateTime fecha = DateTime.FromOADate(numeroDecimal);
 
         DateTime fechaJuliana = ConvertirAFechaJuliana(numeroDecimal);
 
