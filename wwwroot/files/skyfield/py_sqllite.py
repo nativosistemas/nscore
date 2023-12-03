@@ -69,7 +69,7 @@ while True:
     # Guardar (commit) los cambios
     conexion.commit()
     # Pausa de 1 segundo entre las consultas
-    time.sleep(1)
+    time.sleep(0.5)
     
 # Cerrar el cursor y la conexión
 cursor.close()

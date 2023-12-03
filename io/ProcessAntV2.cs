@@ -1,7 +1,7 @@
 using System.Diagnostics;
 
 namespace nscore;
-public class ProcessAnt : IDisposable
+public class ProcessAntV2 : IDisposable
 {
     private bool disposedValue = false;
     //private Process _controller = new Process();
@@ -25,7 +25,7 @@ public class ProcessAnt : IDisposable
     public double _Vertical_grados_min = Math.Round(2.5, 6);
     public double _Vertical_grados_max = Math.Round(12.2, 6);
 
-    public ProcessAnt()
+    public ProcessAntV2()
     {
         _city = getCitys().FirstOrDefault();
         /*_l_Star = new List<Star>();
@@ -273,22 +273,22 @@ public class ProcessAnt : IDisposable
         double siderealTime_local = AstronomyEngine.GetTSL(pDate, city);
 
         // var fff = _processCoordinatesStar.Start(eq.ra, eq.dec);
-       // Guid oAstroTracking = saveAstroTracking(eq.ra, eq.dec);
+        Guid oAstroTracking = saveAstroTracking(eq.ra, eq.dec);
 
 
-        HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
-        //HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(oAstroTracking).Result;
-        //removeAstroTrackingEstado(oAstroTracking);
+        //HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
+        HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(oAstroTracking).Result;
+        removeAstroTrackingEstado(oAstroTracking);
         if (hc != null)
         {
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
             if (oServoCoordinates != null)
             {
-                HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
+                //HorariasCoordinates oHorariasCoordinates = AstronomyEngine.ToHorariasCoordinates(siderealTime_local, eq);
                 string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
-                string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
+                //string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
                 string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
-                result += strEq  +"<br/>" + strHC + "<br/>" + strHc + "<br/>";
+                result += strEq + "<br/>" + strHc + "<br/>";
                 result += "HD " + eq.idHD.ToString() + "<br/>";
                 result += "Servo: " + (isNew ? moveTheAnt_rango(oServoCoordinates, isLaserOn) : moveTheAnt(oServoCoordinates));
             }
@@ -379,271 +379,6 @@ public class ProcessAnt : IDisposable
                 _processServo.Dispose();
                 _processLaser.Dispose();
                 _processServoRango.Dispose();
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-    }
-}
-public class ProcessServo : IDisposable
-{
-    private bool disposedValue = false;
-    private PoolProcess _PoolProcess;
-    public ProcessServo()
-    {
-        string nameFile = string.Empty;
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-        {
-            nameFile = "py_astro";
-        }
-        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-        {
-            nameFile = "py_astro.exe";
-        }
-        _PoolProcess = new PoolProcess(1, nameFile);
-    }
-
-    public string Start(double pH, double pV, int pLaser)
-    {
-        string parameter = pH.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + Convert.ToString(pLaser);
-        return _PoolProcess.Start(parameter);
-    }
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                _PoolProcess.Dispose();
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-    }
-}
-public class ProcessServoRango : IDisposable
-{
-    private bool disposedValue = false;
-    private PoolProcess _PoolProcess;
-    public ProcessServoRango()
-    {
-        string nameFile = string.Empty;
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-        {
-            nameFile = "py_astro_servos";
-        }
-        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-        {
-            nameFile = "py_astro_servos.exe";
-        }
-        _PoolProcess = new PoolProcess(1, nameFile);
-    }
-
-    public string Start(double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, int pLaser, double pSleep_secs)
-    {
-        string parameter = pH.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
-        + Convert.ToString(pLaser) + " " + pH_min.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
-         + pH_max.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pV_min.ToString(System.Globalization.CultureInfo.InvariantCulture) + " "
-         + pV_max.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pSleep_secs.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        return _PoolProcess.Start(parameter);
-    }
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                _PoolProcess.Dispose();
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-    }
-}
-public class ProcessCoordinatesStar : IDisposable
-{
-    private bool disposedValue = false;
-    private PoolProcess _PoolProcess;
-    public ProcessCoordinatesStar()
-    {
-        string nameFile = string.Empty;
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-        {
-            nameFile = "py_coordinatesStar";
-        }
-        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-        {
-            nameFile = "python";// py_coordinatesStar.py "py_coordinatesStar.exe";
-        }
-        _PoolProcess = new PoolProcess(1, nameFile);
-    }
-
-    public string Start(double pRa, double pDec)
-    {
-        string parameter = "py_coordinatesStar.py " + pRa.ToString(System.Globalization.CultureInfo.InvariantCulture) + " " + pDec.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        return _PoolProcess.Start(parameter);
-    }
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                _PoolProcess.Dispose();
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-    }
-}
-public class ProcessLaser : IDisposable
-{
-    private bool disposedValue = false;
-    private PoolProcess _PoolProcess;
-    public ProcessLaser()
-    {
-        string nameFile = string.Empty;
-        // 
-        if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-        {
-            nameFile = "py_laser";
-        }
-        else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
-        {
-            nameFile = "py_laser.exe";
-        }
-        _PoolProcess = new PoolProcess(1, nameFile);
-    }
-
-    public string Start(int pIsRead, int pLaser)
-    {
-        string parameter = Convert.ToString(pIsRead) + " " + Convert.ToString(pLaser);
-        return _PoolProcess.Start(parameter);
-    }
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                _PoolProcess.Dispose();
-            }
-
-            disposedValue = true;
-        }
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-    }
-}
-public class PoolProcess : IDisposable
-{
-    private bool disposedValue = false;
-    private readonly Queue<Process> recursosDisponibles;
-    private readonly int maxRecursos;
-    public PoolProcess(int pMaxRecursos, string pNameFile)
-    {
-        this.maxRecursos = pMaxRecursos;
-        recursosDisponibles = new Queue<Process>();
-        var pathAndFile = Path.Combine(nscore.Helper.folder, pNameFile);
-        if (File.Exists(pathAndFile))
-        {
-            // Inicializar el pool con recursos preinstanciados
-            for (int i = 0; i < maxRecursos; i++)
-            {
-                Process oProcess = new Process();
-                var processInfo = new ProcessStartInfo
-                {
-                    FileName = pathAndFile,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                oProcess.StartInfo = processInfo;
-                recursosDisponibles.Enqueue(oProcess);
-            }
-        }
-    }
-    public string Start(string pParameter)
-    {
-        string output = "null";
-        try
-        {
-            Process oProcess = GetResource();
-            if (oProcess != null)
-            {
-                oProcess.StartInfo.Arguments = pParameter;
-                oProcess.Start();
-                output = oProcess.StandardOutput.ReadToEnd();
-                oProcess.WaitForExit();
-                SetResource(oProcess);
-            }
-            else
-            {
-                output = "Recurso no disponible o en uso";
-            }
-        }
-        catch (Exception ex)
-        {
-            Util.log(ex);
-        }
-        return output;
-    }
-    public Process GetResource()
-    {
-        if (recursosDisponibles.Count > 0)
-        {
-            return recursosDisponibles.Dequeue();
-        }
-
-        // Aquí puedes implementar la lógica para manejar el caso en el que no haya recursos disponibles,
-        // como lanzar una excepción o esperar hasta que haya un recurso disponible.
-
-        return null;
-    }
-
-    public void SetResource(Process recurso)
-    {
-        if (recursosDisponibles.Count < maxRecursos)
-        {
-            recursosDisponibles.Enqueue(recurso);
-        }
-        else
-        {
-            // Aquí puedes implementar la lógica para manejar el caso en el que el pool está lleno
-            // y no se puede devolver el recurso.
-        }
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposedValue)
-        {
-            if (disposing)
-            {
-                //
             }
 
             disposedValue = true;

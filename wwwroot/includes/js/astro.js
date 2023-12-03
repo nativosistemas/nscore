@@ -220,6 +220,10 @@ function onClickIrEstrellas() {
     window.location.href = "estrellas.html";
     return false;
 }
+function onClickIrEstrellasv2() {
+    window.location.href = "estrellas_v2.html";
+    return false;
+}
 function onClickIrConstelaciones() {
     window.location.href = "constelaciones.html";
     return false;
