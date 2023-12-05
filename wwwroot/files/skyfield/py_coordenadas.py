@@ -59,7 +59,7 @@ print('Azimut {:.8f} hours'.format(azimut.degrees))
 #print(f"Azimut: {azimut} ")
 #print(f"Altitud: {altitud.degrees:.2f} grados")
 #print(f"Azimut: {azimut.degrees:.2f} grados")
-print(f"distancia: {d} ")
+#print(f"distancia: {d} ")
 
 #vaa = '{"Altitude": {:.8f},"Azimuth": {:.8f}}'.format(altitud.degrees,azimut.degrees) 
 print(obtener_objeto_json(altitud.degrees,azimut.degrees) )
