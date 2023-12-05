@@ -21,7 +21,8 @@ def decimal_a_grado(decimal):
     return grados, minutos, segundos
 
 # Especifica la ruta completa de la base de datos
-ruta_base_datos = r'C:\dockerns\astro.db'
+#ruta_base_datos = r'C:\dockerns\astro.db'
+ruta_base_datos = r'/usr/src/nscore/stro.db'
 
 # Conectar a la base de datos (creará la base de datos si no existe)
 conexion = sqlite3.connect(ruta_base_datos)
