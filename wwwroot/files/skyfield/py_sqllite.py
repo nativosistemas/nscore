@@ -24,7 +24,7 @@ def decimal_a_grado(decimal):
 #ruta_base_datos = r'C:\dockerns\astro.db'
 ruta_base_datos = r'/usr/src/nscore/stro.db'
 
-# Conectar a la base de datos (creará la base de datos si no existe)
+# Conectar a la base de datos (creara la base de datos si no existe)
 conexion = sqlite3.connect(ruta_base_datos)
 
 # Crear un cursor para ejecutar comandos SQL
@@ -72,6 +72,6 @@ while True:
     # Pausa de 1 segundo entre las consultas
     time.sleep(0.5)
     
-# Cerrar el cursor y la conexión
+# Cerrar el cursor y la conexion
 cursor.close()
 conexion.close()
