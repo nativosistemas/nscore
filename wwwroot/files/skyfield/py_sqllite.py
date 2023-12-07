@@ -4,6 +4,7 @@ from skyfield.api import Star, load,  wgs84
 import sys
 import time
 import json
+import platform
 
 def decimal_a_tiempo(valor):
     decimal = (valor * 24.0) / 360.0
@@ -21,8 +22,18 @@ def decimal_a_grado(decimal):
     return grados, minutos, segundos
 
 # Especifica la ruta completa de la base de datos
-#ruta_base_datos = r'C:\dockerns\astro.db'
-ruta_base_datos = r'/usr/src/nscore/stro.db'
+
+# Obtener el nombre del sistema operativo
+sistema_operativo = platform.system()
+
+# Verificar si es Windows
+if sistema_operativo == 'Windows':
+    ruta_base_datos = r'C:\dockerns\astro.db'
+# Verificar si es Linux
+elif sistema_operativo == 'Linux':
+    ruta_base_datos = r'/usr/src/nscore/astro.db'
+else:
+    ruta_base_datos = r'/usr/src/nscore/astro.db'
 
 # Conectar a la base de datos (creara la base de datos si no existe)
 conexion = sqlite3.connect(ruta_base_datos)
