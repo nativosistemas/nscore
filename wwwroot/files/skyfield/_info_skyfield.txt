@@ -3,6 +3,11 @@ skyfield
 pip install skyfield
 pip install pandas
 
-// codigo ejemplo
+// para cargar py al inicio de linux 
+chmod +x /usr/src/nscore/py_sqllite.py
+//editar .bashrc --->La ruta completa sería ~/ o /home/tu_usuario/, donde "tu_usuario" es el nombre de tu usuario en el sistema.
+nano ~/.bashrc
 
-pyinstaller --onefile --add-data "C:\Python39\Lib\site-packages\skyfield\data\nutation.npz;." py_coordinatesStar.py
+
+
+ /usr/src/nscore/py_sqllite.py

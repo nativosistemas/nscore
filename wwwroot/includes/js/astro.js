@@ -414,7 +414,7 @@ function onClickStar(pId) {
         var pagina = getNamePage();
         //|| pagina == 'index.html'
     
-        if (pagina == 'estrellas.html') {
+        if (pagina == 'estrellas.html' || pagina == 'espaciolab.html') {
     
             fetchServo(id).then(text => {
                 var strHtml = '';

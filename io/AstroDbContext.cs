@@ -5,6 +5,7 @@ public class AstroDbContext : DbContext
     public DbSet<nscore.AstronomicalObject> AstronomicalObjects { get; set; }
     public DbSet<nscore.Constellation> Constellations { get; set; }
     public DbSet<nscore.AstroTracking> AstroTrackings { get; set; }
+    public DbSet<nscore.Config> Configs { get; set; }
     public DbSet<nscore.Log> Logs { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -23,65 +24,10 @@ public class AstroDbContext : DbContext
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+           // Console.WriteLine(ex.Message);
+            Util.log(ex);
             //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
         }
     }
-    /* public static void initTableStar()
-     {
-         try
-         {
-             using (var context = new AstroDbContext())
-             {
-                 int countStars = getStars().Count;
-                 if (countStars <= 0)
-                 {
-                     var l = Util.getStars();
-                     foreach (var item in l)
-                     {
-                         context.Stars.Add(item);
-                     }
-                     context.SaveChanges();
-                 }
-             }
-         }
-         catch (Exception ex)
-         {
-             Console.WriteLine(ex.Message);
-         }
-     }*/
-    /*public static List<Star> getStars()
-    {
-        List<Star> result = new List<Star>();
-        try
-        {
-            using (var context = new AstroDbContext())
-            {
-                result = context.Stars.ToList();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-        return result;
-    }
-    public static List<Constellation> getConstellations()
-    {
-        List<Constellation> result = new List<Constellation>();
-        try
-        {
-            using (var context = new AstroDbContext())
-            {
-                result = context.Constellations.ToList();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-        return result;
-    }
-    */
 }
 
