@@ -14,9 +14,9 @@ public class Config
     [Key]
     [Required]
     public string name { get; set; }
-    public string value { get; set; }
-    public int valueInt { get; set; }
-    public double valueDouble { get; set; }
+    public string? value { get; set; }
+    public int? valueInt { get; set; }
+    public double? valueDouble { get; set; }
 }
 
 public class ConfigAnt
@@ -31,9 +31,11 @@ public class ConfigAnt
     public double longitude { get; set; }
     public double altitude { get; set; }
     public double horizontal_grados_min { get; set; }//= Math.Round(2.9, 6);
-    public double hastaorizontal_grados_max { get; set; }//= Math.Round(12.7, 6);
+    public double horizontal_grados_max { get; set; }//= Math.Round(12.7, 6);
     public double vertical_grados_min { get; set; }//= Math.Round(2.5, 6);
     public double vertical_grados_max { get; set; }// = Math.Round(12.2, 6);
+
+    public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(2.9, 6), horizontal_grados_max = Math.Round(12.7, 6), vertical_grados_min = Math.Round(2.5, 6), vertical_grados_max = Math.Round(12.2, 6) };
 }
 
 [Index(nameof(publicID), IsUnique = true)]

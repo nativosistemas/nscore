@@ -20,10 +20,10 @@ public class ProcessAnt : IDisposable
 
     public double _Horizontal_grados = 0;
     public double _Vertical_grados = 0;
-    public double _Horizontal_grados_min = Math.Round(2.9, 6);
-    public double _Horizontal_grados_max = Math.Round(12.7, 6);
-    public double _Vertical_grados_min = Math.Round(2.5, 6);
-    public double _Vertical_grados_max = Math.Round(12.2, 6);
+    public double _Horizontal_grados_min = ConfigAnt.configDefault.horizontal_grados_min;//  Math.Round(2.9, 6);
+    public double _Horizontal_grados_max = ConfigAnt.configDefault.horizontal_grados_max;//Math.Round(12.7, 6);
+    public double _Vertical_grados_min = ConfigAnt.configDefault.vertical_grados_min;//Math.Round(2.5, 6);
+    public double _Vertical_grados_max = ConfigAnt.configDefault.vertical_grados_max;//Math.Round(12.2, 6);
 
     public ProcessAnt()
     {

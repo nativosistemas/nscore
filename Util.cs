@@ -705,7 +705,45 @@ public class Util
     {
         restaurarJsonBD_Constelaciones();
         RestaurarJsonBD_AstronomicalObjects();
+        restaurarDatosConfig();
         return "Ok";
+    }
+    public static string restaurarDatosConfig()
+    {
+        string result = string.Empty;
+        try
+        {
+
+            ConfigAnt oConfigAnt = ConfigAnt.configDefault;
+            using (var context = new AstroDbContext())
+            {
+                // Obtener el tipo del objeto
+                Type tipoObjeto = oConfigAnt.GetType();
+
+                // Obtener todas las propiedades del objeto
+                System.Reflection.PropertyInfo[] propiedades = tipoObjeto.GetProperties();
+
+                // Recorrer las propiedades e imprimir sus nombres y valores
+                foreach (var propiedad in propiedades)
+                {
+                    object valor = propiedad.GetValue(oConfigAnt);
+                    if (valor != null)
+                    {
+                        context.Configs.Add(new Config() { name = propiedad.Name, valueDouble = Convert.ToDouble(valor) });
+                    }
+
+                }
+
+                context.SaveChanges();
+                result = "Ok";
+            }
+        }
+        catch (Exception ex)
+        {
+            result = "!Ok";
+            log(ex);
+        }
+        return result;
     }
     public static string AsignarConstelacionAEstrellas()
     {
