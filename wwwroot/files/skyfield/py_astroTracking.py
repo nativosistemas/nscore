@@ -43,15 +43,15 @@ cursor = conexion.cursor()
 
 planets = load('de421.bsp')
 earth = planets['earth']
-rosario = earth + wgs84.latlon(-32.94681944444444 ,  -60.6393194444444 )
+
 ts = load.timescale()
 
 while True:
     # Consultar todos los registros de la tabla usuarios
     cursor.execute('SELECT * FROM AstroTrackings WHERE estado = 1')
     registros = cursor.fetchall()
-
-    print("Registros actuales en la tabla:")
+    city = earth + wgs84.latlon(-32.94681944444444 ,  -60.6393194444444 )
+    #print("Registros actuales en la tabla:")
     for registro in registros:
         #print( registro[3]) # ra
         #print( registro[4]) # dec
@@ -63,7 +63,7 @@ while True:
 
         barnard2 = Star(ra_hours=decimal_a_tiempo(ra), dec_degrees=decimal_a_grado(dec))
 
-        astrometric_star = rosario.at(t).observe(barnard2)
+        astrometric_star = rosario.at(t).observe(barnard2)  
 
         local = astrometric_star.apparent()
 
