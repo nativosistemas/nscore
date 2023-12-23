@@ -73,14 +73,16 @@ while True:
 
         cursor.execute('UPDATE AstroTrackings SET Altitude=?,Azimuth=?,estado=? WHERE publicID=?', (altitud.degrees,azimut.degrees,2, publicID))
         #
-        horizontal = azimut
-        vertical = altitud
+        float_azimut = float(azimut.degrees)
+        float_altitud = float(altitud.degrees)
+        horizontal =float_azimut
+        vertical = float_altitud
 
-        if azimut < 180.0:
-            horizontal = 180.0 - azimut
-            vertical = 180.0 - altitud
+        if float_azimut < 180.0:
+            horizontal = 180.0 - float_azimut
+            vertical = 180.0 - float_altitud
         else:
-            horizontal = 360.0 - azimut    
+            horizontal = 360.0 - float_azimut    
 
         parametroH = horizontal#float(sys.argv[1])
         parametroV = vertical#float(sys.argv[2])

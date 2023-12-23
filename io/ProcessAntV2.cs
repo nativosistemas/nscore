@@ -13,7 +13,7 @@ public class ProcessAntV2 : IDisposable
     //private Process _controllerLaser = new Process();
     private List<Star> _l_Star = null;
     private List<ObserverCoordinates> _l_City = null;
-  //  private List<Constellation> _l_Constellation = null;
+    //  private List<Constellation> _l_Constellation = null;
     private ObserverCoordinates _city = ObserverCoordinates.cityRosario;
     //private static Semaphore _semaphore_ant = new Semaphore(0, 1);
     public ObserverCoordinates city { get { return _city; } set { _city = value; } }
@@ -43,7 +43,7 @@ public class ProcessAntV2 : IDisposable
             _l_Star.Add(oStar);
         }*/
         _l_Star = nscore.Util.getAllStars();
-       // _l_Constellation = nscore.Util.getConstelaciones();
+        // _l_Constellation = nscore.Util.getConstelaciones();
     }
     public ObserverCoordinates setCity(int id, string pName, double pLatitude, double pLongitude)
     {
@@ -79,7 +79,7 @@ public class ProcessAntV2 : IDisposable
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "<br/>" + strHc + "<br/>";
                     result += "HD " + oStar.idHD.ToString() + "<br/>";
-                    result += "Servo: " +  moveTheAnt_rango(oServoCoordinates, isLaserOn) ;
+                    result += "Servo: " + moveTheAnt_rango(oServoCoordinates, isLaserOn);
                 }
                 else
                 {
@@ -230,6 +230,18 @@ public class ProcessAntV2 : IDisposable
     {
         return _processLaser.Start(pIsRead, pLaser);
     }
+    public string actionGrabarSirio()
+    {
+        Guid? oAstroTracking = null;
+        Star oStar = _l_Star.Where(x => x.id == 48915).FirstOrDefault();
+        if (oStar != null)
+        {
+            oAstroTracking = saveAstroTracking(oStar.ra, oStar.dec);
+
+        }
+        return oAstroTracking == null ? "!Ok" : oAstroTracking.ToString();
+    }
+
     protected virtual void Dispose(bool disposing)
     {
         if (!disposedValue)

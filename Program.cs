@@ -44,7 +44,7 @@ internal class Program
         app.MapGet("/simbad", () => { return nscore.Util.getAstronomicalObjects(); });
         app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_fileLoad(); });
         app.MapGet("/restore", () => { return nscore.Util.restaurarJsonBD(); });
-        app.MapGet("/cargaInicial", () => { return nscore.Util.restaurarJsonBD(); });//fileSave_Constelaciones()
+        app.MapGet("/cargaInicial", (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.actionGrabarSirio(); });//fileSave_Constelaciones()
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>
         {
             string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index.html");
