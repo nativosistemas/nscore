@@ -50,3 +50,10 @@ def getConfig():
             vertical_grados_max = registro[3]       
             
     return Config(latitude,longitude,altitude,horizontal_grados_min,horizontal_grados_max,vertical_grados_min,vertical_grados_max)        
+
+def calcular_ciclo_de_trabajo_rango(angulo,ciclo_minimo,ciclo_maximo):
+    #ciclo_minimo = 2.5
+    #ciclo_maximo = 12.0
+    rango = ciclo_maximo - ciclo_minimo
+    ciclo = ciclo_minimo + ((rango / 180.0) * angulo)
+    return ciclo

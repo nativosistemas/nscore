@@ -733,7 +733,8 @@ public class Util
                     }
 
                 }
-
+                context.Configs.Add(new Config() { name = "servoH", valueDouble = 0 });
+                context.Configs.Add(new Config() { name = "servoV", valueDouble = 0 });
                 context.SaveChanges();
                 result = "Ok";
             }

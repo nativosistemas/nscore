@@ -3,6 +3,41 @@ using Microsoft.EntityFrameworkCore;
 
 namespace nscore;
 
+[Index(nameof(publicID), IsUnique = true)]
+public class AntTracking
+{
+    public AntTracking()
+    {
+
+    }
+    public AntTracking(Guid pPublicID, int pType, double? pRa = null, double? pDec = null)
+    {
+        publicID = pPublicID;
+        type = pType;
+        date = DateTime.Now;
+        ra = pRa;
+        dec = pDec;
+        status = 1;
+    }
+    public Guid publicID { get; set; }
+    [Key]
+    [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+    public int id { get; set; }
+    public int type { get; set; }
+    public DateTime date { get; set; }
+    public double? ra { get; set; }
+    public double? dec { get; set; }
+    public double? altitude { get; set; }
+    public double? azimuth { get; set; }
+    public double? h { get; set; }
+    public double? v { get; set; }
+    public string? info { get; set; }
+    public DateTime? dateProcess { get; set; }
+    public bool tracking { get; set; }
+    public int status { get; set; }
+
+
+}
 
 [Index(nameof(name), IsUnique = true)]
 public class Config
