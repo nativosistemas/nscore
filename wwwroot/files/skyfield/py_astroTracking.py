@@ -75,7 +75,7 @@ while True:
     city = earth + wgs84.latlon(oConfig.latitude , oConfig.longitude )
     #print("Registros actuales en la tabla:")
     for registro in registros:
-        type = registro[3]
+        type = registro[2]
         parametroH = 0
         parametroV = 0
         if type == "star":
