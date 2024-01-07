@@ -239,6 +239,18 @@ function onClickIrEspacioLab() {
     window.location.href = "espaciolab.html";
     return false;
 }
+function onClickIrVersion_v1() {
+    window.location.href = "index_v1.html";
+    return false;    
+}
+function onClickIrConfiguracion(){
+    window.location.href = "config_v2.html";
+    return false;     
+}
+function onClickIrServos_v2() {
+    window.location.href = "servos_v2.html";
+    return false;
+}
 function quitarActiveLi() {
 
     var elementosLi = document.querySelectorAll("#miLista li");

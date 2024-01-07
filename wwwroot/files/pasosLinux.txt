@@ -41,4 +41,4 @@ cp /home/pi/git/nscore/dist/py_astro_servos /usr/src/nscore/
 
 chmod +x /usr/src/nscore/py_astro_servos
 
-rm /usr/src/nscore/astro.bd
+rm /usr/src/nscore/astro.db

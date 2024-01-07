@@ -12,8 +12,10 @@ nano ~/.bashrc
 
  /usr/src/nscore/py_sqllite.py
 
+ rm /usr/src/nscore/astro.db
+
 cp /home/pi/git/nscore/wwwroot/files/skyfield/py_util.py /usr/src/nscore/
-cp /home/pi/git/nscore/wwwroot/files/skyfield/ /usr/src/nscore/
+cp /home/pi/git/nscore/wwwroot/files/skyfield/py_astroTracking.py /usr/src/nscore/
 cp /home/pi/git/nscore/wwwroot/files/py_astro_servos.py /usr/src/nscore/
 
 chmod +x /usr/src/nscore/py_util.py
