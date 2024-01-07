@@ -5,6 +5,7 @@ public class AstroDbContext : DbContext
     public DbSet<nscore.AstronomicalObject> AstronomicalObjects { get; set; }
     public DbSet<nscore.Constellation> Constellations { get; set; }
     public DbSet<nscore.AstroTracking> AstroTrackings { get; set; }
+    public DbSet<nscore.AntTracking> AntTrackings { get; set; } 
     public DbSet<nscore.Config> Configs { get; set; }
     public DbSet<nscore.Log> Logs { get; set; }
 

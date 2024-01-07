@@ -10,7 +10,7 @@ public class AntTracking
     {
 
     }
-    public AntTracking(Guid pPublicID, int pType, double? pRa = null, double? pDec = null)
+    public AntTracking(Guid pPublicID, string pType, double? pRa = null, double? pDec = null)
     {
         publicID = pPublicID;
         type = pType;
@@ -23,7 +23,7 @@ public class AntTracking
     [Key]
     [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
     public int id { get; set; }
-    public int type { get; set; }
+    public string type { get; set; }
     public DateTime date { get; set; }
     public double? ra { get; set; }
     public double? dec { get; set; }

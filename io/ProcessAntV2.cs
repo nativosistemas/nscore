@@ -69,7 +69,7 @@ public class ProcessAntV2 : IDisposable
         {
             Guid oAstroTracking = saveAstroTracking(oStar.ra, oStar.dec);
             HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(oAstroTracking).Result;
-            removeAstroTrackingEstado(oAstroTracking);
+            removeAstroTracking(oAstroTracking);
             if (hc != null)
             {
                 ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
@@ -79,7 +79,7 @@ public class ProcessAntV2 : IDisposable
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "<br/>" + strHc + "<br/>";
                     result += "HD " + oStar.idHD.ToString() + "<br/>";
-                    result += "Servo: " + moveTheAnt_rango(oServoCoordinates, isLaserOn);
+                    //result += "Servo: " + moveTheAnt_rango(oServoCoordinates, isLaserOn);
                 }
                 else
                 {
@@ -99,8 +99,8 @@ public class ProcessAntV2 : IDisposable
         using (var context = new AstroDbContext())
         {
 
-            nscore.AstroTracking o = new nscore.AstroTracking(oGuid, pRa, pDec);
-            context.AstroTrackings.Add(o);
+            nscore.AntTracking o = new nscore.AntTracking(oGuid, Constantes.astro_type_star, pRa, pDec);
+            context.AntTrackings.Add(o);
 
             try
             {
@@ -122,10 +122,10 @@ public class ProcessAntV2 : IDisposable
 
             while (contador < 5)
             {
-                AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid && x.estado == 2).FirstOrDefault();
-                if (oAstroTracking != null)
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == Constantes.astro_estado_procesado).FirstOrDefault();
+                if (oAntTracking != null)
                 {
-                    resault = new HorizontalCoordinates() { Altitude = oAstroTracking.Altitude.Value, Azimuth = oAstroTracking.Azimuth.Value };
+                    resault = new HorizontalCoordinates() { Altitude = oAntTracking.altitude.Value, Azimuth = oAntTracking.azimuth.Value };
                     break;
                 }
                 await Task.Delay(500);
@@ -134,6 +134,7 @@ public class ProcessAntV2 : IDisposable
         }
         return resault;
     }
+    /*
     public bool changeAstroTrackingEstado(Guid pGuid, int pEstado)
     {
         bool result = false;
@@ -156,20 +157,18 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public bool removeAstroTrackingEstado(Guid pGuid)
+    */
+    public bool removeAstroTracking(Guid pGuid)
     {
         bool result = false;
-        // Crear e inicializar el contexto
         using (var context = new AstroDbContext())
         {
-            // Buscar el usuario por ID
-            AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
+            AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
 
 
-            if (oAstroTracking != null)
+            if (oAntTracking != null)
             {
-                context.AstroTrackings.Remove(oAstroTracking);
-                // Guardar los cambios en la base de datos
+                context.AntTrackings.Remove(oAntTracking);
                 context.SaveChanges();
                 result = true;
             }
