@@ -10,7 +10,7 @@ public static class Constantes
     {
         get { return "moon"; }
     }
-    public static string astro_type_moon
+    public static string astro_type_servoAngle
     {
         get { return "servoAngle"; }
     }    
