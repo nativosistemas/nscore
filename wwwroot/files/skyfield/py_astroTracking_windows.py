@@ -77,6 +77,7 @@ while True:
     for registro in registros:
         type = registro[2]
         print("type: " + type)
+        print("registro[1]" + registro[1])
         parametroH = 0
         parametroV = 0
         if type == "star":
