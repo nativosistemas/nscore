@@ -69,7 +69,7 @@ public class ProcessAntV2 : IDisposable
         {
             Guid oAstroTracking = saveAstroTracking(oStar.ra, oStar.dec);
             HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(oAstroTracking).Result;
-            removeAstroTracking(oAstroTracking);
+            //removeAstroTracking(oAstroTracking);
             if (hc != null)
             {
                 ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
