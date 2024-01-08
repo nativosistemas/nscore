@@ -1,3 +1,4 @@
+using nscore;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
@@ -43,6 +44,7 @@ internal class Program
         app.MapGet("/astro", ((nscore.ProcessAnt pProcessAnt, double h, double v, int laser) => { return pProcessAnt.moveTheAnt(h, v, laser); }));
         app.MapGet("/simbad", () => { return nscore.Util.getAstronomicalObjects(); });
         app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_fileLoad(); });
+        app.MapGet("/astrotracking", (() => { return Util.getAntTrackings(); }));
         app.MapGet("/restore", () => { return nscore.Util.restaurarJsonBD(); });
         app.MapGet("/cargaInicial", (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.actionGrabarSirio(); });//fileSave_Constelaciones()
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>

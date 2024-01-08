@@ -777,4 +777,20 @@ public class Util
         }
         return result;
     }
+        public static List<AntTracking> getAntTrackings()
+    {
+        List<AntTracking> result = new List<AntTracking>();
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                result = context.AntTrackings.ToList();
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
 }

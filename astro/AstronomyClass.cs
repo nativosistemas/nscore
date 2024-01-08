@@ -72,7 +72,7 @@ public class ConfigAnt
 
     public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(2.9, 6), horizontal_grados_max = Math.Round(12.7, 6), vertical_grados_min = Math.Round(2.5, 6), vertical_grados_max = Math.Round(12.2, 6) };
 }
-
+/*
 [Index(nameof(publicID), IsUnique = true)]
 public class AstroTracking
 {
@@ -103,6 +103,7 @@ public class AstroTracking
 
 
 }
+*/
 [Index(nameof(id), IsUnique = true)]
 public class Constellation
 {

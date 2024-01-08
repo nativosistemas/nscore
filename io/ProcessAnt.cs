@@ -183,7 +183,7 @@ public class ProcessAnt : IDisposable
         result = actionAnt(pDate, eq, isNew, isLaserOn);
         return result;
     }
-    public Guid saveAstroTracking(double pRa, double pDec)
+   /* public Guid saveAstroTracking(double pRa, double pDec)
     {
         Guid oGuid = Guid.NewGuid();
         using (var context = new AstroDbContext())
@@ -202,8 +202,8 @@ public class ProcessAnt : IDisposable
             }
         }
         return oGuid;
-    }
-    public async Task<HorizontalCoordinates> getAstroTracking_HorizontalCoordinates(Guid pGuid)
+    }*/
+    /*public async Task<HorizontalCoordinates> getAstroTracking_HorizontalCoordinates(Guid pGuid)
     {
         HorizontalCoordinates resault = null;
         using (var context = new AstroDbContext())
@@ -223,8 +223,8 @@ public class ProcessAnt : IDisposable
             }
         }
         return resault;
-    }
-    public bool changeAstroTrackingEstado(Guid pGuid, int pEstado)
+    }*/
+   /* public bool changeAstroTrackingEstado(Guid pGuid, int pEstado)
     {
         bool result = false;
         // Crear e inicializar el contexto
@@ -245,8 +245,8 @@ public class ProcessAnt : IDisposable
             }
         }
         return result;
-    }
-    public bool removeAstroTrackingEstado(Guid pGuid)
+    }*/
+   /* public bool removeAstroTrackingEstado(Guid pGuid)
     {
         bool result = false;
         // Crear e inicializar el contexto
@@ -265,7 +265,7 @@ public class ProcessAnt : IDisposable
             }
         }
         return result;
-    }
+    }*/
     public string actionAnt(DateTime pDate, EquatorialCoordinates eq, bool isNew = false, bool isLaserOn = false)
     {
         string result = string.Empty;
