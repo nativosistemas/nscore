@@ -43,7 +43,9 @@ valorH = calcular_ciclo_de_trabajo_rango(0,parametroH_rango_min,parametroH_rango
 valorV = calcular_ciclo_de_trabajo_rango(0,parametroV_rango_min,parametroV_rango_max)
 pH.start(valorH)
 pV.start(valorV)
-
+time.sleep(3)
+pV.stop()
+pH.stop()
 # Obtener el nombre del sistema operativo
 sistema_operativo = platform.system()
 
@@ -88,10 +90,10 @@ while True:
             altitud, azimut, d = local.altaz()
             # Actualizar 
             publicID = registro[1]
-            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,status=?,dateProcess=? WHERE publicID=?', (altitud.degrees,azimut.degrees,2,datetime.now(), publicID))
-            #        
             float_azimut = float(azimut.degrees)
             float_altitud = float(altitud.degrees)
+            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,status=?,dateProcess=? WHERE publicID=?', (float_altitud,float_azimut,2,datetime.now(), publicID))
+            #        
             horizontal =float_azimut
             vertical = float_altitud
 
