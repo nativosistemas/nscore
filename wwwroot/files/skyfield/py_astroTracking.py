@@ -133,6 +133,8 @@ while True:
         try:
             valorH = calcular_ciclo_de_trabajo_rango(parametroH,parametroH_rango_min,parametroH_rango_max)
             valorV = calcular_ciclo_de_trabajo_rango(parametroV,parametroV_rango_min,parametroV_rango_max)
+            print("valorH: " + str(valorH))
+            print("valorV: " + str(valorV))  
             pH.ChangeDutyCycle(valorH)
             pV.ChangeDutyCycle(valorV)
             # timer
