@@ -101,9 +101,11 @@ while True:
                 horizontal = 180.0 - float_azimut
                 vertical = 180.0 - float_altitud
             else:
-                horizontal = 360.0 - float_azimut    
+                horizontal = 360.0 - float_azimut                    
             parametroH = horizontal#float(sys.argv[1])
             parametroV = vertical#float(sys.argv[2]) 
+            print("parametroH: " +  parametroH)  
+            print("parametroV: " + parametroV)  
             print("star")           
         elif type == "servoAngle":
             parametroH = registro[8]
