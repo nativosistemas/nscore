@@ -44,8 +44,8 @@ valorV = calcular_ciclo_de_trabajo_rango(0,parametroV_rango_min,parametroV_rango
 pH.start(valorH)
 pV.start(valorV)
 time.sleep(3)
-pV.stop()
-pH.stop()
+#pV.stop()
+#pH.stop()
 # Obtener el nombre del sistema operativo
 sistema_operativo = platform.system()
 
@@ -125,7 +125,7 @@ while True:
         parametroH_rango_max = oConfig.horizontal_grados_max
         parametroV_rango_min = oConfig.vertical_grados_min
         parametroV_rango_max = oConfig.vertical_grados_max
-        sleep_secs = 3#float(sys.argv[8])       
+        sleep_secs = 2.5#float(sys.argv[8])       
         #subprocess.call(['python', 'py_astro_servos.py', parametroH, parametroV,parametroLaser,parametroH_rango_min,parametroH_rango_max,parametroV_rango_min,parametroV_rango_max,sleep_secs])
 
 
@@ -139,8 +139,8 @@ while True:
             pV.ChangeDutyCycle(valorV)
             # timer
             time.sleep(sleep_secs)
-            pV.stop()
-            pH.stop()
+            #pV.stop()
+            #pH.stop()
         except ValueError:
             print("except ValueError")
 
