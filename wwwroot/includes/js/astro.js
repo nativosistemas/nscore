@@ -39,7 +39,7 @@ function pageMainLoad() {
         loadServos();
 
     } else if (pagina == 'espaciolab.html') {
-        loadIndex();
+        // loadIndex();
     }
     if (pagina == 'estrellas.html' || pagina == 'config.html' || pagina == 'constelaciones.html') {
         fetchGetCity().then(el_city => {
@@ -109,7 +109,11 @@ function loadIndex() {
                 if (!element.visible) {
                     disabled = ' disabled list-group-item-dark ';
                 }
-                strHtml += '<li class="list-group-item' + disabled + '" value="' + element.id + '">' + element.name + '</li>';
+                var cssColor = '';
+                if (element.nearZenith) {
+                    cssColor = ' li-nearZenith ';
+                }
+                strHtml += '<li class="list-group-item' + disabled + cssColor + '" value="' + element.id + '">' + element.name + '</li>';
             }
         }
         );
@@ -241,11 +245,11 @@ function onClickIrEspacioLab() {
 }
 function onClickIrVersion_v1() {
     window.location.href = "index_v1.html";
-    return false;    
+    return false;
 }
-function onClickIrConfiguracion(){
+function onClickIrConfiguracion() {
     window.location.href = "config_v2.html";
-    return false;     
+    return false;
 }
 function onClickIrServos_v2() {
     window.location.href = "servos_v2.html";
@@ -425,9 +429,9 @@ function onClickStar(pId) {
         var id = pId;
         var pagina = getNamePage();
         //|| pagina == 'index.html'
-    
+
         if (pagina == 'estrellas.html' || pagina == 'espaciolab.html') {
-    
+
             fetchServo(id).then(text => {
                 var strHtml = '';
                 strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
@@ -435,7 +439,7 @@ function onClickStar(pId) {
                 isOnClickStar = false;
                 document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
             });
-    
+
         } else if (pagina == 'estrellas_v2.html') {
             fetchServo_v2(id).then(text => {
                 var strHtml = '';
@@ -444,8 +448,8 @@ function onClickStar(pId) {
                 isOnClickStar = false;
                 document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
             });
-    
-        } 
+
+        }
 
     }
 }

@@ -48,7 +48,7 @@ def getConfig():
             vertical_grados_min = registro[3]       
         if registro[0] == 'vertical_grados_max':
             vertical_grados_max = registro[3]       
-            
+    cursor.close()        
     return Config(latitude,longitude,altitude,horizontal_grados_min,horizontal_grados_max,vertical_grados_min,vertical_grados_max)        
 
 def calcular_ciclo_de_trabajo_rango(angulo,ciclo_minimo,ciclo_maximo):
@@ -57,3 +57,24 @@ def calcular_ciclo_de_trabajo_rango(angulo,ciclo_minimo,ciclo_maximo):
     rango = ciclo_maximo - ciclo_minimo
     ciclo = ciclo_minimo + ((rango / 180.0) * angulo)
     return ciclo
+
+def setServoAngle(parametroH,parametroV):
+    cursor = conexion.cursor()    
+    cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroH,'servoH'))
+    cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroV, 'servoV'))
+    cursor.close()
+    return "Ok"
+
+def getServoAngle():
+    servoH = 0
+    servoV = 0
+    cursor = conexion.cursor()   
+    cursor.execute('SELECT * FROM Configs WHERE name=? or name=?',('servoH','servoV')) 
+    registros = cursor.fetchall()
+    for registro in registros:
+        if registro[0] == 'servoH':
+            servoH = registro[3]
+        if registro[0] == 'servoV':
+            servoV = registro[3]
+    cursor.close()
+    return (servoH,servoV)

@@ -22,10 +22,10 @@
             </div>
             <div class="col-2">
                 <button type="button" class="btn btn-success" onclick="onClickEncenderLaser()">Encender Laser</button>
-            </div>            
+            </div>
             <div class="col-2">
                 <button type="button" class="btn btn-secondary" onclick="onClickApagarLaser()">Apagar Laser</button>
-            </div>            
+            </div>
             <div class="col-2">
                 <button type="button" class="btn btn-info" onclick="onClickIrConfig()" title="Configuración"> <svg
                         xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear"
@@ -44,7 +44,7 @@
                 <ul id="miLista" class="list-group scrollable-list">
                 </ul>
             </div>
-            <div class="col"> 
+            <div class="col">
                 <div id="divMsg" class="col">
 
 
@@ -55,6 +55,13 @@
 
 
     </div>
+    <script>
+        window.addEventListener("load", (event) => {
+            loadIndex();
+
+
+        });
+    </script>
 </body>
 
 </html>

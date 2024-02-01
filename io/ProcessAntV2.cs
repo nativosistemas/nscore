@@ -116,11 +116,11 @@ public class ProcessAntV2 : IDisposable
     public async Task<HorizontalCoordinates> getAstroTracking_HorizontalCoordinates(Guid pGuid)
     {
         HorizontalCoordinates resault = null;
-        using (var context = new AstroDbContext())
-        {
-            int contador = 0;
+        int contador = 0;
 
-            while (contador < 5)
+        while (contador < 5)
+        {
+            using (var context = new AstroDbContext())
             {
                 AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == Constantes.astro_estado_procesado).FirstOrDefault();
                 if (oAntTracking != null)
@@ -128,9 +128,9 @@ public class ProcessAntV2 : IDisposable
                     resault = new HorizontalCoordinates() { Altitude = oAntTracking.altitude.Value, Azimuth = oAntTracking.azimuth.Value };
                     break;
                 }
-                await Task.Delay(500);
-                contador++;
             }
+            await Task.Delay(500);
+            contador++;
         }
         return resault;
     }

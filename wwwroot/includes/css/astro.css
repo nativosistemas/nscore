@@ -133,3 +133,7 @@
     transform-origin: 75px 75px;
     transform: rotate(-90deg);
   }
+  .li-nearZenith {
+    background-color: #be6fbe;
+    font-weight: bold;
+  }

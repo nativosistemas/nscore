@@ -80,7 +80,14 @@ public class ProcessAnt : IDisposable
             EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
             HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
             ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
-
+            if (hc.Altitude > 40)
+            {
+                oStar.nearZenith = true;
+            }
+            else
+            {
+                oStar.nearZenith = false;
+            }
             if (hc.Altitude < 1.0)
             {
                 oStar.visible = false;
@@ -183,26 +190,26 @@ public class ProcessAnt : IDisposable
         result = actionAnt(pDate, eq, isNew, isLaserOn);
         return result;
     }
-   /* public Guid saveAstroTracking(double pRa, double pDec)
-    {
-        Guid oGuid = Guid.NewGuid();
-        using (var context = new AstroDbContext())
-        {
+    /* public Guid saveAstroTracking(double pRa, double pDec)
+     {
+         Guid oGuid = Guid.NewGuid();
+         using (var context = new AstroDbContext())
+         {
 
-            nscore.AstroTracking o = new nscore.AstroTracking(oGuid, pRa, pDec);
-            context.AstroTrackings.Add(o);
+             nscore.AstroTracking o = new nscore.AstroTracking(oGuid, pRa, pDec);
+             context.AstroTrackings.Add(o);
 
-            try
-            {
-                context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                nscore.Util.log(ex);
-            }
-        }
-        return oGuid;
-    }*/
+             try
+             {
+                 context.SaveChanges();
+             }
+             catch (Exception ex)
+             {
+                 nscore.Util.log(ex);
+             }
+         }
+         return oGuid;
+     }*/
     /*public async Task<HorizontalCoordinates> getAstroTracking_HorizontalCoordinates(Guid pGuid)
     {
         HorizontalCoordinates resault = null;
@@ -224,48 +231,48 @@ public class ProcessAnt : IDisposable
         }
         return resault;
     }*/
-   /* public bool changeAstroTrackingEstado(Guid pGuid, int pEstado)
-    {
-        bool result = false;
-        // Crear e inicializar el contexto
-        using (var context = new AstroDbContext())
-        {
-            // Buscar el usuario por ID
-            AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
+    /* public bool changeAstroTrackingEstado(Guid pGuid, int pEstado)
+     {
+         bool result = false;
+         // Crear e inicializar el contexto
+         using (var context = new AstroDbContext())
+         {
+             // Buscar el usuario por ID
+             AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
 
 
-            if (oAstroTracking != null)
-            {
-                // Actualizar los valores
-                oAstroTracking.estado = pEstado;
+             if (oAstroTracking != null)
+             {
+                 // Actualizar los valores
+                 oAstroTracking.estado = pEstado;
 
-                // Guardar los cambios en la base de datos
-                context.SaveChanges();
-                result = true;
-            }
-        }
-        return result;
-    }*/
-   /* public bool removeAstroTrackingEstado(Guid pGuid)
-    {
-        bool result = false;
-        // Crear e inicializar el contexto
-        using (var context = new AstroDbContext())
-        {
-            // Buscar el usuario por ID
-            AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
+                 // Guardar los cambios en la base de datos
+                 context.SaveChanges();
+                 result = true;
+             }
+         }
+         return result;
+     }*/
+    /* public bool removeAstroTrackingEstado(Guid pGuid)
+     {
+         bool result = false;
+         // Crear e inicializar el contexto
+         using (var context = new AstroDbContext())
+         {
+             // Buscar el usuario por ID
+             AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
 
 
-            if (oAstroTracking != null)
-            {
-                context.AstroTrackings.Remove(oAstroTracking);
-                // Guardar los cambios en la base de datos
-                context.SaveChanges();
-                result = true;
-            }
-        }
-        return result;
-    }*/
+             if (oAstroTracking != null)
+             {
+                 context.AstroTrackings.Remove(oAstroTracking);
+                 // Guardar los cambios en la base de datos
+                 context.SaveChanges();
+                 result = true;
+             }
+         }
+         return result;
+     }*/
     public string actionAnt(DateTime pDate, EquatorialCoordinates eq, bool isNew = false, bool isLaserOn = false)
     {
         string result = string.Empty;
@@ -273,7 +280,7 @@ public class ProcessAnt : IDisposable
         double siderealTime_local = AstronomyEngine.GetTSL(pDate, city);
 
         // var fff = _processCoordinatesStar.Start(eq.ra, eq.dec);
-       // Guid oAstroTracking = saveAstroTracking(eq.ra, eq.dec);
+        // Guid oAstroTracking = saveAstroTracking(eq.ra, eq.dec);
 
 
         HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
@@ -288,9 +295,11 @@ public class ProcessAnt : IDisposable
                 string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(eq.ra) + "/" + AstronomyEngine.GetSexagesimal(eq.dec);
                 string strHC = "HA/Dec: " + AstronomyEngine.GetHHmmss(oHorariasCoordinates.HA) + "/" + AstronomyEngine.GetSexagesimal(oHorariasCoordinates.dec);
                 string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
-                result += strEq  +"<br/>" + strHC + "<br/>" + strHc + "<br/>";
+                result += strEq + "<br/>";
+                //result += strHC + "<br/>";
+                result += strHc + "<br/>";
                 result += "HD " + eq.idHD.ToString() + "<br/>";
-                result += "Servo: " + (isNew ? moveTheAnt_rango(oServoCoordinates, isLaserOn) : moveTheAnt(oServoCoordinates));
+                // result += "Servo: " + (isNew ? moveTheAnt_rango(oServoCoordinates, isLaserOn) : moveTheAnt(oServoCoordinates));
             }
             else
             {

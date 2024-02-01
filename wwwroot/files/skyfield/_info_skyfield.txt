@@ -7,7 +7,7 @@ pip install pandas
 chmod +x /usr/src/nscore/py_sqllite.py
 //editar .bashrc --->La ruta completa sería ~/ o /home/tu_usuario/, donde "tu_usuario" es el nombre de tu usuario en el sistema.
 nano ~/.bashrc
-
+// en "nano ~/.bashrc" lo que hay que agregar la linea => python /usr/src/nscore/py_astroTracking.py
 
 
  /usr/src/nscore/py_sqllite.py

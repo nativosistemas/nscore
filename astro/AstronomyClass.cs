@@ -188,6 +188,7 @@ public class Star
     public double ra { get; set; }
     public double dec { get; set; }
     public bool visible { get; set; }
+    public bool nearZenith { get; set; }
     public int idHD { get; set; }
 }
 public class ObserverCoordinates
