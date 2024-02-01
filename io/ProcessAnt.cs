@@ -299,7 +299,7 @@ public class ProcessAnt : IDisposable
                 //result += strHC + "<br/>";
                 result += strHc + "<br/>";
                 result += "HD " + eq.idHD.ToString() + "<br/>";
-                // result += "Servo: " + (isNew ? moveTheAnt_rango(oServoCoordinates, isLaserOn) : moveTheAnt(oServoCoordinates));
+                string result_accion = "Servo: " + (isNew ? moveTheAnt_rango(oServoCoordinates, isLaserOn) : moveTheAnt(oServoCoordinates));
             }
             else
             {
