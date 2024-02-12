@@ -122,7 +122,7 @@ public class ProcessAntV2 : IDisposable
         HorizontalCoordinates resault = null;
         int contador = 0;
 
-        while (contador < 5)
+        while (contador < 10)
         {
             using (var context = new AstroDbContext())
             {
@@ -133,7 +133,7 @@ public class ProcessAntV2 : IDisposable
                     break;
                 }
             }
-            await Task.Delay(100);
+            await Task.Delay(200);
             contador++;
         }
         return resault;
