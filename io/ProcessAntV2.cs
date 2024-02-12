@@ -86,6 +86,10 @@ public class ProcessAntV2 : IDisposable
                     result = "Estrella no es visible";
                 }
             }
+            else
+            {
+                result = "No se obtuvo respuesta";
+            }
         }
         else
         {
@@ -129,7 +133,7 @@ public class ProcessAntV2 : IDisposable
                     break;
                 }
             }
-            await Task.Delay(500);
+            await Task.Delay(100);
             contador++;
         }
         return resault;

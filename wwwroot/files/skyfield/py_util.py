@@ -22,6 +22,9 @@ else:
 
 conexion = sqlite3.connect(ruta_base_datos)
 
+def getConexion():
+    return conexion
+
 def getConfig():
     latitude = 0.0
     longitude =  0.0
@@ -57,6 +60,21 @@ def calcular_ciclo_de_trabajo_rango(angulo,ciclo_minimo,ciclo_maximo):
     rango = ciclo_maximo - ciclo_minimo
     ciclo = ciclo_minimo + ((rango / 180.0) * angulo)
     return ciclo
+
+def decimal_a_tiempo(valor):
+    decimal = (valor * 24.0) / 360.0
+    horas = int(decimal)
+    minutos = int((decimal - horas) * 60)
+    segundos = (((decimal - horas) * 60 - minutos) * 60.0)
+
+    return horas, minutos, segundos
+
+def decimal_a_grado(decimal):
+    grados = int(decimal)
+    minutos_float = (decimal - grados) * 60
+    minutos = int(minutos_float)
+    segundos = (minutos_float - minutos) * 60.0
+    return grados, minutos, segundos
 
 def setServoAngle(parametroH,parametroV):
     cursor = conexion.cursor()    

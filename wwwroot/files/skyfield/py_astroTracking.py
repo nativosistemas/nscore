@@ -5,61 +5,11 @@ import sys
 import time
 import json
 import platform
-from py_util import getConfig, calcular_ciclo_de_trabajo_rango
+from py_util import getConfig, calcular_ciclo_de_trabajo_rango,decimal_a_tiempo,decimal_a_grado,getConexion,getServoAngle
 import subprocess
-import RPi.GPIO as GPIO
 from datetime import datetime
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(7, GPIO.OUT)
-GPIO.setup(11, GPIO.OUT)
-GPIO.setup(21, GPIO.OUT)  # laser
-
-pV = GPIO.PWM(7, 50)
-pH = GPIO.PWM(11, 50)
-GPIO.output(21, GPIO.LOW)
-
-def decimal_a_tiempo(valor):
-    decimal = (valor * 24.0) / 360.0
-    horas = int(decimal)
-    minutos = int((decimal - horas) * 60)
-    segundos = (((decimal - horas) * 60 - minutos) * 60.0)
-
-    return horas, minutos, segundos
-
-def decimal_a_grado(decimal):
-    grados = int(decimal)
-    minutos_float = (decimal - grados) * 60
-    minutos = int(minutos_float)
-    segundos = (minutos_float - minutos) * 60.0
-    return grados, minutos, segundos
-
-oConfig = getConfig()
-parametroH_rango_min = oConfig.horizontal_grados_min
-parametroH_rango_max = oConfig.horizontal_grados_max
-parametroV_rango_min = oConfig.vertical_grados_min
-parametroV_rango_max = oConfig.vertical_grados_max
-valorH = calcular_ciclo_de_trabajo_rango(0,parametroH_rango_min,parametroH_rango_max)
-valorV = calcular_ciclo_de_trabajo_rango(0,parametroV_rango_min,parametroV_rango_max)
-pH.start(valorH)
-pV.start(valorV)
-time.sleep(3)
-#pV.stop()
-#pH.stop()
-# Obtener el nombre del sistema operativo
-sistema_operativo = platform.system()
-
-# Verificar si es Windows
-if sistema_operativo == 'Windows':
-    ruta_base_datos = r'C:\dockerns\astro.db'
-# Verificar si es Linux
-elif sistema_operativo == 'Linux':
-    ruta_base_datos = r'/usr/src/nscore/astro.db'
-else:
-    ruta_base_datos = r'/usr/src/nscore/astro.db'
-
-# Conectar a la base de datos (creara la base de datos si no existe)
-conexion = sqlite3.connect(ruta_base_datos)
+conexion = getConexion()
 
 # Crear un cursor para ejecutar comandos SQL
 cursor = conexion.cursor()
@@ -70,16 +20,16 @@ earth = planets['earth']
 ts = load.timescale()
 
 while True:
-    # Consultar todos los registros de la tabla usuarios
     cursor.execute('SELECT * FROM AntTrackings WHERE status = 1 OR tracking = 1')
     registros = cursor.fetchall()
     oConfig = getConfig()
     city = earth + wgs84.latlon(oConfig.latitude , oConfig.longitude )
-    #print("Registros actuales en la tabla:")
     for registro in registros:
+        print(registro)
         type = registro[2]
         parametroH = 0
         parametroV = 0
+        publicID = registro[1]
         if type == "star":
             ra = registro[4]
             dec = registro[5]        
@@ -88,10 +38,9 @@ while True:
             astrometric_star = city.at(t).observe(barnard2)  
             local = astrometric_star.apparent()
             altitud, azimut, d = local.altaz()
-            # Actualizar 
-            publicID = registro[1]
-            float_azimut = float(azimut.degrees)
+            
             float_altitud = float(altitud.degrees)
+            float_azimut = float(azimut.degrees)
             cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,status=?,dateProcess=? WHERE publicID=?', (float_altitud,float_azimut,2,datetime.now(), publicID))
             #        
             horizontal =float_azimut
@@ -104,6 +53,10 @@ while True:
                 horizontal = 360.0 - float_azimut                    
             parametroH = horizontal#float(sys.argv[1])
             parametroV = vertical#float(sys.argv[2]) 
+
+
+
+
             print("parametroH: " + str(parametroH))
             print("parametroV: " + str(parametroV))  
             print("star")           
@@ -111,7 +64,6 @@ while True:
             parametroH = registro[8]
             parametroV = registro[9]
             # Actualizar 
-            publicID = registro[1]
             cursor.execute('UPDATE AntTrackings SET status=?,dateProcess=? WHERE publicID=?', (2,datetime.now(), publicID))
             #                 
             print("servoAngle")
@@ -120,40 +72,51 @@ while True:
 
 
 
-        parametroLaser = 0
         parametroH_rango_min = oConfig.horizontal_grados_min
-        parametroH_rango_max = oConfig.horizontal_grados_max
+        parametroH_rango_max =  oConfig.horizontal_grados_max
         parametroV_rango_min = oConfig.vertical_grados_min
         parametroV_rango_max = oConfig.vertical_grados_max
-        sleep_secs = 2.5#float(sys.argv[8])       
-        #subprocess.call(['python', 'py_astro_servos.py', parametroH, parametroV,parametroLaser,parametroH_rango_min,parametroH_rango_max,parametroV_rango_min,parametroV_rango_max,sleep_secs])
 
 
-        # Convertir el valor a grados y mover los servos
-        try:
-            valorH = calcular_ciclo_de_trabajo_rango(parametroH,parametroH_rango_min,parametroH_rango_max)
-            valorV = calcular_ciclo_de_trabajo_rango(parametroV,parametroV_rango_min,parametroV_rango_max)
-            print("valorH: " + str(valorH))
-            print("valorV: " + str(valorV))  
-            pH.ChangeDutyCycle(valorH)
-            pV.ChangeDutyCycle(valorV)
-            # timer
-            time.sleep(sleep_secs)
-            #pV.stop()
-            #pH.stop()
-        except ValueError:
-            print("except ValueError")
+        angle_servo_origen = getServoAngle()
+        servoH_angle = angle_servo_origen[0]
+        servoV_angle = angle_servo_origen[1]
 
-        #
+        cambioRangoH = abs(parametroH - servoH_angle)
+        cambioRangoV = abs(parametroV - servoV_angle)
+
+        valorH = calcular_ciclo_de_trabajo_rango(parametroH,parametroH_rango_min,parametroH_rango_max)
+        #pH.start(valorH)#pH.ChangeDutyCycle(valorH)
+
+        valorV = calcular_ciclo_de_trabajo_rango(parametroV,parametroV_rango_min,parametroV_rango_max)
+        #pV.start(valorV)#pV.ChangeDutyCycle(valorV)
+        sleep_secs = 3
+        if cambioRangoH > cambioRangoV:
+            sleep_secs = round((sleep_secs * cambioRangoH) / 180.0, 1)
+        else:
+            sleep_secs = round((sleep_secs * cambioRangoV) / 180.0, 1)
+
+        if sleep_secs < 0.5:
+            sleep_secs = 0.5
+
         cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroH,'servoH'))
         cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroV, 'servoV'))
-        #
-        print(registro)
 
-    conexion.commit()
+        # Llamar program mover Servo
+        ruta_ejecutable = 'py_astroTracking_servo'
+        argumentos = [str(valorH), str(valorV),str(sleep_secs),str(0)] # 0 => laser apagado
+        subprocess.run([ruta_ejecutable] + argumentos)
+        #
+
+        # Cambiar estado de que se llamo a mover servo estado 3?    
+        cursor.execute('UPDATE AntTrackings SET status=?,dateProcess=? WHERE publicID=?', (3,datetime.now(), publicID))
+        conexion.commit()
+        time.sleep(0.5) # hacer espera?
+        #
+
+    #conexion.commit()
     time.sleep(0.5)
     
 # Cerrar el cursor y la conexion
 cursor.close()
 conexion.close()
-GPIO.cleanup()

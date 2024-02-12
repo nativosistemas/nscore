@@ -49,7 +49,7 @@ internal class Program
         app.MapGet("/cargaInicial", (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.actionGrabarSirio(); });//fileSave_Constelaciones()
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>
         {
-            string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index_v1.html");// "index.html"
+            string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index.html");// "index.html"
             var html = System.IO.File.ReadAllText(pathPageWeb);
             return Results.Content(html, "text/html");
             //return "Ok"; 
