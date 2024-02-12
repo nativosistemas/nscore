@@ -101,7 +101,7 @@ while True:
 
         cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroH,'servoH'))
         cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroV, 'servoV'))
-
+        conexion.commit()
         # Llamar program mover Servo
         ruta_ejecutable = '/usr/src/nscore/py_astroTracking_servo'
         argumentos = [str(valorH), str(valorV),str(sleep_secs),str(0)] # 0 => laser apagado
@@ -110,7 +110,7 @@ while True:
 
         # Cambiar estado de que se llamo a mover servo estado 3?    
         #cursor.execute('UPDATE AntTrackings SET status=?,dateProcess=? WHERE publicID=?', (3,datetime.now(), publicID))
-        conexion.commit()
+        #conexion.commit()
         time.sleep(0.5) # hacer espera?
         #
 
