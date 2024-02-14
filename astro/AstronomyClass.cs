@@ -3,6 +3,56 @@ using Microsoft.EntityFrameworkCore;
 
 namespace nscore;
 
+public class Stellarium
+{
+    public double? ra { get; set; }
+    public double? raJ2000 { get; set; }
+    public double? dec { get; set; }
+    public double? decJ2000 { get; set; }
+    public string? star_type { get; set; }
+    public string? type { get; set; }
+    public double? absolute_mag { get; set; }
+    public string? iauConstellation { get; set; }
+    public string? name { get; set; }
+    public string? localized_name { get; set; }
+    public double? distance_ly { get; set; }
+    public string? object_type { get; set; }
+    public double? parallax { get; set; }
+    public string? spectral_class { get; set; }
+    public string? variable_star { get; set; }
+
+}
+
+[Index(nameof(publicID), IsUnique = true)]
+public class Astronomical_stellarium : Stellarium
+{
+    public Astronomical_stellarium()
+    {
+        publicID = Guid.NewGuid();
+    }
+    [Key]
+    public Guid publicID { get; set; }
+    public int? hip { get; set; }
+    public string? name_web { get; set; }
+    public string getName()
+    {
+        string result = string.Empty;
+        if (!string.IsNullOrEmpty(name_web) )
+        {
+            result = name_web;
+        }
+        else if (!string.IsNullOrEmpty(name))
+        {
+            result = name;
+        }
+        else 
+        {
+            result = publicID.ToString();
+        }
+        return result;
+    }
+}
+
 [Index(nameof(publicID), IsUnique = true)]
 public class AntTracking
 {
@@ -175,13 +225,6 @@ public class AstronomicalObject
 //[Keyless]
 public class Star
 {
-    /* public Star(){
-         guid = Guid.NewGuid();
-     }
-     [Key]
-     public Guid guid { get; set; }*/
-    [Key]
-    [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
     public int id { get; set; }
     public int nameBayer { get; set; }
     public string name { get; set; }
@@ -189,7 +232,7 @@ public class Star
     public double dec { get; set; }
     public bool visible { get; set; }
     public bool nearZenith { get; set; }
-    public int idHD { get; set; }
+    public int hip { get; set; }
 }
 public class ObserverCoordinates
 {

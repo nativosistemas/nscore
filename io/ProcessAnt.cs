@@ -141,7 +141,7 @@ public class ProcessAnt : IDisposable
     {
         string result = string.Empty;
         Constellation o = _l_Constellation.Where(x => x.id == pId).FirstOrDefault();
-        Star oStar = _l_Star.Where(x => x.idHD == o.idHD_startRef).FirstOrDefault();
+        Star oStar = _l_Star.Where(x => x.hip == o.idHD_startRef).FirstOrDefault();
         if (o != null && oStar != null)
         {
 

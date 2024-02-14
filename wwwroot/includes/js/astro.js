@@ -162,20 +162,6 @@ function loadConstelaciones() {
             });
         });
     });
-    /* fetchAllStarsJSON().then(l => {
-         var strHtml = '';
- 
-         l.forEach(element => {
-             if (element.name != null && element.name != '') {
-   
- 
-                 strHtml += '<option value="' + element.idHD + '">' + element.name + ' [HD ' + element.idHD + ']' + '</option>';
-             }
-         }
-         );
-         document.getElementById("selectStar").innerHTML = strHtml;
- 
-     });*/
 }
 function loadServos() {
     actulizarGradosServos();
@@ -309,6 +295,7 @@ function cargarDetalleConstellation() {
     }
 
 }
+
 function onClickGuardarConstellation() {
     // idConstellationSelect
     var id = idConstellationSelect;
@@ -371,11 +358,12 @@ async function fetchServo_v2(pId) {
     const text = await response.text();
     return text;
 }
+/*
 async function fetchUpdateConstelacion(id, idHD, name) {
     const response = await fetch('/updateconstellation?id=' + id + '&idHD=' + idHD + '&name=' + name);// id, int idHD, string name
     const text = await response.text();
     return text;
-}
+}*/
 async function fetchServoConstellation(pId) {
     const response = await fetch('/servoconstellations?id=' + pId);
     const text = await response.text();

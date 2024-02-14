@@ -42,7 +42,7 @@ public class ProcessAntV2 : IDisposable
             oStar.idHD = o.idHD;
             _l_Star.Add(oStar);
         }*/
-        _l_Star = nscore.Util.getAllStars();
+        _l_Star = nscore.Util.getAllStars_stellarium();
         // _l_Constellation = nscore.Util.getConstelaciones();
     }
     public ObserverCoordinates setCity(int id, string pName, double pLatitude, double pLongitude)
@@ -61,6 +61,34 @@ public class ProcessAntV2 : IDisposable
         }
         return _l_City;
     }
+    public List<Star> getStars()
+    {
+        double siderealTime_local = AstronomyEngine.GetTSL(DateTime.UtcNow, city);
+        foreach (Star oStar in _l_Star)
+        {
+            EquatorialCoordinates eq = new EquatorialCoordinates() { dec = oStar.dec, ra = oStar.ra };
+            HorizontalCoordinates hc = AstronomyEngine.ToHorizontalCoordinates(siderealTime_local, city, eq);
+            ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
+            if (hc.Altitude > 40)
+            {
+                oStar.nearZenith = true;
+            }
+            else
+            {
+                oStar.nearZenith = false;
+            }
+            if (hc.Altitude < 1.0)
+            {
+                oStar.visible = false;
+            }
+            else
+            {
+                oStar.visible = true;
+            }
+            // oStar.visible = true;
+        }
+        return _l_Star.Where(x => x.visible).ToList();
+    }
     public string findStar(int pId, bool isLaserOn = false)
     {
         string result = string.Empty;
@@ -78,7 +106,7 @@ public class ProcessAntV2 : IDisposable
                     string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(oStar.ra) + "/" + AstronomyEngine.GetSexagesimal(oStar.dec);
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "<br/>" + strHc + "<br/>";
-                    result += "HD " + oStar.idHD.ToString() + "<br/>";
+                    result += "HIP " + oStar.hip.ToString() + "<br/>";
                     //result += "Servo: " + moveTheAnt_rango(oServoCoordinates, isLaserOn);
                 }
                 else

@@ -35,6 +35,7 @@ internal class Program
         app.MapGet("/servoconstellations", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findConstellation(id); }));
         app.MapGet("/laser", ((nscore.ProcessAnt pProcessAnt, int read, int on) => { return pProcessAnt.actionLaser(read, on); }));
         app.MapGet("/stars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getStars()); }));
+        app.MapGet("/stars_stellarium", ((nscore.ProcessAntV2 pProcessAntV2) => { return Results.Json(pProcessAntV2.getStars()); }));
         app.MapGet("/allstars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(nscore.Util.getAllStars()); }));
         app.MapGet("/constellations", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getConstellations()); }));
         app.MapGet("/updateconstellation", ((nscore.ProcessAnt pProcessAnt, int id, int idHD, string name) => { return nscore.Util.updateConstelacion(id, idHD, name); }));
@@ -45,8 +46,10 @@ internal class Program
         app.MapGet("/simbad", () => { return nscore.Util.getAstronomicalObjects(); });
         app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_fileLoad(); });
         app.MapGet("/astrotracking", (() => { return Util.getAntTrackings(); }));
-        app.MapGet("/restore", () => { return nscore.Util.restaurarJsonBD(); });
+        app.MapGet("/restore", () => { return nscore.Util.restore(); });
         app.MapGet("/cargaInicial", (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.actionGrabarSirio(); });//fileSave_Constelaciones()
+        app.MapGet("/stellarium", async () => { return await nscore.Util.getInfoStellarium(); });
+        app.MapGet("/test", async () => { return await nscore.Util.Astronomical_stellarium_copia(); });
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>
         {
             string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index.html");// "index.html"
