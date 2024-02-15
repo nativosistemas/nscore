@@ -11,9 +11,9 @@ public class AstronomyEngine
     public static string GetSexagesimal(double angulo)
     {
         int grados = (int)Math.Floor(angulo);
-        double minutosDecimal = (angulo - grados) * 60;
+        double minutosDecimal = (angulo - Convert.ToDouble(grados)) * 60.0;
         int minutos = (int)Math.Floor(minutosDecimal);
-        double segundosDecimal = (minutosDecimal - minutos) * 60;
+        double segundosDecimal = (minutosDecimal - Convert.ToDouble(minutos)) * 60.0;
 
         return $"{grados}° {minutos}' {Math.Round(segundosDecimal, 4)}\"";
     }
