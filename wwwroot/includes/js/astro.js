@@ -25,7 +25,7 @@ function pageMainLoad() {
         loadIndex();
 
     } else if (pagina == 'estrellas_v2.html') {
-        loadIndex();
+        loadStarsStellarium();
 
     } else if (pagina == 'config.html') {
         loadConfig();
@@ -124,6 +124,34 @@ function loadIndex() {
         var elementosLi = document.querySelectorAll("#miLista li");
 
         // Asigna un controlador de eventos a cada elemento <li>
+        elementosLi.forEach(function (li) {
+            li.addEventListener("click", function (event) {
+                capturarEvento(li);
+            });
+        });
+    });
+
+}
+function loadStarsStellarium() {
+
+    fetchStarsStellariumJSON().then(stars => {
+        var strHtml = '';
+        stars.forEach(element => {
+            if (element.name != null && element.name != '') {
+                var disabled = '';
+                if (!element.visible) {
+                    disabled = ' disabled list-group-item-dark ';
+                }
+                var cssColor = '';
+                if (element.nearZenith) {
+                    cssColor = ' li-nearZenith ';
+                }
+                strHtml += '<li class="list-group-item' + disabled + cssColor + '" value="' + element.id + '">' + element.name + '</li>';
+            }
+        }
+        );
+        document.getElementById("miLista").innerHTML = strHtml;
+        var elementosLi = document.querySelectorAll("#miLista li");
         elementosLi.forEach(function (li) {
             li.addEventListener("click", function (event) {
                 capturarEvento(li);
@@ -335,6 +363,11 @@ function actulizarGradosServos() {
 }
 async function fetchStarsJSON() {
     const response = await fetch('/stars');
+    const stars = await response.json();
+    return stars;
+}
+async function fetchStarsStellariumJSON() {
+    const response = await fetch('/stars_stellarium');
     const stars = await response.json();
     return stars;
 }

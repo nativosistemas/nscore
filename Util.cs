@@ -915,7 +915,7 @@ public class Util
     public static List<Star> getAllStars_stellarium()
     {
         List<Star> result = new List<Star>();
-        List<Astronomical_stellarium> l = getAstronomical_stellarium().Where(x => x.absolute_mag != null).OrderBy(x => x.absolute_mag).ToList();
+        List<Astronomical_stellarium> l = getAstronomical_stellarium();//.Where(x => x.absolute_mag != null).OrderBy(x => x.absolute_mag).ToList();
         //foreach (AstronomicalObject oStar in l){
         for (int i = 0; i < l.Count; i++)
         {
