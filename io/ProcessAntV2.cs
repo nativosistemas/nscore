@@ -20,10 +20,10 @@ public class ProcessAntV2 : IDisposable
 
     public double _Horizontal_grados = 0;
     public double _Vertical_grados = 0;
-    public double _Horizontal_grados_min = Math.Round(2.9, 6);
-    public double _Horizontal_grados_max = Math.Round(12.7, 6);
-    public double _Vertical_grados_min = Math.Round(2.5, 6);
-    public double _Vertical_grados_max = Math.Round(12.2, 6);
+    public double _Horizontal_grados_min = 0;
+    public double _Horizontal_grados_max = 0;
+    public double _Vertical_grados_min = 0;
+    public double _Vertical_grados_max = 0;
 
     public ProcessAntV2()
     {
@@ -89,14 +89,25 @@ public class ProcessAntV2 : IDisposable
         }
         return _l_Star.Where(x => x.visible).ToList();
     }
+    public string actionAnt_servo(double pHorizontal, double pVertical)
+    {
+        string result = string.Empty;
+        Guid oAstroTracking = saveAstroTracking(Constantes.astro_type_servoAngle, pHorizontal, pVertical);
+        HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(Constantes.astro_type_servoAngle, oAstroTracking).Result;
+        if (hc != null)
+        {
+            result = "Ok";
+        }
+        return result;
+    }
     public string findStar(int pId, bool isLaserOn = false)
     {
         string result = string.Empty;
         Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
         if (oStar != null)
         {
-            Guid oAstroTracking = saveAstroTracking(oStar.ra, oStar.dec);
-            HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(oAstroTracking).Result;
+            Guid oAstroTracking = saveAstroTracking(Constantes.astro_type_star, oStar.ra, oStar.dec);
+            HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(Constantes.astro_type_star, oAstroTracking).Result;
             //removeAstroTracking(oAstroTracking);
             if (hc != null)
             {
@@ -107,7 +118,6 @@ public class ProcessAntV2 : IDisposable
                     string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
                     result += strEq + "<br/>" + strHc + "<br/>";
                     result += "HIP " + oStar.hip.ToString() + "<br/>";
-                    //result += "Servo: " + moveTheAnt_rango(oServoCoordinates, isLaserOn);
                 }
                 else
                 {
@@ -125,15 +135,14 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public Guid saveAstroTracking(double pRa, double pDec)
+    public Guid saveAstroTracking(string pType, double pRa_h, double pDec_v)
     {
         Guid oGuid = Guid.NewGuid();
         using (var context = new AstroDbContext())
         {
 
-            nscore.AntTracking o = new nscore.AntTracking(oGuid, Constantes.astro_type_star, pRa, pDec);
+            nscore.AntTracking o = new nscore.AntTracking(oGuid, pType, pRa_h, pDec_v);
             context.AntTrackings.Add(o);
-
             try
             {
                 context.SaveChanges();
@@ -145,7 +154,7 @@ public class ProcessAntV2 : IDisposable
         }
         return oGuid;
     }
-    public async Task<HorizontalCoordinates> getAstroTracking_HorizontalCoordinates(Guid pGuid)
+    public async Task<HorizontalCoordinates> getAstroTracking_HorizontalCoordinates(string pType, Guid pGuid)
     {
         HorizontalCoordinates resault = null;
         int contador = 0;
@@ -157,7 +166,14 @@ public class ProcessAntV2 : IDisposable
                 AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == Constantes.astro_estado_procesado).FirstOrDefault();
                 if (oAntTracking != null)
                 {
-                    resault = new HorizontalCoordinates() { Altitude = oAntTracking.altitude.Value, Azimuth = oAntTracking.azimuth.Value };
+                    if (pType == Constantes.astro_type_star)
+                    {
+                        resault = new HorizontalCoordinates() { Altitude = oAntTracking.altitude.Value, Azimuth = oAntTracking.azimuth.Value };
+                    }
+                    else if (pType == Constantes.astro_type_servoAngle)
+                    {
+                        resault = new HorizontalCoordinates() { Altitude = oAntTracking.h.Value, Azimuth = oAntTracking.v.Value };
+                    }
                     break;
                 }
             }
@@ -165,6 +181,34 @@ public class ProcessAntV2 : IDisposable
             contador++;
         }
         return resault;
+    }
+    public string getValoresServos()
+    {
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                List<Config> l = context.Configs.ToList();
+                _Horizontal_grados = l.FirstOrDefault(x => x.name == "servoH").valueDouble.Value;
+                _Vertical_grados = l.FirstOrDefault(x => x.name == "servoV").valueDouble.Value;
+                _Horizontal_grados_min = l.FirstOrDefault(x => x.name == "horizontal_grados_min").valueDouble.Value;
+                _Horizontal_grados_max = l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble.Value;
+                _Vertical_grados_min = l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble.Value;
+                _Vertical_grados_max = l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble.Value;
+            }
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
+        string result = "{ \"horizontal\":" + _Horizontal_grados.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+        ", \"vertical\":" + _Vertical_grados.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+          ", \"horizontal_min\":" + _Horizontal_grados_min.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                    ", \"horizontal_max\":" + _Horizontal_grados_max.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                              ", \"vertical_min\":" + _Vertical_grados_min.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+                    ", \"vertical_max\":" + _Vertical_grados_max.ToString(System.Globalization.CultureInfo.InvariantCulture) +
+        " }";
+        return result;
     }
     /*
     public bool changeAstroTrackingEstado(Guid pGuid, int pEstado)
@@ -190,6 +234,7 @@ public class ProcessAntV2 : IDisposable
         return result;
     }
     */
+    /*
     public bool removeAstroTracking(Guid pGuid)
     {
         bool result = false;
@@ -207,10 +252,12 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
+    */
     /*public string moveTheAnt(ServoCoordinates pServoCoordinates)
     {
         return _processServo.Start(pServoCoordinates.servoH, pServoCoordinates.servoV, 1);
     }*/
+    /*
     public string moveTheAnt_rango(ServoCoordinates pServoCoordinates, bool isLaserOn = false)
     {
         return moveTheAnt_rango(pServoCoordinates.servoH, pServoCoordinates.servoV, _Horizontal_grados_min, _Horizontal_grados_max, _Vertical_grados_min, _Vertical_grados_max, isLaserOn ? 1 : 0);
@@ -260,18 +307,18 @@ public class ProcessAntV2 : IDisposable
     public string actionLaser(int pIsRead, int pLaser)
     {
         return _processLaser.Start(pIsRead, pLaser);
-    }
-    public string actionGrabarSirio()
+    }*/
+    /*public string actionGrabarSirio()
     {
         Guid? oAstroTracking = null;
         Star oStar = _l_Star.Where(x => x.id == 48915).FirstOrDefault();
         if (oStar != null)
         {
-            oAstroTracking = saveAstroTracking(oStar.ra, oStar.dec);
+            oAstroTracking = saveAstroTracking(Constantes.astro_type_star,oStar.ra, oStar.dec);
 
         }
         return oAstroTracking == null ? "!Ok" : oAstroTracking.ToString();
-    }
+    }*/
 
     protected virtual void Dispose(bool disposing)
     {

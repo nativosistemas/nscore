@@ -434,12 +434,21 @@ async function fetchSetServoMover(pH, pV, pH_min, pH_max, pV_min, pV_max, pOnLas
     const text = await response.text();
     return text;
 }
+async function fetchSetServoMover_v2(pH, pV) {
+    const response = await fetch('/servomover_v2?pH=' + pH + '&pV=' + pV);
+    const text = await response.text();
+    return text;
+}
 async function fetchGetServos() {
     const response = await fetch('/getservos');
     const text = await response.text();
     return text;
 }
-
+async function fetchGetServos_v2() {
+    const response = await fetch('/getservos_v2');
+    const text = await response.text();
+    return text;
+}
 var isOnClickStar = false;
 
 function onClickStar(pId) {
@@ -577,6 +586,96 @@ function onchangeRangeMoverServo() {
             strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
             document.getElementById("divMsg").innerHTML = strHtml;
             isOnClickMoverServo = false;
+            document.getElementById("spinner").style.display = "none";
+
+        })
+    }
+    return false;
+}
+/////////////////
+var isOnClickMoverServo_v2 = false;
+function onClickMoverServo_v2() {
+    if (!isOnClickMoverServo_v2) {
+        isOnClickMoverServo_v2 = true;
+        document.getElementById("spinner").style.display = '';
+        var horizontal = 0;
+        var vertical = 0;
+
+        var inputElement_horizontal = document.getElementById('inputServoH');
+        if (inputElement_horizontal.value.trim() !== '') {
+            horizontal = inputElement_horizontal.value;
+        }
+        var inputElement_vertical = document.getElementById('inputServoV');
+        if (inputElement_vertical.value.trim() !== '') {
+            vertical = inputElement_vertical.value;
+        }
+
+        fetchSetServoMover_v2(horizontal, vertical).then(text => {
+            actulizarGradosServos_v2();
+            var strHtml = '';
+            strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
+            document.getElementById("divMsg").innerHTML = strHtml;
+            isOnClickMoverServo_v2 = false;
+            document.getElementById("spinner").style.display = "none";
+        })
+    }
+    return false;
+}
+function actulizarGradosServos_v2() {
+
+    fetchGetServos_v2().then(response => {
+        var strHtml = '';
+        /*const o = response.json();
+        const json = '{"result":true, "count":42}';*/
+        const o = JSON.parse(response);
+        document.getElementById("inputServoH").value = o.horizontal;
+        document.getElementById("inputServoV").value = o.vertical;
+        //
+        //document.getElementById("rangeHorizontal").value = o.horizontal;
+        var rangeH = document.getElementById("rangeHorizontal");
+        rangeH.value = o.horizontal;
+        var bubbleH = document.getElementById("bubbleHorizontal");
+        var rangeV = document.getElementById("rangeVertical");
+        rangeV.value = o.vertical;
+        var bubbleV = document.getElementById("bubbleVertical");
+
+        setBubble(rangeH, bubbleH);
+        setBubble(rangeV, bubbleV);
+        //
+
+
+       // document.getElementById("inputServoHmin").value = o.horizontal_min;
+       // document.getElementById("inputServoHmax").value = o.horizontal_max;
+       // document.getElementById("inputServoVmin").value = o.vertical_min;
+       // document.getElementById("inputServoVmax").value = o.vertical_max;
+        // document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
+    });
+}
+function onchangeRangeMoverServo_v2() {
+    if (!isOnClickMoverServo_v2) {
+        isOnClickMoverServo_v2 = true;
+        document.getElementById("spinner").style.display = '';
+        var horizontal = 0;
+        var vertical = 0;
+
+        var inputElement_horizontal = document.getElementById('rangeHorizontal');
+        if (inputElement_horizontal.value.trim() !== '') {
+            horizontal = inputElement_horizontal.value;
+        }
+        var inputElement_vertical = document.getElementById('rangeVertical');
+        if (inputElement_vertical.value.trim() !== '') {
+            vertical = inputElement_vertical.value;
+        }
+
+
+
+
+        fetchSetServoMover_v2(horizontal, vertical).then(text => {
+            actulizarGradosServos_v2();
+            var strHtml = '';
+            strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
+            document.getElementById("divMsg").innerHTML = strHtml;
+            isOnClickMoverServo_v2 = false;
             document.getElementById("spinner").style.display = "none";
 
         })

@@ -21,6 +21,14 @@ star-type
 type
 variable-star
 
+-----------------
 
-resultado
-{"above-horizon":true,"absolute-mag":1.4443988800048828,"airmass":1.0641230344772339,"altitude":70.00796223324548,"altitude-geometric":70.0018784262886,"ambientInt":0.04301616549491882,"ambientLum":0.0007729088538326323,"appSidTm":"5h54m12.0s","azimuth":39.05914183559706,"azimuth-geometric":39.05914183559706,"bV":0.0039370059967041016,"dec":-16.751525106904076,"decJ2000":-16.727460030649286,"distance-ly":8.600943479790127,"elat":-39.61113924938923,"elatJ2000":-39.61651885162531,"elong":104.41763251176641,"elongJ2000":104.08320729487167,"found":true,"glat":-8.895177445723084,"glong":227.2406419007656,"hourAngle-dd":346.99446546099085,"hourAngle-hms":"23h07m58.7s","iauConstellation":"CMa","localized-name":"Sirio","meanSidTm":"5h54m12.3s","name":"HIP 32349","object-type":"double star","parallax":0.37921000000000005,"ra":101.55558057079072,"raJ2000":101.28720143239494,"rise":"15h28m","rise-dhr":15.462222222222222,"set":"5h05m","set-dhr":5.086111111111111,"sglat":-87.42163445796575,"sglong":272.8420559144162,"size":0,"size-dd":0,"size-deg":"0.00000Â°","size-dms":"+0Â°00'00.00\"","spectral-class":"A1V+DA","star-type":"double-star","transit":"22h14m","transit-dhr":22.24138888888889,"type":"Star","variable-star":"no","vmag":-1.4500000476837158,"vmage":-1.3116872310638428,"wds-position-angle":61,"wds-separation":125.69999694824219,"wds-year":2011}
+Constelación
+
+http://localhost:8090/api/objects/info?name=And&format=json
+
+iauConstellation
+localized-name
+name
+object-type
+type

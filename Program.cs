@@ -31,7 +31,9 @@ internal class Program
         app.MapGet("/servo", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findStar(id, true); }));
         app.MapGet("/servo_v2", ((nscore.ProcessAntV2 pProcessAntV2, int id) => { return pProcessAntV2.findStar(id); }));
         app.MapGet("/getservos", ((nscore.ProcessAnt pProcessAnt) => { return pProcessAnt.getValoresServos(); }));
+        app.MapGet("/getservos_v2", ((nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.getValoresServos(); }));
         app.MapGet("/servomover", ((nscore.ProcessAnt pProcessAnt, double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, bool pOnLaser) => { return pProcessAnt.actionAnt_servo(pH, pV, pH_min, pH_max, pV_min, pV_max, pOnLaser); }));
+        app.MapGet("/servomover_v2", ((nscore.ProcessAntV2 pProcessAntV2, double pH, double pV) => { return pProcessAntV2.actionAnt_servo(pH, pV); }));
         app.MapGet("/servoconstellations", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findConstellation(id); }));
         app.MapGet("/laser", ((nscore.ProcessAnt pProcessAnt, int read, int on) => { return pProcessAnt.actionLaser(read, on); }));
         app.MapGet("/stars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getStars()); }));
@@ -47,7 +49,7 @@ internal class Program
         app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_fileLoad(); });
         app.MapGet("/astrotracking", (() => { return Util.getAntTrackings(); }));
         app.MapGet("/restore", () => { return nscore.Util.restore(); });
-        app.MapGet("/cargaInicial", (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.actionGrabarSirio(); });//fileSave_Constelaciones()
+        //app.MapGet("/cargaInicial", (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.actionGrabarSirio(); });//fileSave_Constelaciones()
         app.MapGet("/stellarium", async () => { return await nscore.Util.getInfoStellarium(); });
         app.MapGet("/test", async () => { return await nscore.Util.Astronomical_stellarium_copia(); });
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>

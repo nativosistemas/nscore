@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace nscore;
 
-public class Stellarium
+public class StellariumStar_base
 {
     public double? ra { get; set; }
     public double? raJ2000 { get; set; }
@@ -22,11 +22,28 @@ public class Stellarium
     public string? variable_star { get; set; }
 
 }
-
-[Index(nameof(publicID), IsUnique = true)]
-public class Astronomical_stellarium : Stellarium
+public class StellariumConstellation_base
 {
-    public Astronomical_stellarium()
+    public string? type { get; set; }
+    public string? iauConstellation { get; set; }
+    public string? name { get; set; }
+    public string? localized_name { get; set; }
+
+}
+[Index(nameof(publicID), IsUnique = true)]
+public class StellariumConstellation : StellariumConstellation_base
+{
+    public StellariumConstellation()
+    {
+        publicID = Guid.NewGuid();
+    }
+    [Key]
+    public Guid publicID { get; set; }
+}
+[Index(nameof(publicID), IsUnique = true)]
+public class StellariumStar : StellariumStar_base
+{
+    public StellariumStar()
     {
         publicID = Guid.NewGuid();
     }
@@ -37,7 +54,7 @@ public class Astronomical_stellarium : Stellarium
     public string getName()
     {
         string result = string.Empty;
-        if (!string.IsNullOrEmpty(name_web) )
+        if (!string.IsNullOrEmpty(name_web))
         {
             result = name_web;
         }
@@ -45,7 +62,7 @@ public class Astronomical_stellarium : Stellarium
         {
             result = name;
         }
-        else 
+        else
         {
             result = publicID.ToString();
         }
@@ -60,13 +77,21 @@ public class AntTracking
     {
 
     }
-    public AntTracking(Guid pPublicID, string pType, double? pRa = null, double? pDec = null)
+    public AntTracking(Guid pPublicID, string pType, double? pRa_h = null, double? pDec_v = null)
     {
         publicID = pPublicID;
         type = pType;
         date = DateTime.Now;
-        ra = pRa;
-        dec = pDec;
+        if (pType == Constantes.astro_type_star)
+        {
+            ra = pRa_h;
+            dec = pDec_v;
+        }
+        else if (pType == Constantes.astro_type_servoAngle)
+        {
+            h = pRa_h;
+            v = pDec_v;
+        }
         status = 1;
     }
     public Guid publicID { get; set; }

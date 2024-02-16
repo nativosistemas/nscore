@@ -794,9 +794,9 @@ public class Util
         }
         return result;
     }
-    public static async Task<List<Stellarium>> getInfoStellarium()
+    public static async Task<List<StellariumStar_base>> getInfoStellarium()
     {
-        List<Stellarium> result = new List<Stellarium>();
+        List<StellariumStar_base> result = new List<StellariumStar_base>();
         // Astronomical_stellarium
         using var httpClient = new HttpClient();
 
@@ -811,7 +811,7 @@ public class Util
 
                 response.EnsureSuccessStatusCode();
 
-                Stellarium data = await response.Content.ReadFromJsonAsync<Stellarium>();
+                StellariumStar_base data = await response.Content.ReadFromJsonAsync<StellariumStar_base>();
                 result.Add(data);
             }
         }
@@ -821,14 +821,14 @@ public class Util
         }
         return result;
     }
-    public static async Task<List<Astronomical_stellarium>> Stellarium_CompletarDatos()
+    public static async Task<List<StellariumStar>> Stellarium_CompletarDatos()
     {
-        List<Astronomical_stellarium> l_result = new List<Astronomical_stellarium>();
-        List<Stellarium> l = await getInfoStellarium();
+        List<StellariumStar> l_result = new List<StellariumStar>();
+        List<StellariumStar_base> l = await getInfoStellarium();
         List<AstronomicalObject> l_AstronomicalObjects = nscore.Util.getAstronomicalObjects().Where(x => x.magnitudAparente != null).OrderBy(x => x.magnitudAparente).ToList();
-        foreach (Stellarium oStellarium in l)
+        foreach (StellariumStar_base oStellarium in l)
         {
-            Astronomical_stellarium oAstronomical_stellarium = CopiarPropiedades(oStellarium, new Astronomical_stellarium());
+            StellariumStar oAstronomical_stellarium = CopiarPropiedades(oStellarium, new StellariumStar());
             int hip = Convert.ToInt32(oStellarium.name.ToString().Replace("HIP ", ""));
             string name_hip = "HIP" + hip.ToString().PadLeft(7);// "HIP  71683";
             AstronomicalObject oAstronomicalObject = l_AstronomicalObjects.Where(x => x.simbadNames.Contains(name_hip)).FirstOrDefault();
@@ -841,14 +841,14 @@ public class Util
         }
         return l_result;
     }
-    public static async Task<List<Astronomical_stellarium>> restoreStellarium()
+    public static async Task<List<StellariumStar>> restoreStellarium()
     {
-        List<Astronomical_stellarium> l = getAstronomical_stellarium_fileLoad();
+        List<StellariumStar> l = getAstronomical_stellarium_fileLoad();
         using (var context = new AstroDbContext())
         {
-            foreach (Astronomical_stellarium oFila in l)
+            foreach (StellariumStar oFila in l)
             {
-                context.Astronomical_stellariums.Add(oFila);
+                context.StellariumStars.Add(oFila);
             }
             try
             {
@@ -861,10 +861,10 @@ public class Util
         }
         return l;
     }
-    public static Astronomical_stellarium CopiarPropiedades(Stellarium padre, Astronomical_stellarium hija)
+    public static StellariumStar CopiarPropiedades(StellariumStar_base padre, StellariumStar hija)
     {
-        System.Reflection.PropertyInfo[] propiedadesPadre = typeof(Stellarium).GetProperties();
-        System.Reflection.PropertyInfo[] propiedadesHija = typeof(Astronomical_stellarium).GetProperties();
+        System.Reflection.PropertyInfo[] propiedadesPadre = typeof(StellariumStar_base).GetProperties();
+        System.Reflection.PropertyInfo[] propiedadesHija = typeof(StellariumStar).GetProperties();
 
         foreach (var propiedadPadre in propiedadesPadre)
         {
@@ -881,14 +881,14 @@ public class Util
         }
         return hija;
     }
-    public static List<Astronomical_stellarium> getAstronomical_stellarium()
+    public static List<StellariumStar> getAstronomical_stellarium()
     {
-        List<Astronomical_stellarium> result = new List<Astronomical_stellarium>();
+        List<StellariumStar> result = new List<StellariumStar>();
         try
         {
             using (var context = new AstroDbContext())
             {
-                result = context.Astronomical_stellariums.ToList();
+                result = context.StellariumStars.ToList();
             }
         }
         catch (Exception ex)
@@ -897,13 +897,13 @@ public class Util
         }
         return result;
     }
-    public static List<Astronomical_stellarium> getAstronomical_stellarium_fileLoad()
+    public static List<StellariumStar> getAstronomical_stellarium_fileLoad()
     {
         try
         {
             string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "Astronomical_stellarium.json");
             string json = File.ReadAllText(pathAstronomy);
-            List<Astronomical_stellarium> instancia = System.Text.Json.JsonSerializer.Deserialize<List<Astronomical_stellarium>>(json);
+            List<StellariumStar> instancia = System.Text.Json.JsonSerializer.Deserialize<List<StellariumStar>>(json);
             return instancia;
         }
         catch (Exception ex)
@@ -915,11 +915,11 @@ public class Util
     public static List<Star> getAllStars_stellarium()
     {
         List<Star> result = new List<Star>();
-        List<Astronomical_stellarium> l = getAstronomical_stellarium();//.Where(x => x.absolute_mag != null).OrderBy(x => x.absolute_mag).ToList();
+        List<StellariumStar> l = getAstronomical_stellarium();//.Where(x => x.absolute_mag != null).OrderBy(x => x.absolute_mag).ToList();
         //foreach (AstronomicalObject oStar in l){
         for (int i = 0; i < l.Count; i++)
         {
-            Astronomical_stellarium o = l[i];
+            StellariumStar o = l[i];
             Star oStar = new Star();
             oStar.id = o.hip.Value;
             oStar.dec = o.dec.Value;
@@ -933,7 +933,7 @@ public class Util
     public static async Task<string> Astronomical_stellarium_copia()
     {
         string result = string.Empty;
-        List<Astronomical_stellarium> l = await Stellarium_CompletarDatos();
+        List<StellariumStar> l = await Stellarium_CompletarDatos();
         string json = System.Text.Json.JsonSerializer.Serialize(l);
         string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "Astronomical_stellarium.json");
         File.WriteAllText(pathAstronomy, json);

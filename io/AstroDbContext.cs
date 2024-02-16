@@ -8,7 +8,7 @@ public class AstroDbContext : DbContext
     public DbSet<nscore.AntTracking> AntTrackings { get; set; } 
     public DbSet<nscore.Config> Configs { get; set; }
     public DbSet<nscore.Log> Logs { get; set; }
-    public DbSet<nscore.Astronomical_stellarium> Astronomical_stellariums { get; set; }
+    public DbSet<nscore.StellariumStar> StellariumStars { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         string strDataSource = Path.Combine(nscore.Helper.folder, nscore.Helper.sqllite);
