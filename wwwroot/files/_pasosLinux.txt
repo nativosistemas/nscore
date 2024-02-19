@@ -41,6 +41,10 @@ pyinstaller --onefile  wwwroot/files/skyfield/py_astroTracking_servo.py
 cp /home/pi/git/nscore/dist/py_astroTracking_servo /usr/src/nscore/
 chmod +x /usr/src/nscore/py_astroTracking_servo
 
+cp /home/pi/git/nscore/wwwroot/files/skyfield/py_astroTracking.py /usr/src/nscore/
+cp /home/pi/git/nscore/wwwroot/files/skyfield/py_util.py /usr/src/nscore/
 
+chmod +x /usr/src/nscore/py_astroTracking.py
+chmod +x /usr/src/nscore/py_util.py
 
 rm /usr/src/nscore/astro.db
