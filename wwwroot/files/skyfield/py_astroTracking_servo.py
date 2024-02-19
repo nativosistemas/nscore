@@ -3,6 +3,7 @@ import RPi.GPIO as GPIO
 import time
 from datetime import datetime
 from py_util import getConexion
+import sqlite3
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(7, GPIO.OUT)
