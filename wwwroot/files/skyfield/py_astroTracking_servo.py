@@ -24,15 +24,15 @@ sleep_secs = float(sys.argv[3])
 parametroLaser = int(sys.argv[4])
 
 pH.start(valorH)#pH.ChangeDutyCycle(valorH)
-
+time.sleep(sleep_secs)
+pH.stop()
 
 pV.start(valorV)#pV.ChangeDutyCycle(valorV)
-
-# timer
 time.sleep(sleep_secs)
-
 pV.stop()
-pH.stop()
+
+#pH.stop()
+#pV.stop()
 
 if bool(parametroLaser):
     GPIO.output(21, GPIO.HIGH)  # led on
