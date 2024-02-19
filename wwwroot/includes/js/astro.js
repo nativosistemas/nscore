@@ -38,6 +38,8 @@ function pageMainLoad() {
     else if (pagina == 'servos.html') {
         loadServos();
 
+    } else if (pagina == 'servos_v2.html') {
+        actulizarGradosServos_v2();
     } else if (pagina == 'espaciolab.html') {
         // loadIndex();
     }
@@ -644,10 +646,10 @@ function actulizarGradosServos_v2() {
         //
 
 
-       // document.getElementById("inputServoHmin").value = o.horizontal_min;
-       // document.getElementById("inputServoHmax").value = o.horizontal_max;
-       // document.getElementById("inputServoVmin").value = o.vertical_min;
-       // document.getElementById("inputServoVmax").value = o.vertical_max;
+        // document.getElementById("inputServoHmin").value = o.horizontal_min;
+        // document.getElementById("inputServoHmax").value = o.horizontal_max;
+        // document.getElementById("inputServoVmin").value = o.vertical_min;
+        // document.getElementById("inputServoVmax").value = o.vertical_max;
         // document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
     });
 }
