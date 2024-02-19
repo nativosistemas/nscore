@@ -163,7 +163,7 @@ public class ProcessAntV2 : IDisposable
         {
             using (var context = new AstroDbContext())
             {
-                AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == Constantes.astro_estado_procesado).FirstOrDefault();
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == Constantes.astro_estado_moveServo).FirstOrDefault();
                 if (oAntTracking != null)
                 {
                     if (pType == Constantes.astro_type_star)

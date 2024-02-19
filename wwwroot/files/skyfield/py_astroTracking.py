@@ -104,7 +104,7 @@ while True:
         conexion.commit()
         # Llamar program mover Servo
         ruta_ejecutable = '/usr/src/nscore/py_astroTracking_servo'
-        argumentos = [str(valorH), str(valorV),str(sleep_secs),str(0)] # 0 => laser apagado
+        argumentos = [str(valorH), str(valorV),str(sleep_secs),str(0),str(publicID)] # 0 => laser apagado
         subprocess.call([ruta_ejecutable] + argumentos)#subprocess.run([ruta_ejecutable] + argumentos)
         #
 

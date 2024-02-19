@@ -1,6 +1,8 @@
 import sys
 import RPi.GPIO as GPIO
 import time
+from datetime import datetime
+from py_util import getConexion
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(7, GPIO.OUT)
@@ -11,6 +13,8 @@ pV = GPIO.PWM(7, 50)
 pH = GPIO.PWM(11, 50)
 GPIO.output(21, GPIO.LOW)
 
+conexion = getConexion()
+cursor = conexion.cursor()
 
 # Verificar si se proporcionaron suficientes argumentos
 if len(sys.argv) < 2:
@@ -22,6 +26,7 @@ valorH = float(sys.argv[1])
 valorV = float(sys.argv[2])
 sleep_secs = float(sys.argv[3])
 parametroLaser = int(sys.argv[4])
+publicID = str(sys.argv[5])
 
 pH.start(valorH)#pH.ChangeDutyCycle(valorH)
 time.sleep(sleep_secs)
@@ -33,6 +38,7 @@ pV.stop()
 
 #pH.stop()
 #pV.stop()
+cursor.execute('UPDATE AntTrackings SET status=?,dateProcess=? WHERE publicID=?', (3,datetime.now(), publicID))
 
 if bool(parametroLaser):
     GPIO.output(21, GPIO.HIGH)  # led on
