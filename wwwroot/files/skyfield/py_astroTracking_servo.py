@@ -40,7 +40,7 @@ pV.stop()
 #pH.stop()
 #pV.stop()
 cursor.execute('UPDATE AntTrackings SET status=?,dateProcess=? WHERE publicID=?', (3,datetime.now(), publicID))
-
+conexion.commit()
 if bool(parametroLaser):
     GPIO.output(21, GPIO.HIGH)  # led on
 else:
