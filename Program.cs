@@ -52,6 +52,7 @@ internal class Program
         //app.MapGet("/cargaInicial", (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.actionGrabarSirio(); });//fileSave_Constelaciones()
         app.MapGet("/stellarium", async () => { return await nscore.Util.getInfoStellarium(); });
         app.MapGet("/test", async () => { return await nscore.Util.Astronomical_stellarium_copia(); });
+        app.MapGet("/esp32", async (int led) => { return await nscore.Util.esp32_util(led); });
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>
         {
             string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index.html");// "index.html"

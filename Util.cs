@@ -1,3 +1,4 @@
+using System.Device.Gpio;
 using DocumentFormat.OpenXml.Vml.Spreadsheet;
 
 namespace nscore;
@@ -736,6 +737,7 @@ public class Util
                 }
                 context.Configs.Add(new Config() { name = "servoH", valueDouble = 0 });
                 context.Configs.Add(new Config() { name = "servoV", valueDouble = 0 });
+                context.Configs.Add(new Config() { name = "esp32", valueInt = 0 });
                 context.SaveChanges();
                 result = "Ok";
             }
@@ -938,6 +940,66 @@ public class Util
         string pathAstronomy = Path.Combine(nscore.Util.WebRootPath, @"files", "Astronomical_stellarium.json");
         File.WriteAllText(pathAstronomy, json);
         result = json;
+        return result;
+    }
+    public static async Task<string> esp32_set(int pValue)
+    {
+        string result = string.Empty;
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+
+                Config o = context.Configs.Where(x => x.name == "esp32").FirstOrDefault();
+                if (o != null)
+                {
+                    o.valueInt = pValue;
+                    context.SaveChanges();
+                }
+
+                result = "Ok";
+            }
+        }
+        catch (Exception ex)
+        {
+            result = "!Ok";
+            log(ex);
+        }
+        return result;
+    }
+    public static async Task<int> esp32_get()
+    {
+        int result = -1;
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+
+                Config o = context.Configs.Where(x => x.name == "esp32").FirstOrDefault();
+                if (o != null)
+                {
+                    result = o.valueInt != null ? o.valueInt.Value : -1;
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static async Task<int> esp32_util(int pValue)
+    {
+        int result = -1;
+        if (pValue == 0 || pValue == 1)
+        {
+            result = await esp32_set(pValue) == "Ok" ? pValue : -1;
+        }
+        else
+        {
+            result = await esp32_get();
+        }
         return result;
     }
 }
