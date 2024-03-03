@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Processing;
 
 internal class Program
 {
-    private static async void Main(string[] args)
+    private static  void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         // builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
@@ -23,7 +23,7 @@ internal class Program
 
         //
         nscore.AstroDbContext.initDbContext();
-        await nscore.Util.inicioApp();
+        int inicioApp =  nscore.Util.inicioApp().Result; //       LlamarFuncionAsincronica().Wait(); 
         //
         app.MapGet("/logs", () => { return nscore.Util.getLogs(); });
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
