@@ -6,6 +6,7 @@ namespace nscore;
 
 public class Util
 {
+    public static bool isStartApp { get; set; }
     public static string WebRootPath { get; set; }
 
     public static string HolaMundo()
@@ -738,6 +739,7 @@ public class Util
                 context.Configs.Add(new Config() { name = "servoH", valueDouble = 0 });
                 context.Configs.Add(new Config() { name = "servoV", valueDouble = 0 });
                 context.Configs.Add(new Config() { name = "esp32", valueInt = 0 });
+                context.Configs.Add(new Config() { name = "esp32_activo", valueInt = 0 });
                 context.SaveChanges();
                 result = "Ok";
             }
@@ -1001,5 +1003,165 @@ public class Util
             result = await esp32_get();
         }
         return result;
+    }
+    public static async Task<string> esp32_activo_set(int pValue)
+    {
+        string result = string.Empty;
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+
+                Config o = context.Configs.Where(x => x.name == "esp32_activo").FirstOrDefault();
+                if (o != null)
+                {
+                    o.valueInt = pValue;
+                    context.SaveChanges();
+                }
+
+                result = "Ok";
+            }
+        }
+        catch (Exception ex)
+        {
+            result = "!Ok";
+            log(ex);
+        }
+        return result;
+    }
+    public static async Task<int> esp32_activo_get()
+    {
+        int result = -1;
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+
+                Config o = context.Configs.Where(x => x.name == "esp32_activo").FirstOrDefault();
+                if (o != null)
+                {
+                    result = o.valueInt != null ? o.valueInt.Value : -1;
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static async Task<int> inicioApp()
+    {
+        await esp32_activo_set(0);
+        isStartApp = true;
+        return 0;
+    }
+    public static async Task<bool> AntTrackingStatus(Guid pGuid, int pEstado)
+    {
+        bool result = false;
+        using (var context = new AstroDbContext())
+        {
+            AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
+            if (oAntTracking != null)
+            {
+                oAntTracking.status = pEstado;
+                context.SaveChanges();
+                result = true;
+            }
+        }
+        return result;
+    }
+    public static async Task<Esp32_astro> esp32_getAstro()
+    {
+        Esp32_astro result = null;
+        try
+        {
+            int esp32_activo = await esp32_activo_get();
+            if (esp32_activo == 0)
+            {
+                if (isStartApp)
+                {
+                    isStartApp = false;
+                    await esp32_activo_set(1);
+                    Guid publicID = newAstroTracking(Constantes.astro_type_servoAngle, 0, 0);
+                    await AntTrackingStatus(publicID, Constantes.astro_status_movingServo);
+                    result = new Esp32_astro()
+                    {
+                        publicID =publicID,// Guid.Empty,
+                        horizontal_grados = 0,
+                        vertical_grados = 0
+                    };
+                }
+                else
+                {
+                    using (var context = new AstroDbContext())
+                    {
+                        AntTracking oAntTracking = context.AntTrackings.Where(x => x.status == Constantes.astro_status_calculationResolution).OrderBy(x1 => x1.date).FirstOrDefault();
+                        if (oAntTracking != null)
+                        {
+                            await esp32_activo_set(1);
+                            await AntTrackingStatus(oAntTracking.publicID, Constantes.astro_status_movingServo);
+
+                            result = new Esp32_astro()
+                            {
+                                publicID = oAntTracking.publicID,
+                                horizontal_grados = oAntTracking.h.Value,
+                                vertical_grados = oAntTracking.v.Value
+                            };
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static async Task<string> esp32_setAstro(string pPublicID)
+    {
+        string result = string.Empty;
+        try
+        {
+            Guid publicID = new Guid(pPublicID);
+            /*if (publicID == Guid.Empty)
+            {
+
+            }
+            else
+            {
+                await AntTrackingStatus(publicID, Constantes.astro_status_movedServo);
+            }*/
+            await AntTrackingStatus(publicID, Constantes.astro_status_movedServo);
+            await esp32_activo_set(0);
+            result = "Ok";
+
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static Guid newAstroTracking(string pType, double pRa_h, double pDec_v)
+    {
+        Guid oGuid = Guid.NewGuid();
+        using (var context = new AstroDbContext())
+        {
+
+            nscore.AntTracking o = new nscore.AntTracking(oGuid, pType, pRa_h, pDec_v);
+            context.AntTrackings.Add(o);
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                nscore.Util.log(ex);
+            }
+        }
+        return oGuid;
     }
 }

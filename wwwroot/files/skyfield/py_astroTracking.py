@@ -41,7 +41,7 @@ while True:
             
             float_altitud = float(altitud.degrees)
             float_azimut = float(azimut.degrees)
-            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,status=?,dateProcess=? WHERE publicID=?', (float_altitud,float_azimut,2,datetime.now(), publicID))
+            #cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,status=?,dateProcess=? WHERE publicID=?', (float_altitud,float_azimut,2,datetime.now(), publicID))
             #        
             horizontal =float_azimut
             vertical = float_altitud
@@ -53,7 +53,7 @@ while True:
                 horizontal = 360.0 - float_azimut                    
             parametroH = horizontal#float(sys.argv[1])
             parametroV = vertical#float(sys.argv[2]) 
-
+            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,h=?,v=?,status=?,dateProcess=? WHERE publicID=?', (float_altitud,float_azimut,parametroH,parametroV,2,datetime.now(), publicID))
 
 
 
@@ -86,10 +86,8 @@ while True:
         cambioRangoV = abs(parametroV - servoV_angle)
 
         valorH = calcular_ciclo_de_trabajo_rango(parametroH,parametroH_rango_min,parametroH_rango_max)
-        #pH.start(valorH)#pH.ChangeDutyCycle(valorH)
 
         valorV = calcular_ciclo_de_trabajo_rango(parametroV,parametroV_rango_min,parametroV_rango_max)
-        #pV.start(valorV)#pV.ChangeDutyCycle(valorV)
         sleep_secs = 3
         if cambioRangoH > cambioRangoV:
             sleep_secs = round((sleep_secs * cambioRangoH) / 180.0, 1)
@@ -102,16 +100,15 @@ while True:
         cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroH,'servoH'))
         cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroV, 'servoV'))
         conexion.commit()
-        # Llamar program mover Servo
-        ruta_ejecutable = '/usr/src/nscore/py_astroTracking_servo'
-        argumentos = [str(valorH), str(valorV),str(sleep_secs),str(0),str(publicID)] # 0 => laser apagado
-        subprocess.call([ruta_ejecutable] + argumentos)#subprocess.run([ruta_ejecutable] + argumentos)
-        #
 
-        # Cambiar estado de que se llamo a mover servo estado 3?    
-        #cursor.execute('UPDATE AntTrackings SET status=?,dateProcess=? WHERE publicID=?', (3,datetime.now(), publicID))
-        #conexion.commit()
-        time.sleep(0.5) # hacer espera?
+
+        ### Llamar program mover Servo
+        #ruta_ejecutable = '/usr/src/nscore/py_astroTracking_servo'
+        #argumentos = [str(valorH), str(valorV),str(sleep_secs),str(0),str(publicID)] # 0 => laser apagado
+        #subprocess.call([ruta_ejecutable] + argumentos)#subprocess.run([ruta_ejecutable] + argumentos)
+        ###
+
+        time.sleep(0.5) 
         #
 
     #conexion.commit()

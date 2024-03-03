@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Processing;
 
 internal class Program
 {
-    private static void Main(string[] args)
+    private static async void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         // builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
@@ -23,7 +23,7 @@ internal class Program
 
         //
         nscore.AstroDbContext.initDbContext();
-        //nscore.AstroDbContext.initTableStar();
+        await nscore.Util.inicioApp();
         //
         app.MapGet("/logs", () => { return nscore.Util.getLogs(); });
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
@@ -53,6 +53,8 @@ internal class Program
         app.MapGet("/stellarium", async () => { return await nscore.Util.getInfoStellarium(); });
         app.MapGet("/test", async () => { return await nscore.Util.Astronomical_stellarium_copia(); });
         app.MapGet("/esp32", async (int led) => { return await nscore.Util.esp32_util(led); });
+        app.MapGet("/esp32_getAstro", async () => { return await nscore.Util.esp32_getAstro(); });
+        app.MapGet("/esp32_setAstro", async (string publicID) => { return await nscore.Util.esp32_setAstro(publicID); });
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>
         {
             string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index.html");// "index.html"

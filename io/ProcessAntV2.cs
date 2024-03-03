@@ -163,7 +163,7 @@ public class ProcessAntV2 : IDisposable
         {
             using (var context = new AstroDbContext())
             {
-                AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == Constantes.astro_estado_moveServo).FirstOrDefault();
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == Constantes.astro_status_movedServo).FirstOrDefault();
                 if (oAntTracking != null)
                 {
                     if (pType == Constantes.astro_type_star)
@@ -210,30 +210,7 @@ public class ProcessAntV2 : IDisposable
         " }";
         return result;
     }
-    /*
-    public bool changeAstroTrackingEstado(Guid pGuid, int pEstado)
-    {
-        bool result = false;
-        // Crear e inicializar el contexto
-        using (var context = new AstroDbContext())
-        {
-            // Buscar el usuario por ID
-            AstroTracking oAstroTracking = context.AstroTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
-
-
-            if (oAstroTracking != null)
-            {
-                // Actualizar los valores
-                oAstroTracking.estado = pEstado;
-
-                // Guardar los cambios en la base de datos
-                context.SaveChanges();
-                result = true;
-            }
-        }
-        return result;
-    }
-    */
+    
     /*
     public bool removeAstroTracking(Guid pGuid)
     {

@@ -109,7 +109,7 @@ public class AntTracking
     public string? info { get; set; }
     public DateTime? dateProcess { get; set; }
     public bool tracking { get; set; }
-    public int status { get; set; }
+    public int status { get; set; }// 1 = creado // 2 = realizar calculos // 3 = se movio servo
 
 
 }
@@ -147,6 +147,19 @@ public class ConfigAnt
 
     public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(2.9, 6), horizontal_grados_max = Math.Round(12.7, 6), vertical_grados_min = Math.Round(2.5, 6), vertical_grados_max = Math.Round(12.2, 6) };
 }
+
+public class Esp32_astro
+{
+   // public int idHIP { get; set; }
+    public Guid publicID { get; set; }
+    public double horizontal_grados { get; set; }
+    public double vertical_grados { get; set; }
+    public double horizontal_grados_min { get; set; }
+    public double horizontal_grados_max { get; set; }
+    public double vertical_grados_min { get; set; }
+    public double vertical_grados_max { get; set; }
+}
+
 /*
 [Index(nameof(publicID), IsUnique = true)]
 public class AstroTracking
