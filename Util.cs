@@ -1088,7 +1088,7 @@ public class Util
                     await AntTrackingStatus(publicID, Constantes.astro_status_movingServo);
                     result = new Esp32_astro()
                     {
-                        publicID =publicID,// Guid.Empty,
+                        publicID = publicID,// Guid.Empty,
                         horizontal_grados = 0,
                         vertical_grados = 0
                     };
@@ -1106,8 +1106,8 @@ public class Util
                             result = new Esp32_astro()
                             {
                                 publicID = oAntTracking.publicID,
-                                horizontal_grados = oAntTracking.h.Value,
-                                vertical_grados = oAntTracking.v.Value
+                                horizontal_grados = oAntTracking.h == null?0:oAntTracking.h.Value,
+                                vertical_grados = oAntTracking.v == null?0:oAntTracking.v.Value
                             };
                         }
                     }
