@@ -1053,7 +1053,7 @@ public class Util
     }
     public static async Task<int> inicioApp()
     {
-        await esp32_activo_set(0);
+        //await esp32_activo_set(0);
         isStartApp = true;
         return 0;
     }
@@ -1077,13 +1077,13 @@ public class Util
         Esp32_astro result = null;
         try
         {
-            int esp32_activo = await esp32_activo_get();
-            if (esp32_activo == 0)
-            {
+           // int esp32_activo = await esp32_activo_get();
+           // if (esp32_activo == 0)
+           // {
                 if (isStartApp)
                 {
                     isStartApp = false;
-                    await esp32_activo_set(1);
+                    //await esp32_activo_set(1);
                     Guid publicID = newAstroTracking(Constantes.astro_type_servoAngle, 0, 0);
                     await AntTrackingStatus(publicID, Constantes.astro_status_movingServo);
                     result = new Esp32_astro()
@@ -1100,7 +1100,7 @@ public class Util
                         AntTracking oAntTracking = context.AntTrackings.Where(x => x.status == Constantes.astro_status_calculationResolution).OrderBy(x1 => x1.date).FirstOrDefault();
                         if (oAntTracking != null)
                         {
-                            await esp32_activo_set(1);
+                            //await esp32_activo_set(1);
                             await AntTrackingStatus(oAntTracking.publicID, Constantes.astro_status_movingServo);
 
                             result = new Esp32_astro()
@@ -1112,7 +1112,7 @@ public class Util
                         }
                     }
                 }
-            }
+           // }
         }
         catch (Exception ex)
         {
@@ -1135,7 +1135,7 @@ public class Util
                 await AntTrackingStatus(publicID, Constantes.astro_status_movedServo);
             }*/
             await AntTrackingStatus(publicID, Constantes.astro_status_movedServo);
-            await esp32_activo_set(0);
+            //await esp32_activo_set(0);
             result = "Ok";
 
         }
