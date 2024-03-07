@@ -27,13 +27,6 @@ public class SessionApp
     {
 
     }
-    public SessionApp(string pName)
-    {
-
-        publicID = Singleton_SessionApp.Instance.publicID;//Guid.NewGuid();
-        name = pName;
-        createDate = DateTime.Now;
-    }
     [Key]
     public Guid publicID { get; set; }
     [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
@@ -46,15 +39,7 @@ public class SessionDevice
 {
     public SessionDevice()
     {
-
-    }
-    public SessionDevice(Guid pSessionApp_publicID, Guid pDevice_publicID, string pDevice_name)
-    {
         publicID = Guid.NewGuid();
-        device_name = pDevice_name;
-        device_publicID = pDevice_publicID;
-        sessionApp_publicID = pSessionApp_publicID;
-        createDate = DateTime.Now;
     }
     [Key]
     public Guid publicID { get; set; }

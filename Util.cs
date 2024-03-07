@@ -1057,7 +1057,11 @@ public class Util
         {
             using (var context = new AstroDbContext())
             {
-                context.SessionApps.Add(new SessionApp("Señalador de Estrellas"));
+                SessionApp o = new SessionApp();
+                o.publicID = Singleton_SessionApp.Instance.publicID;
+                o.name = "Señalador de Estrellas";
+                o.createDate = DateTime.Now;
+                context.SessionApps.Add(o);
                 context.SaveChanges();
             }
         }
@@ -1165,10 +1169,14 @@ public class Util
             Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
             using (var context = new AstroDbContext())
             {
-                SessionDevice o_new = new SessionDevice(sessionApp_publicID, device_publicID, pDevice_name);
-                result = o_new.publicID;
-                context.SessionDevices.Add(o_new);
-                context.SaveChanges();                
+                SessionDevice o = new SessionDevice();
+                o.device_name = pDevice_name;
+                o.device_publicID = device_publicID;
+                o.sessionApp_publicID = sessionApp_publicID;
+                o.createDate = DateTime.Now;
+                result = o.publicID;
+                context.SessionDevices.Add(o);
+                context.SaveChanges();
             }
             Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
         }
