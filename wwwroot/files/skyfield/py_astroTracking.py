@@ -20,7 +20,7 @@ earth = planets['earth']
 ts = load.timescale()
 
 while True:
-    cursor.execute('SELECT * FROM AntTrackings WHERE status = \'create\' OR tracking = 1')
+    cursor.execute('SELECT * FROM AntTrackings WHERE status=? OR tracking = 1','create')
     registros = cursor.fetchall()
     oConfig = getConfig()
     city = earth + wgs84.latlon(oConfig.latitude , oConfig.longitude )
