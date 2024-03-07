@@ -23,6 +23,10 @@ public class Singleton_SessionApp
 [Index(nameof(publicID), IsUnique = true)]
 public class SessionApp
 {
+    public SessionApp()
+    {
+
+    }
     public SessionApp(string pName)
     {
 
@@ -40,6 +44,10 @@ public class SessionApp
 [Index(nameof(publicID), IsUnique = true)]
 public class SessionDevice
 {
+    public SessionDevice()
+    {
+
+    }
     public SessionDevice(Guid pSessionApp_publicID, Guid pDevice_publicID, string pDevice_name)
     {
         publicID = Guid.NewGuid();
