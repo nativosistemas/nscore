@@ -5,10 +5,13 @@ public class AstroDbContext : DbContext
     public DbSet<nscore.AstronomicalObject> AstronomicalObjects { get; set; }
     public DbSet<nscore.Constellation> Constellations { get; set; }
     //public DbSet<nscore.AstroTracking> AstroTrackings { get; set; }
-    public DbSet<nscore.AntTracking> AntTrackings { get; set; } 
+    public DbSet<nscore.AntTracking> AntTrackings { get; set; }
     public DbSet<nscore.Config> Configs { get; set; }
     public DbSet<nscore.Log> Logs { get; set; }
     public DbSet<nscore.StellariumStar> StellariumStars { get; set; }
+    public DbSet<nscore.SessionApp> SessionApps { get; set; }
+    public DbSet<nscore.SessionDevice> SessionDevices { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         string strDataSource = Path.Combine(nscore.Helper.folder, nscore.Helper.sqllite);
@@ -25,7 +28,7 @@ public class AstroDbContext : DbContext
         }
         catch (Exception ex)
         {
-           // Console.WriteLine(ex.Message);
+            // Console.WriteLine(ex.Message);
             Util.log(ex);
             //DKbase.generales.Log.LogError(System.Reflection.MethodBase.GetCurrentMethod(), ex, DateTime.Now);
         }

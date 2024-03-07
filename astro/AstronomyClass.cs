@@ -3,6 +3,61 @@ using Microsoft.EntityFrameworkCore;
 
 namespace nscore;
 
+public class Singleton_SessionApp
+{
+    private static readonly Lazy<Singleton_SessionApp> instance = new Lazy<Singleton_SessionApp>(() => new Singleton_SessionApp());
+
+    private Singleton_SessionApp()
+    {
+        publicID = Guid.NewGuid();
+    }
+    public Guid publicID { get; set; }
+    public static Singleton_SessionApp Instance
+    {
+        get
+        {
+            return instance.Value;
+        }
+    }
+}
+[Index(nameof(publicID), IsUnique = true)]
+public class SessionApp
+{
+    public SessionApp(string pName)
+    {
+
+        publicID = Singleton_SessionApp.Instance.publicID;//Guid.NewGuid();
+        name = pName;
+        createDate = DateTime.Now;
+    }
+    [Key]
+    public Guid publicID { get; set; }
+    [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+    public int id { get; set; }
+    public string name { get; set; }
+    public DateTime createDate { get; set; }
+}
+[Index(nameof(publicID), IsUnique = true)]
+public class SessionDevice
+{
+    public SessionDevice(Guid pSessionApp_publicID, Guid pDevice_publicID, string pDevice_name)
+    {
+        publicID = Guid.NewGuid();
+        device_name = pDevice_name;
+        device_publicID = pDevice_publicID;
+        sessionApp_publicID = pSessionApp_publicID;
+        createDate = DateTime.Now;
+    }
+    [Key]
+    public Guid publicID { get; set; }
+    [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+    public int id { get; set; }
+    public Guid device_publicID { get; set; }
+    public Guid sessionApp_publicID { get; set; }
+    public string device_name { get; set; }
+    public DateTime createDate { get; set; }
+}
+
 public class StellariumStar_base
 {
     public double? ra { get; set; }
@@ -82,6 +137,7 @@ public class AntTracking
         publicID = pPublicID;
         type = pType;
         date = DateTime.Now;
+        status = Constantes.astro_status_create;
         if (pType == Constantes.astro_type_star)
         {
             ra = pRa_h;
@@ -92,12 +148,20 @@ public class AntTracking
             h = pRa_h;
             v = pDec_v;
         }
-        status = 1;
+        else if (pType == Constantes.astro_type_servoAngle_inicio)
+        {
+            h = 0;
+            v = 0;
+            status = Constantes.astro_status_calculationResolution;
+        }
+
     }
-    public Guid publicID { get; set; }
     [Key]
+    public Guid publicID { get; set; }
     [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
     public int id { get; set; }
+    public Guid sessionDevice_publicID { get; set; }
+    public Guid sessionApp_publicID { get; set; }
     public string type { get; set; }
     public DateTime date { get; set; }
     public double? ra { get; set; }
@@ -107,9 +171,10 @@ public class AntTracking
     public double? h { get; set; }
     public double? v { get; set; }
     public string? info { get; set; }
-    public DateTime? dateProcess { get; set; }
+    //public DateTime? dateProcess { get; set; }
     public bool tracking { get; set; }
-    public int status { get; set; }// 1 = creado // 2 = realizar calculos // 3 = se movio servo
+    public string status { get; set; }// 1 = creado // 2 = realizar calculos // 3 = se movio servo
+    public DateTime? statusUpdateDate { get; set; }
 
 
 }
@@ -150,7 +215,7 @@ public class ConfigAnt
 
 public class Esp32_astro
 {
-   // public int idHIP { get; set; }
+    // public int idHIP { get; set; }
     public Guid publicID { get; set; }
     public double horizontal_grados { get; set; }
     public double vertical_grados { get; set; }

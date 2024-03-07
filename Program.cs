@@ -54,8 +54,10 @@ internal class Program
         app.MapGet("/test", async () => { return await nscore.Util.Astronomical_stellarium_copia(); });
         app.MapGet("/esp32", async (int led) => { return await nscore.Util.esp32_util(led); });
         app.MapGet("/esp32_getAstro", async () => { return await nscore.Util.esp32_getAstro(); });
-        app.MapGet("/esp32_setAstro", async (string publicID) => { return await nscore.Util.esp32_setAstro(publicID); });
-        //app.MapGet("/AntTrackings", async () => { return nscore.Util.getAntTrackings(); });
+        app.MapGet("/esp32_setAstro", async (string publicID, string pSessionDevice_publicID) => { return await nscore.Util.esp32_setAstro(publicID, pSessionDevice_publicID); });
+        app.MapGet("/sessionDeviceAdd", async (string pDevice_publicID, string pDevice_name) => { return await nscore.Util.sessionDeviceAdd(pDevice_publicID, pDevice_name); });
+        app.MapGet("/isSessionDeviceOk", async (string pSessionDevice_publicID) => { return await nscore.Util.isSessionDeviceOk(pSessionDevice_publicID); });
+        //isSessionDeviceOk(string pSessionDevice_publicID)
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>
         {
             string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index.html");// "index.html"

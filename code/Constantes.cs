@@ -14,21 +14,28 @@ public static class Constantes
     {
         get { return "servoAngle"; }
     }
-    public static int astro_status_create
+    public static string astro_type_servoAngle_inicio
     {
-        get { return 1; }
+        get { return "astro_type_servoAngle_inicio"; }
     }
-    public static int astro_status_calculationResolution
+    public static string astro_status_create
     {
-        get { return 2; }
+        get { return "create"; }
     }
-    public static int astro_status_movingServo
+    public static string astro_status_calculationResolution
     {
-        get { return 3; }
+        get { return "calculationResolution"; }
     }
-    public static int astro_status_movedServo
+    public static string astro_status_movingServo
     {
-        get { return 4; }
+        get { return "movingServo"; }
     }
-
+    public static string astro_status_movedServo
+    {
+        get { return "movedServo"; }
+    }
+    public static string astro_status_resetSession
+    {
+        get { return "resetSession"; }
+    }
 }

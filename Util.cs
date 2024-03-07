@@ -6,7 +6,7 @@ namespace nscore;
 
 public class Util
 {
-    public static bool isStartApp { get; set; }
+    //public static bool isStartApp { get; set; }
     public static string WebRootPath { get; set; }
 
     public static string HolaMundo()
@@ -1051,13 +1051,30 @@ public class Util
         }
         return result;
     }
+    public static async Task<int> SessionApp_inicio()
+    {
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                context.SessionApps.Add(new SessionApp("Señalador de Estrellas"));
+                context.SaveChanges();
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return 0;
+    }
     public static async Task<int> inicioApp()
     {
         //await esp32_activo_set(0);
-        isStartApp = true;
+        //isStartApp = true;
+        await SessionApp_inicio();
         return 0;
     }
-    public static async Task<bool> AntTrackingStatus(Guid pGuid, int pEstado)
+    public static async Task<bool> AntTrackingStatus(Guid pGuid, string pEstado, Guid? pSessionDevice_publicID)
     {
         bool result = false;
         using (var context = new AstroDbContext())
@@ -1066,6 +1083,11 @@ public class Util
             if (oAntTracking != null)
             {
                 oAntTracking.status = pEstado;
+                oAntTracking.statusUpdateDate = DateTime.Now;
+                if (pSessionDevice_publicID != null)
+                {
+                    oAntTracking.sessionDevice_publicID = pSessionDevice_publicID.Value;
+                }
                 context.SaveChanges();
                 result = true;
             }
@@ -1077,42 +1099,21 @@ public class Util
         Esp32_astro result = null;
         try
         {
-           // int esp32_activo = await esp32_activo_get();
-           // if (esp32_activo == 0)
-           // {
-                if (isStartApp)
+            using (var context = new AstroDbContext())
+            {
+                Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_calculationResolution).OrderBy(x1 => x1.date).FirstOrDefault();
+                if (oAntTracking != null)
                 {
-                    isStartApp = false;
-                    //await esp32_activo_set(1);
-                    Guid publicID = newAstroTracking(Constantes.astro_type_servoAngle, 0, 0);
-                    await AntTrackingStatus(publicID, Constantes.astro_status_movingServo);
+                    await AntTrackingStatus(oAntTracking.publicID, Constantes.astro_status_movingServo, null);
                     result = new Esp32_astro()
                     {
-                        publicID = publicID,// Guid.Empty,
-                        horizontal_grados = 0,
-                        vertical_grados = 0
+                        publicID = oAntTracking.publicID,
+                        horizontal_grados = oAntTracking.h == null ? 0 : oAntTracking.h.Value,
+                        vertical_grados = oAntTracking.v == null ? 0 : oAntTracking.v.Value
                     };
                 }
-                else
-                {
-                    using (var context = new AstroDbContext())
-                    {
-                        AntTracking oAntTracking = context.AntTrackings.Where(x => x.status == Constantes.astro_status_calculationResolution).OrderBy(x1 => x1.date).FirstOrDefault();
-                        if (oAntTracking != null)
-                        {
-                            //await esp32_activo_set(1);
-                            await AntTrackingStatus(oAntTracking.publicID, Constantes.astro_status_movingServo);
-
-                            result = new Esp32_astro()
-                            {
-                                publicID = oAntTracking.publicID,
-                                horizontal_grados = oAntTracking.h == null?0:oAntTracking.h.Value,
-                                vertical_grados = oAntTracking.v == null?0:oAntTracking.v.Value
-                            };
-                        }
-                    }
-                }
-           // }
+            }
         }
         catch (Exception ex)
         {
@@ -1120,24 +1121,15 @@ public class Util
         }
         return result;
     }
-    public static async Task<string> esp32_setAstro(string pPublicID)
+    public static async Task<string> esp32_setAstro(string pPublicID, string pSessionDevice_publicID)
     {
         string result = string.Empty;
         try
         {
             Guid publicID = new Guid(pPublicID);
-            /*if (publicID == Guid.Empty)
-            {
-
-            }
-            else
-            {
-                await AntTrackingStatus(publicID, Constantes.astro_status_movedServo);
-            }*/
-            await AntTrackingStatus(publicID, Constantes.astro_status_movedServo);
-            //await esp32_activo_set(0);
+            Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
+            await AntTrackingStatus(publicID, Constantes.astro_status_movedServo, sessionDevice_publicID);
             result = "Ok";
-
         }
         catch (Exception ex)
         {
@@ -1163,5 +1155,80 @@ public class Util
             }
         }
         return oGuid;
+    }
+    public static async Task<Guid> sessionDeviceAdd(string pDevice_publicID, string pDevice_name)
+    {
+        Guid result = Guid.Empty;
+        try
+        {
+            Guid device_publicID = new Guid(pDevice_publicID);
+            Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+            using (var context = new AstroDbContext())
+            {
+                SessionDevice o_new = new SessionDevice(sessionApp_publicID, device_publicID, pDevice_name);
+                result = o_new.publicID;
+                context.SessionDevices.Add(o_new);
+                context.SaveChanges();                
+            }
+            Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static async Task<string> isSessionDeviceOk(string pSessionDevice_publicID)
+    {
+        string result = "!Ok";
+        try
+        {
+            Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
+            Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+            using (var context = new AstroDbContext())
+            {
+                SessionDevice o = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();//&& x.sessionApp_publicID == sessionApp_publicID
+                if (o == null && o.sessionApp_publicID == sessionApp_publicID)
+                {
+                    result = "Ok";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
+    }
+    public static async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
+    {
+        Guid result = Guid.Empty;
+        try
+        {
+            Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
+            using (var context = new AstroDbContext())
+            {
+                SessionDevice oSessionDevices = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();
+                if (oSessionDevices != null)
+                {
+                    Guid sessionApp_publicID = oSessionDevices.sessionApp_publicID;
+                    List<nscore.AntTracking> l = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID).ToList();
+                    DateTime dateNow = DateTime.Now;
+                    foreach (var oItem in l)
+                    {
+                        oItem.status = Constantes.astro_status_resetSession;
+                        oItem.statusUpdateDate = dateNow;
+                    }
+                    context.SaveChanges();
+                    Guid publicID = newAstroTracking(Constantes.astro_type_servoAngle_inicio, 0, 0);
+                    result = publicID;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log(ex);
+        }
+        return result;
     }
 }

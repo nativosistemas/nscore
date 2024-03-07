@@ -20,7 +20,7 @@ earth = planets['earth']
 ts = load.timescale()
 
 while True:
-    cursor.execute('SELECT * FROM AntTrackings WHERE status = 1 OR tracking = 1')
+    cursor.execute('SELECT * FROM AntTrackings WHERE status = "create" OR tracking = 1')
     registros = cursor.fetchall()
     oConfig = getConfig()
     city = earth + wgs84.latlon(oConfig.latitude , oConfig.longitude )
@@ -53,7 +53,7 @@ while True:
                 horizontal = 360.0 - float_azimut                    
             parametroH = horizontal#float(sys.argv[1])
             parametroV = vertical#float(sys.argv[2]) 
-            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,h=?,v=?,status=?,dateProcess=? WHERE publicID=?', (float_altitud,float_azimut,parametroH,parametroV,2,datetime.now(), publicID))
+            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,h=?,v=?,status=?,dateProcess=? WHERE publicID=?', (float_altitud,float_azimut,parametroH,parametroV,"calculationResolution",datetime.now(), publicID))
 
 
 
@@ -64,7 +64,7 @@ while True:
             parametroH = registro[8]
             parametroV = registro[9]
             # Actualizar 
-            cursor.execute('UPDATE AntTrackings SET status=?,dateProcess=? WHERE publicID=?', (2,datetime.now(), publicID))
+            cursor.execute('UPDATE AntTrackings SET status=?,dateProcess=? WHERE publicID=?', ("calculationResolution",datetime.now(), publicID))
             #                 
             print("servoAngle")
         else:

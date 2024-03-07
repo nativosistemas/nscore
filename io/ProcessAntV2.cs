@@ -92,7 +92,7 @@ public class ProcessAntV2 : IDisposable
     public string actionAnt_servo(double pHorizontal, double pVertical)
     {
         string result = string.Empty;
-        Guid oAstroTracking = saveAstroTracking(Constantes.astro_type_servoAngle, pHorizontal, pVertical);
+        Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_servoAngle, pHorizontal, pVertical);
         HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(Constantes.astro_type_servoAngle, oAstroTracking).Result;
         if (hc != null)
         {
@@ -106,7 +106,7 @@ public class ProcessAntV2 : IDisposable
         Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
         if (oStar != null)
         {
-            Guid oAstroTracking = saveAstroTracking(Constantes.astro_type_star, oStar.ra, oStar.dec);
+            Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_star, oStar.ra, oStar.dec);
             HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(Constantes.astro_type_star, oAstroTracking).Result;
             //removeAstroTracking(oAstroTracking);
             if (hc != null)
@@ -135,7 +135,7 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public Guid saveAstroTracking(string pType, double pRa_h, double pDec_v)
+   /* public Guid saveAstroTracking(string pType, double pRa_h, double pDec_v)
     {
         Guid oGuid = Guid.NewGuid();
         using (var context = new AstroDbContext())
@@ -153,7 +153,7 @@ public class ProcessAntV2 : IDisposable
             }
         }
         return oGuid;
-    }
+    }*/
     public async Task<HorizontalCoordinates> getAstroTracking_HorizontalCoordinates(string pType, Guid pGuid)
     {
         HorizontalCoordinates resault = null;
