@@ -29,8 +29,8 @@ public class SessionApp
     }
     [Key]
     public Guid publicID { get; set; }
-    [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
-    public int id { get; set; }
+    //[System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+    //public int id { get; set; }
     public string name { get; set; }
     public DateTime createDate { get; set; }
 }
@@ -43,8 +43,8 @@ public class SessionDevice
     }
     [Key]
     public Guid publicID { get; set; }
-    [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
-    public int id { get; set; }
+    //[System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+    //public int id { get; set; }
     public Guid device_publicID { get; set; }
     public Guid sessionApp_publicID { get; set; }
     public string device_name { get; set; }
@@ -151,8 +151,8 @@ public class AntTracking
     }
     [Key]
     public Guid publicID { get; set; }
-    [System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
-    public int id { get; set; }
+    //[System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
+    //public int id { get; set; }
     public Guid sessionDevice_publicID { get; set; }
     public Guid sessionApp_publicID { get; set; }
     public string type { get; set; }
