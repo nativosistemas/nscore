@@ -130,6 +130,7 @@ public class AntTracking
         publicID = pPublicID;
         type = pType;
         date = DateTime.Now;
+        sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
         status = Constantes.astro_status_create;
         if (pType == Constantes.astro_type_star)
         {
