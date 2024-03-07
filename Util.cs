@@ -1196,7 +1196,7 @@ public class Util
             using (var context = new AstroDbContext())
             {
                 SessionDevice o = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();//&& x.sessionApp_publicID == sessionApp_publicID
-                if (o == null && o.sessionApp_publicID == sessionApp_publicID)
+                if (o != null && o.sessionApp_publicID == sessionApp_publicID)
                 {
                     result = "Ok";
                 }
