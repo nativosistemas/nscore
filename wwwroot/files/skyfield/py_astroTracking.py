@@ -55,7 +55,7 @@ while True:
                 horizontal = 360.0 - float_azimut                    
             parametroH = horizontal#float(sys.argv[1])
             parametroV = vertical#float(sys.argv[2]) 
-            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,h=?,v=?,status=\'calculationResolution\' WHERE publicID=?', (float_altitud,float_azimut,parametroH,parametroV,publicID))
+            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,h=?,v=?,status=? WHERE publicID=?', (float_altitud,float_azimut,parametroH,parametroV,'calculationResolution',publicID))
 
 
 
@@ -66,7 +66,7 @@ while True:
             parametroH = registro[7]
             parametroV = registro[8]
             # Actualizar 
-            cursor.execute('UPDATE AntTrackings SET status=\'calculationResolution\' WHERE publicID=?', ( publicID))
+            cursor.execute('UPDATE AntTrackings SET status=? WHERE publicID=?', ('calculationResolution', publicID))
             #                 
             print("servoAngle")
         else:
