@@ -154,8 +154,6 @@ public class AntTracking
     public Guid publicID { get; set; }
     //[System.ComponentModel.DataAnnotations.Schema.DatabaseGenerated(System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption.Identity)]
     //public int id { get; set; }
-    public Guid sessionDevice_publicID { get; set; }
-    public Guid sessionApp_publicID { get; set; }
     public string type { get; set; }
     public DateTime date { get; set; }
     public double? ra { get; set; }
@@ -169,6 +167,9 @@ public class AntTracking
     public bool tracking { get; set; }
     public string status { get; set; }// 1 = creado // 2 = realizar calculos // 3 = se movio servo
     public DateTime? statusUpdateDate { get; set; }
+    public Guid sessionDevice_publicID { get; set; }
+    public Guid sessionApp_publicID { get; set; }
+
 
 
 }

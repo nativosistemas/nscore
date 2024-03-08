@@ -18,21 +18,23 @@ planets = load('de421.bsp')
 earth = planets['earth']
 
 ts = load.timescale()
-
+status_create = 'create'
 while True:
-    cursor.execute('SELECT * FROM AntTrackings WHERE status=? OR tracking = 1','create')
+    cursor.execute('SELECT * FROM AntTrackings WHERE tracking = 1 OR status=\'create\'')#,(status_create)
     registros = cursor.fetchall()
     oConfig = getConfig()
     city = earth + wgs84.latlon(oConfig.latitude , oConfig.longitude )
     for registro in registros:
         print(registro)
-        type = registro[2]
+        type = registro[1]
+        #print("type:" + type)
         parametroH = 0
         parametroV = 0
-        publicID = registro[1]
+        publicID = registro[0]
+        #print("publicID:" + publicID)
         if type == "star":
-            ra = registro[4]
-            dec = registro[5]        
+            ra = registro[3]
+            dec = registro[4]        
             t = ts.now()
             barnard2 = Star(ra_hours=decimal_a_tiempo(ra), dec_degrees=decimal_a_grado(dec))
             astrometric_star = city.at(t).observe(barnard2)  
@@ -53,7 +55,7 @@ while True:
                 horizontal = 360.0 - float_azimut                    
             parametroH = horizontal#float(sys.argv[1])
             parametroV = vertical#float(sys.argv[2]) 
-            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,h=?,v=?,status=?,dateProcess=? WHERE publicID=?', (float_altitud,float_azimut,parametroH,parametroV,'calculationResolution',datetime.now(), publicID))
+            cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,h=?,v=?,status=\'calculationResolution\' WHERE publicID=?', (float_altitud,float_azimut,parametroH,parametroV,publicID))
 
 
 
@@ -61,10 +63,10 @@ while True:
             print("parametroV: " + str(parametroV))  
             print("star")           
         elif type == "servoAngle":
-            parametroH = registro[8]
-            parametroV = registro[9]
+            parametroH = registro[7]
+            parametroV = registro[8]
             # Actualizar 
-            cursor.execute('UPDATE AntTrackings SET status=?,dateProcess=? WHERE publicID=?', ('calculationResolution',datetime.now(), publicID))
+            cursor.execute('UPDATE AntTrackings SET status=\'calculationResolution\' WHERE publicID=?', ( publicID))
             #                 
             print("servoAngle")
         else:
