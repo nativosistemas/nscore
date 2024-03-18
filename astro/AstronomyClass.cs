@@ -210,10 +210,14 @@ public class ConfigAnt
 
 public class Esp32_astro
 {
-    // public int idHIP { get; set; }
+    //public int? idHIP { get; set; }
     public Guid publicID { get; set; }
     public double horizontal_grados { get; set; }
     public double vertical_grados { get; set; }
+    public double? horizontal_grados_ant { get; set; }
+    public double? vertical_grados_ant { get; set; }
+    public double horizontal_grados_sleep { get; set; }
+    public double vertical_grados_sleep { get; set; }
     public double horizontal_grados_min { get; set; }
     public double horizontal_grados_max { get; set; }
     public double vertical_grados_min { get; set; }

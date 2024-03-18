@@ -1,0 +1,18 @@
+// crear el Dockerfile
+
+// crear imagen en docker local
+docker build -t nscore .
+
+// crear contenedor de la imagen
+docker run -p 80:80 -v C:\dockerns:/usr/src  --name nscore --hostname nscore  -d nscore
+
+
+
+//docker run -p 80:80 -v C:\dockerns:/usr/src  --name nscore --hostname nscore  -d nscore --env=ASPNETCORE_URLS=http://+:80 
+
+// ==> nginx
+docker pull nginx
+//Winsdow
+docker run --name hola-nginx -v C:\dockerns:/usr/share/nginx/html:ro -p 8080:80 -d nginx
+// Linux
+sudo docker run --name hola-nginx -v /usr/src/nginx:/usr/share/nginx/html:ro -p 80:80 -d nginx

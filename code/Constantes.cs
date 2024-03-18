@@ -38,4 +38,12 @@ public static class Constantes
     {
         get { return "resetSession"; }
     }
+    public static double servo_sleep_max
+    {
+        get { return 3; }
+    }
+    public static double servo_sleep_min
+    {
+        get { return 0.5; }
+    }
 }

@@ -54,7 +54,7 @@ while True:
             else:
                 horizontal = 360.0 - float_azimut                    
             parametroH = horizontal#float(sys.argv[1])
-            parametroV = vertical#float(sys.argv[2]) 
+            parametroV = vertical#float(sys.argv[2]) movedServo * calculationResolution
             cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,h=?,v=?,status=? WHERE publicID=?', (float_altitud,float_azimut,parametroH,parametroV,'calculationResolution',publicID))
 
 
