@@ -8,7 +8,8 @@ docker build -t nscore .
 // crear contenedor de la imagen
 docker run -p 80:8080  -v C:\dockerns:/usr/src  --name nscore --hostname nscore  -d nscore
 
-//docker run -it --rm -p 80:8080 -v C:\dockerns:/usr/src --name nscore_conte nscore
+// linux 
+sudo docker run -p 80:8080  -v /usr/src/dockerns:/usr/src  --name nscore --hostname nscore  -d nscore
 
 
 //docker run -p 80:80 -v C:\dockerns:/usr/src  --name nscore --hostname nscore  -d nscore --env=ASPNETCORE_URLS=http://+:80 
@@ -19,3 +20,19 @@ docker pull nginx
 docker run --name hola-nginx -v C:\dockerns:/usr/share/nginx/html:ro -p 8080:80 -d nginx
 // Linux
 sudo docker run --name hola-nginx -v /usr/src/nginx:/usr/share/nginx/html:ro -p 80:80 -d nginx
+
+// ver imagenes
+sudo docker image ls
+
+//ver contendores
+sudo docker ps -a
+
+// eliminar contenedores
+sudo docker rm "nombre"
+// eliminar imagen
+sudo docker rmi mi_imagen:tag
+
+
+///
+docker build -t nscore-python .
+docker run  -v C:\dockerns:/usr/src  --name nscore-python --hostname nscore-python  -d nscore-python

@@ -16,9 +16,9 @@ sistema_operativo = platform.system()
 if sistema_operativo == 'Windows':
     ruta_base_datos = r'C:\dockerns\astro.db'
 elif sistema_operativo == 'Linux':
-    ruta_base_datos = r'/usr/src/nscore/astro.db'
+    ruta_base_datos = r'/usr/src/astro.db'
 else:
-    ruta_base_datos = r'/usr/src/nscore/astro.db'
+    ruta_base_datos = r'/usr/src/astro.db'
 
 conexion = sqlite3.connect(ruta_base_datos)
 

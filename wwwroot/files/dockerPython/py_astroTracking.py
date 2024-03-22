@@ -10,7 +10,7 @@ import subprocess
 from datetime import datetime
 
 conexion = getConexion()
-
+print("000 py")
 # Crear un cursor para ejecutar comandos SQL
 cursor = conexion.cursor()
 
@@ -20,6 +20,7 @@ earth = planets['earth']
 ts = load.timescale()
 status_create = 'create'
 while True:
+    print("hola py")
     cursor.execute('SELECT * FROM AntTrackings WHERE tracking = 1 OR status=\'create\'')#,(status_create)
     registros = cursor.fetchall()
     oConfig = getConfig()
