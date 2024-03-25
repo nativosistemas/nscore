@@ -65,6 +65,10 @@ public class ProcessAntV2 : IDisposable
         }
         return _l_Star.Where(x => x.visible).ToList();
     }
+    public string actionAnt_laser(int pIsRead, int pLaser)
+    {
+        return _poolEsp32.Start_laser(pIsRead, pLaser);
+    }
     public string actionAnt_servo(double pHorizontal, double pVertical)
     {
         return _poolEsp32.Start_servoAngle(pHorizontal, pVertical);
@@ -143,6 +147,28 @@ public class PoolEsp32 : IDisposable
             ProcessEsp32 oProcessEsp32 = new ProcessEsp32();
             recursosDisponibles.Enqueue(oProcessEsp32);
         }
+    }
+    public string Start_laser(int pIsRead, int pLaser)
+    {
+        string output = "null";
+        try
+        {
+            ProcessEsp32 oProcess = GetResource();
+            if (oProcess != null)
+            {
+                output = oProcess.actionAnt_laser(pIsRead, pLaser);
+                SetResource(oProcess);
+            }
+            else
+            {
+                output = "Recurso no disponible o en uso";
+            }
+        }
+        catch (Exception ex)
+        {
+            Util.log(ex);
+        }
+        return output;
     }
     public string Start_servoAngle(double pHorizontal, double pVertical)
     {
@@ -239,6 +265,17 @@ public class ProcessEsp32 : IDisposable
     {
 
     }
+    public string actionAnt_laser(int pIsRead, int pLaser)
+    {
+        string result = string.Empty;
+        Guid oAstroTracking = Util.newAstroTracking_laser(Constantes.astro_type_laser, pLaser);
+        HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(Constantes.astro_type_laser, oAstroTracking).Result;
+        if (hc != null)
+        {
+            result = "Ok";
+        }
+        return result;
+    }
     public string actionAnt_servoAngle(double pHorizontal, double pVertical)
     {
         string result = string.Empty;
@@ -288,7 +325,7 @@ public class ProcessEsp32 : IDisposable
         HorizontalCoordinates resault = null;
         int contador = 0;
 
-        while (contador < 500)
+        while (contador < 300)
         {
             using (var context = new AstroDbContext())
             {
@@ -302,6 +339,10 @@ public class ProcessEsp32 : IDisposable
                     else if (pType == Constantes.astro_type_servoAngle)
                     {
                         resault = new HorizontalCoordinates() { Altitude = oAntTracking.h.Value, Azimuth = oAntTracking.v.Value };
+                    }
+                    else if (pType == Constantes.astro_type_laser)
+                    {
+                        resault = new HorizontalCoordinates() { Altitude = 0, Azimuth = 0 };
                     }
                     break;
                 }

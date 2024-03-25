@@ -125,13 +125,16 @@ public class AntTracking
     {
 
     }
-    public AntTracking(Guid pPublicID, string pType, double? pRa_h = null, double? pDec_v = null)
+    public AntTracking(Guid pPublicID, string pType)
     {
         publicID = pPublicID;
         type = pType;
         date = DateTime.Now;
         sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
         status = Constantes.astro_status_create;
+    }
+    public AntTracking(Guid pPublicID, string pType, double? pRa_h = null, double? pDec_v = null) : this(pPublicID, pType)
+    {
         if (pType == Constantes.astro_type_star)
         {
             ra = pRa_h;
@@ -141,6 +144,7 @@ public class AntTracking
         {
             h = pRa_h;
             v = pDec_v;
+            status = Constantes.astro_status_calculationResolution;
         }
         else if (pType == Constantes.astro_type_servoAngle_inicio)
         {
@@ -148,7 +152,14 @@ public class AntTracking
             v = 0;
             status = Constantes.astro_status_calculationResolution;
         }
-
+    }
+    public AntTracking(Guid pPublicID, string pType, int pIsLaser) : this(pPublicID, pType)
+    {
+        if (pType == Constantes.astro_type_laser)
+        {
+            status = Constantes.astro_status_calculationResolution;
+            isLaser = pIsLaser;
+        }
     }
     [Key]
     public Guid publicID { get; set; }
@@ -169,6 +180,7 @@ public class AntTracking
     public DateTime? statusUpdateDate { get; set; }
     public Guid sessionDevice_publicID { get; set; }
     public Guid sessionApp_publicID { get; set; }
+    public int isLaser { get; set; }
 
 
 
@@ -210,8 +222,10 @@ public class ConfigAnt
 
 public class Esp32_astro
 {
-    //public int? idHIP { get; set; }
+
     public Guid publicID { get; set; }
+    public string type { get; set; }
+    public int isLaser { get; set; }
     public double horizontal_grados { get; set; }
     public double vertical_grados { get; set; }
     public double? horizontal_grados_ant { get; set; }

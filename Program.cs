@@ -35,7 +35,7 @@ internal class Program
         app.MapGet("/servomover", ((nscore.ProcessAnt pProcessAnt, double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, bool pOnLaser) => { return pProcessAnt.actionAnt_servo(pH, pV, pH_min, pH_max, pV_min, pV_max, pOnLaser); }));
         app.MapGet("/servomover_v2", ((nscore.ProcessAntV2 pProcessAntV2, double pH, double pV) => { return pProcessAntV2.actionAnt_servo(pH, pV); }));
         app.MapGet("/servoconstellations", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findConstellation(id); }));
-        app.MapGet("/laser", ((nscore.ProcessAnt pProcessAnt, int read, int on) => { return pProcessAnt.actionLaser(read, on); }));
+        //app.MapGet("/laser", ((nscore.ProcessAnt pProcessAnt, int read, int on) => { return pProcessAnt.actionLaser(read, on); }));
         app.MapGet("/stars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getStars()); }));
         app.MapGet("/stars_stellarium", ((nscore.ProcessAntV2 pProcessAntV2) => { return Results.Json(pProcessAntV2.getStars()); }));
         app.MapGet("/allstars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(nscore.Util.getAllStars()); }));
@@ -49,16 +49,15 @@ internal class Program
         app.MapGet("/falta", () => { return nscore.Util.getAstronomicalObjects_fileLoad(); });
         app.MapGet("/astrotracking", (() => { return Util.getAntTrackings(); }));
         app.MapGet("/restore", () => { return nscore.Util.restore(); });
-        //app.MapGet("/cargaInicial", (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.actionGrabarSirio(); });//fileSave_Constelaciones()
         app.MapGet("/stellarium", async () => { return await nscore.Util.getInfoStellarium(); });
         app.MapGet("/test", async () => { return await nscore.Util.Astronomical_stellarium_copia(); });
+        //
         app.MapGet("/esp32", async (int led) => { return await nscore.Util.esp32_util(led); });
         app.MapGet("/esp32_getAstro", async () => { return await nscore.Util.esp32_getAstro(); });
-        app.MapGet("/esp32_getAstro_movedServo", async () => { return await nscore.Util.esp32_getAstro_movedServo(); });
+        app.MapGet("/laser", ((nscore.ProcessAntV2 pProcessAntV2, int read, int on) => { return pProcessAntV2.actionAnt_laser(read, on); }));
         app.MapGet("/esp32_setAstro", async (string publicID, string pSessionDevice_publicID) => { return await nscore.Util.esp32_setAstro(publicID, pSessionDevice_publicID); });
         app.MapGet("/sessionDeviceAdd", async (string pDevice_publicID, string pDevice_name) => { return await nscore.Util.sessionDeviceAdd(pDevice_publicID, pDevice_name); });
         app.MapGet("/isSessionDeviceOk", async (string pSessionDevice_publicID) => { return await nscore.Util.isSessionDeviceOk(pSessionDevice_publicID); });
-        //isSessionDeviceOk(string pSessionDevice_publicID)
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>
         {
             string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index.html");// "index.html"

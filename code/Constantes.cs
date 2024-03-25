@@ -18,6 +18,10 @@ public static class Constantes
     {
         get { return "astro_type_servoAngle_inicio"; }
     }
+    public static string astro_type_laser
+    {
+        get { return "laser"; }
+    }
     public static string astro_status_create
     {
         get { return "create"; }

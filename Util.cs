@@ -1098,7 +1098,7 @@ public class Util
         }
         return result;
     }
-    public static async Task<Esp32_astro> esp32_getAstro_movedServo()
+   /* public static async Task<Esp32_astro> esp32_getAstro_movedServo()
     {
         Esp32_astro result = null;
         try
@@ -1124,7 +1124,7 @@ public class Util
             log(ex);
         }
         return result;
-    }
+    }*/
     public static async Task<Esp32_astro> esp32_getAstro()
     {
         Esp32_astro result = null;
@@ -1190,6 +1190,8 @@ public class Util
                     await AntTrackingStatus(oAntTracking.publicID, Constantes.astro_status_movingServo, null);
                     result = new Esp32_astro()
                     {
+                        type = oAntTracking.type,
+                        isLaser = oAntTracking.isLaser,
                         publicID = oAntTracking.publicID,
                         horizontal_grados = oAntTracking.h == null ? 0 : oAntTracking.h.Value,
                         vertical_grados = oAntTracking.v == null ? 0 : oAntTracking.v.Value,
@@ -1231,6 +1233,25 @@ public class Util
         {
 
             nscore.AntTracking o = new nscore.AntTracking(oGuid, pType, pRa_h, pDec_v);
+            context.AntTrackings.Add(o);
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                nscore.Util.log(ex);
+            }
+        }
+        return oGuid;
+    }
+    public static Guid newAstroTracking_laser(string pType, int pIsLaser)
+    {
+        Guid oGuid = Guid.NewGuid();
+        using (var context = new AstroDbContext())
+        {
+
+            nscore.AntTracking o = new nscore.AntTracking(oGuid, pType, pIsLaser);
             context.AntTrackings.Add(o);
             try
             {

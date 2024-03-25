@@ -27,6 +27,9 @@ sudo docker image ls
 //ver contendores
 sudo docker ps -a
 
+//parar un contenedor
+sudo docker stop "nombre"
+
 // eliminar contenedores
 sudo docker rm "nombre"
 // eliminar imagen

@@ -1,0 +1,12 @@
+[Unit]
+Description=Docker Container nscore-python
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker start -a nscore-python
+ExecStop=/usr/bin/docker stop -t 10 nscore-python
+
+[Install]
+WantedBy=multi-user.target

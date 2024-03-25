@@ -1,0 +1,10 @@
+
+
+sudo systemctl enable nscore-python.service
+sudo systemctl start nscore-python.service
+
+// ver el estado
+sudo systemctl status nscore-python.service 
+
+// para parar proceso PARA PUBLICAR
+sudo systemctl stop nscore-python.service
