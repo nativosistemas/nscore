@@ -35,6 +35,7 @@ sudo docker rm "nombre"
 // eliminar imagen
 sudo docker rmi mi_imagen:tag
 
+sudo docker rm nscore
 
 ///
 sudo docker build -t nscore-python .

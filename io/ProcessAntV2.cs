@@ -73,7 +73,7 @@ public class ProcessAntV2 : IDisposable
     {
         return _poolEsp32.Start_servoAngle(pHorizontal, pVertical);
     }
-    public string findStar(int pId, bool isLaserOn = false)
+    public string actionAnt_star(int pId, bool isLaserOn = false)
     {
         string result = string.Empty;
         Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();

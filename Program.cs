@@ -29,7 +29,6 @@ internal class Program
         app.MapGet("/on", (nscore.LedClient pLed) => { pLed.LedOn(); return "LedOn"; });
         app.MapGet("/off", (nscore.LedClient pLed) => { pLed.LedOff(); return "LedOff"; });
         app.MapGet("/servo", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findStar(id, true); }));
-        app.MapGet("/servo_v2", ((nscore.ProcessAntV2 pProcessAntV2, int id) => { return pProcessAntV2.findStar(id); }));
         app.MapGet("/getservos", ((nscore.ProcessAnt pProcessAnt) => { return pProcessAnt.getValoresServos(); }));
         app.MapGet("/getservos_v2", ((nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.getValoresServos(); }));
         app.MapGet("/servomover", ((nscore.ProcessAnt pProcessAnt, double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, bool pOnLaser) => { return pProcessAnt.actionAnt_servo(pH, pV, pH_min, pH_max, pV_min, pV_max, pOnLaser); }));
@@ -55,6 +54,7 @@ internal class Program
         app.MapGet("/esp32", async (int led) => { return await nscore.Util.esp32_util(led); });
         app.MapGet("/esp32_getAstro", async () => { return await nscore.Util.esp32_getAstro(); });
         app.MapGet("/laser", ((nscore.ProcessAntV2 pProcessAntV2, int read, int on) => { return pProcessAntV2.actionAnt_laser(read, on); }));
+        app.MapGet("/servo_v2", ((nscore.ProcessAntV2 pProcessAntV2, int id) => { return pProcessAntV2.actionAnt_star(id); }));
         app.MapGet("/esp32_setAstro", async (string publicID, string pSessionDevice_publicID) => { return await nscore.Util.esp32_setAstro(publicID, pSessionDevice_publicID); });
         app.MapGet("/sessionDeviceAdd", async (string pDevice_publicID, string pDevice_name) => { return await nscore.Util.sessionDeviceAdd(pDevice_publicID, pDevice_name); });
         app.MapGet("/isSessionDeviceOk", async (string pSessionDevice_publicID) => { return await nscore.Util.isSessionDeviceOk(pSessionDevice_publicID); });
