@@ -50,4 +50,9 @@ public static class Constantes
     {
         get { return 0.5; }
     }
+    public static string device_name_esp32_servos_laser
+    {
+        get { return "esp32_servos_laser"; }
+    }
+    
 }

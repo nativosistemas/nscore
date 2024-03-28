@@ -393,22 +393,31 @@ async function fetchServo_v2(pId) {
     const text = await response.text();
     return text;
 }
-/*
-async function fetchUpdateConstelacion(id, idHD, name) {
-    const response = await fetch('/updateconstellation?id=' + id + '&idHD=' + idHD + '&name=' + name);// id, int idHD, string name
-    const text = await response.text();
-    return text;
-}*/
+function ajaxBegingCallFunction() {
+    document.getElementById("spinner").style.display = '';
+}
+function ajaxEndCallFunction(pValue) {
+    var strHtml = '';
+    strHtml += ' <div class="alert alert-primary" role="alert">' + pValue + '  </div>';
+    document.getElementById("divMsg").innerHTML = strHtml;
+    document.getElementById("spinner").style.display = "none";
+}
 async function fetchServoConstellation(pId) {
     const response = await fetch('/servoconstellations?id=' + pId);
     const text = await response.text();
     return text;
 }
 function onClickApagarLaser() {
-    fetchLaser(0, 0);
+    ajaxBegingCallFunction();
+    fetchLaser(0, 0).then(text => {
+        ajaxEndCallFunction(text);
+    });
 }
 function onClickEncenderLaser() {
-    fetchLaser(0, 1);
+    ajaxBegingCallFunction();
+    fetchLaser(0, 1).then(text => {
+        ajaxEndCallFunction(text);
+    });
 }
 async function fetchLaser(pRead, pOn) {
     const response = await fetch('/laser?read=' + pRead + '&on=' + pOn);

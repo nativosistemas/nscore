@@ -8,3 +8,18 @@ sudo systemctl status nscore-python.service
 
 // para parar proceso PARA PUBLICAR
 sudo systemctl stop nscore-python.service
+
+//////////////
+
+sudo systemctl status nscore.service 
+sudo systemctl stop nscore.service
+
+sudo docker rm nscore
+sudo docker rmi nscore
+
+sudo rm /usr/src/dockerns/astro.db
+
+sudo docker build -t nscore .
+sudo docker run -p 80:8080  -v /usr/src/dockerns:/usr/src  --name nscore --hostname nscore  -d nscore
+
+sudo docker restart nscore

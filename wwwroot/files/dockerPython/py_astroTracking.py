@@ -111,7 +111,7 @@ while True:
         #subprocess.call([ruta_ejecutable] + argumentos)#subprocess.run([ruta_ejecutable] + argumentos)
         ###
 
-        time.sleep(0.5) 
+        #time.sleep(0.5) 
         #
 
     #conexion.commit()

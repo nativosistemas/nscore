@@ -236,6 +236,7 @@ public class Esp32_astro
     public double horizontal_grados_max { get; set; }
     public double vertical_grados_min { get; set; }
     public double vertical_grados_max { get; set; }
+   public Guid  sessionDevice_publicID_return { get; set; }
 }
 
 /*

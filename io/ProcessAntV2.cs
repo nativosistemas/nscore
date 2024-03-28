@@ -73,7 +73,7 @@ public class ProcessAntV2 : IDisposable
     {
         return _poolEsp32.Start_servoAngle(pHorizontal, pVertical);
     }
-    public string actionAnt_star(int pId, bool isLaserOn = false)
+    public async Task<string> actionAnt_star(int pId, bool isLaserOn = false)
     {
         string result = string.Empty;
         Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
@@ -87,6 +87,230 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
+    public async Task<Esp32_astro> actionAnt_getAntTracking(string pDevice_publicID, string pSessionDevice_publicID)
+    {
+        Esp32_astro result = null;
+        try
+        {
+            Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
+            Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+            using (var context = new AstroDbContext())
+            {
+                Guid sessionDevice_publicID_return = sessionDevice_publicID;
+                SessionDevice o = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();//&& x.sessionApp_publicID == sessionApp_publicID
+                if (o == null || o.sessionApp_publicID != sessionApp_publicID)
+                {
+                    sessionDevice_publicID_return = await sessionDeviceAdd(pDevice_publicID, Constantes.device_name_esp32_servos_laser);
+                }
+                result = await esp32_getAstro();
+                result.sessionDevice_publicID_return = sessionDevice_publicID_return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Util.log(ex);
+        }
+        return result;
+    }
+    public async Task<Guid> sessionDeviceAdd(string pDevice_publicID, string pDevice_name)
+    {
+        Guid result = Guid.Empty;
+        try
+        {
+            Guid device_publicID = new Guid(pDevice_publicID);
+            Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+            using (var context = new AstroDbContext())
+            {
+                SessionDevice o = new SessionDevice();
+                o.device_name = pDevice_name;
+                o.device_publicID = device_publicID;
+                o.sessionApp_publicID = sessionApp_publicID;
+                o.createDate = DateTime.Now;
+                result = o.publicID;
+                context.SessionDevices.Add(o);
+                context.SaveChanges();
+            }
+            Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
+        }
+        catch (Exception ex)
+        {
+            Util.log(ex);
+        }
+        return result;
+    }
+    public async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
+    {
+        Guid result = Guid.Empty;
+        try
+        {
+            Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
+            using (var context = new AstroDbContext())
+            {
+                SessionDevice oSessionDevices = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();
+                if (oSessionDevices != null)
+                {
+                    Guid sessionApp_publicID = oSessionDevices.sessionApp_publicID;
+                    List<nscore.AntTracking> l = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID).ToList();
+                    DateTime dateNow = DateTime.Now;
+                    foreach (var oItem in l)
+                    {
+                        oItem.status = Constantes.astro_status_resetSession;
+                        oItem.statusUpdateDate = dateNow;
+                    }
+                    context.SaveChanges();
+                    Guid publicID = Util.newAstroTracking(Constantes.astro_type_servoAngle_inicio, 0, 0);
+                    result = publicID;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Util.log(ex);
+        }
+        return result;
+    }
+    public async Task<Esp32_astro> esp32_getAstro()
+    {
+        Esp32_astro result = null;
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_calculationResolution).OrderBy(x1 => x1.date).FirstOrDefault();
+                if (oAntTracking != null)
+                {
+                    AntTracking oAntTracking_ant = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
+                    double? h_old = null;
+                    double? v_old = null;
+                    double? h_diferencia_grados = null;
+                    double? v_diferencia_grados = null;
+                    if (oAntTracking_ant != null)
+                    {
+                        h_old = oAntTracking_ant.h;
+                        v_old = oAntTracking_ant.v;
+                        if (h_old != null && oAntTracking.h != null)
+                        {
+                            if (h_old.Value > oAntTracking.h.Value)
+                            {
+                                h_diferencia_grados = Math.Abs(h_old.Value - oAntTracking.h.Value);
+                            }
+                            else
+                            {
+                                h_diferencia_grados = Math.Abs(oAntTracking.h.Value - h_old.Value);
+                            }
+                        }
+                        if (v_old != null && oAntTracking.v != null)
+                        {
+                            if (v_old.Value > oAntTracking.v.Value)
+                            {
+                                v_diferencia_grados = Math.Abs(v_old.Value - oAntTracking.v.Value);
+                            }
+                            else
+                            {
+                                v_diferencia_grados = Math.Abs(oAntTracking.v.Value - v_old.Value);
+                            }
+                        }
+                    }
+                    double h_sleep_secs = Constantes.servo_sleep_max;
+                    double v_sleep_secs = Constantes.servo_sleep_max;
+                    if (h_diferencia_grados != null)
+                    {
+                        h_sleep_secs = double.Round((h_sleep_secs * h_diferencia_grados.Value) / 180.0, 1);
+                        if (h_sleep_secs < Constantes.servo_sleep_min)
+                        {
+                            h_sleep_secs = 0.5;
+                        }
+                    }
+                    if (v_diferencia_grados != null)
+                    {
+                        v_sleep_secs = double.Round((v_sleep_secs * v_diferencia_grados.Value) / 180.0, 1);
+                        if (v_sleep_secs < Constantes.servo_sleep_min)
+                        {
+                            v_sleep_secs = 0.5;
+                        }
+                    }
+
+                    await AntTrackingStatus(oAntTracking.publicID, Constantes.astro_status_movingServo, null);
+                    //
+                    List<Config> l = context.Configs.ToList();
+
+                    double _Horizontal_grados_min = 0;
+                    double _Horizontal_grados_max = 0;
+                    double _Vertical_grados_min = 0;
+                    double _Vertical_grados_max = 0;
+
+                    if (l != null)
+                    {
+                        _Horizontal_grados_min = l.FirstOrDefault(x => x.name == "horizontal_grados_min").valueDouble.Value;
+                        _Horizontal_grados_max = l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble.Value;
+                        _Vertical_grados_min = l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble.Value;
+                        _Vertical_grados_max = l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble.Value;
+                    }
+
+                    //
+                    result = new Esp32_astro()
+                    {
+                        type = oAntTracking.type,
+                        isLaser = oAntTracking.isLaser,
+                        publicID = oAntTracking.publicID,
+                        horizontal_grados = oAntTracking.h == null ? 0 : oAntTracking.h.Value,
+                        vertical_grados = oAntTracking.v == null ? 0 : oAntTracking.v.Value,
+                        horizontal_grados_ant = h_old,
+                        vertical_grados_ant = v_old,
+                        horizontal_grados_sleep = h_sleep_secs,
+                        vertical_grados_sleep = v_sleep_secs,
+                        horizontal_grados_min = _Horizontal_grados_min,
+                        horizontal_grados_max = _Horizontal_grados_max,
+                        vertical_grados_min = _Vertical_grados_min,
+                        vertical_grados_max = _Vertical_grados_max
+
+                    };
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Util.log(ex);
+        }
+        return result;
+    }
+    public async Task<string> esp32_setAstro(string pPublicID, string pSessionDevice_publicID)
+    {
+        string result = string.Empty;
+        try
+        {
+            Guid publicID = new Guid(pPublicID);
+            Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
+            await AntTrackingStatus(publicID, Constantes.astro_status_movedServo, sessionDevice_publicID);
+            result = "Ok";
+        }
+        catch (Exception ex)
+        {
+            Util.log(ex);
+        }
+        return result;
+    }
+    public async Task<bool> AntTrackingStatus(Guid pGuid, string pEstado, Guid? pSessionDevice_publicID)
+    {
+        bool result = false;
+        using (var context = new AstroDbContext())
+        {
+            AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
+            if (oAntTracking != null)
+            {
+                oAntTracking.status = pEstado;
+                oAntTracking.statusUpdateDate = DateTime.Now;
+                if (pSessionDevice_publicID != null)
+                {
+                    oAntTracking.sessionDevice_publicID = pSessionDevice_publicID.Value;
+                }
+                context.SaveChanges();
+                result = true;
+            }
+        }
+        return result;
+    }
     public string getValoresServos()
     {
         try
@@ -94,8 +318,14 @@ public class ProcessAntV2 : IDisposable
             using (var context = new AstroDbContext())
             {
                 List<Config> l = context.Configs.ToList();
-                _Horizontal_grados = l.FirstOrDefault(x => x.name == "servoH").valueDouble.Value;
-                _Vertical_grados = l.FirstOrDefault(x => x.name == "servoV").valueDouble.Value;
+
+                Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.type == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
+                if (oAntTracking != null)
+                {
+                    _Horizontal_grados = oAntTracking.h.Value;
+                    _Vertical_grados = oAntTracking.v.Value;
+                }
                 _Horizontal_grados_min = l.FirstOrDefault(x => x.name == "horizontal_grados_min").valueDouble.Value;
                 _Horizontal_grados_max = l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble.Value;
                 _Vertical_grados_min = l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble.Value;
@@ -273,6 +503,10 @@ public class ProcessEsp32 : IDisposable
         if (hc != null)
         {
             result = "Ok";
+        }
+        else
+        {
+            result = "No se obtuvo respuesta";
         }
         return result;
     }

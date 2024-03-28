@@ -1078,7 +1078,7 @@ public class Util
         await SessionApp_inicio();
         return 0;
     }
-    public static async Task<bool> AntTrackingStatus(Guid pGuid, string pEstado, Guid? pSessionDevice_publicID)
+    /*public static async Task<bool> AntTrackingStatus(Guid pGuid, string pEstado, Guid? pSessionDevice_publicID)
     {
         bool result = false;
         using (var context = new AstroDbContext())
@@ -1097,7 +1097,7 @@ public class Util
             }
         }
         return result;
-    }
+    }*/
    /* public static async Task<Esp32_astro> esp32_getAstro_movedServo()
     {
         Esp32_astro result = null;
@@ -1125,7 +1125,7 @@ public class Util
         }
         return result;
     }*/
-    public static async Task<Esp32_astro> esp32_getAstro()
+   /* public static async Task<Esp32_astro> esp32_getAstro()
     {
         Esp32_astro result = null;
         try
@@ -1209,8 +1209,8 @@ public class Util
             log(ex);
         }
         return result;
-    }
-    public static async Task<string> esp32_setAstro(string pPublicID, string pSessionDevice_publicID)
+    }*/
+    /*public static async Task<string> esp32_setAstro(string pPublicID, string pSessionDevice_publicID)
     {
         string result = string.Empty;
         try
@@ -1225,7 +1225,7 @@ public class Util
             log(ex);
         }
         return result;
-    }
+    }*/
     public static Guid newAstroTracking(string pType, double pRa_h, double pDec_v)
     {
         Guid oGuid = Guid.NewGuid();
@@ -1264,7 +1264,7 @@ public class Util
         }
         return oGuid;
     }
-    public static async Task<Guid> sessionDeviceAdd(string pDevice_publicID, string pDevice_name)
+    /*public static async Task<Guid> sessionDeviceAdd(string pDevice_publicID, string pDevice_name)
     {
         Guid result = Guid.Empty;
         try
@@ -1289,7 +1289,7 @@ public class Util
             log(ex);
         }
         return result;
-    }
+    }*/
     public static async Task<string> isSessionDeviceOk(string pSessionDevice_publicID)
     {
         string result = "!Ok";
@@ -1312,7 +1312,7 @@ public class Util
         }
         return result;
     }
-    public static async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
+    /*public static async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
     {
         Guid result = Guid.Empty;
         try
@@ -1342,5 +1342,5 @@ public class Util
             log(ex);
         }
         return result;
-    }
+    }*/
 }
