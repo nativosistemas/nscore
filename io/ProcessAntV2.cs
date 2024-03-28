@@ -130,7 +130,7 @@ public class ProcessAntV2 : IDisposable
                 context.SessionDevices.Add(o);
                 context.SaveChanges();
             }
-            Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
+           // Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
         }
         catch (Exception ex)
         {
@@ -138,7 +138,7 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
+   /* public async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
     {
         Guid result = Guid.Empty;
         try
@@ -168,7 +168,7 @@ public class ProcessAntV2 : IDisposable
             Util.log(ex);
         }
         return result;
-    }
+    }*/
     public async Task<Esp32_astro> esp32_getAstro()
     {
         Esp32_astro result = null;
@@ -320,7 +320,7 @@ public class ProcessAntV2 : IDisposable
                 List<Config> l = context.Configs.ToList();
 
                 Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
-                AntTracking oAntTracking = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.type == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
                 if (oAntTracking != null)
                 {
                     _Horizontal_grados = oAntTracking.h.Value;
