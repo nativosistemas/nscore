@@ -1,0 +1,12 @@
+docker-compose.yml
+
+
+version: '3.7'
+
+services:
+  tu_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"

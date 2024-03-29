@@ -65,7 +65,7 @@ public class ProcessAntV2 : IDisposable
         }
         return _l_Star.Where(x => x.visible).ToList();
     }
-    public string actionAnt_laser(int pIsRead, int pLaser)
+    public async Task<string> actionAnt_laser(int pIsRead, int pLaser)
     {
         return _poolEsp32.Start_laser(pIsRead, pLaser);
     }
@@ -130,7 +130,7 @@ public class ProcessAntV2 : IDisposable
                 context.SessionDevices.Add(o);
                 context.SaveChanges();
             }
-           // Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
+            // Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
         }
         catch (Exception ex)
         {
@@ -138,37 +138,37 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-   /* public async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
-    {
-        Guid result = Guid.Empty;
-        try
-        {
-            Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
-            using (var context = new AstroDbContext())
-            {
-                SessionDevice oSessionDevices = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();
-                if (oSessionDevices != null)
-                {
-                    Guid sessionApp_publicID = oSessionDevices.sessionApp_publicID;
-                    List<nscore.AntTracking> l = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID).ToList();
-                    DateTime dateNow = DateTime.Now;
-                    foreach (var oItem in l)
-                    {
-                        oItem.status = Constantes.astro_status_resetSession;
-                        oItem.statusUpdateDate = dateNow;
-                    }
-                    context.SaveChanges();
-                    Guid publicID = Util.newAstroTracking(Constantes.astro_type_servoAngle_inicio, 0, 0);
-                    result = publicID;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Util.log(ex);
-        }
-        return result;
-    }*/
+    /* public async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
+     {
+         Guid result = Guid.Empty;
+         try
+         {
+             Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
+             using (var context = new AstroDbContext())
+             {
+                 SessionDevice oSessionDevices = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();
+                 if (oSessionDevices != null)
+                 {
+                     Guid sessionApp_publicID = oSessionDevices.sessionApp_publicID;
+                     List<nscore.AntTracking> l = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID).ToList();
+                     DateTime dateNow = DateTime.Now;
+                     foreach (var oItem in l)
+                     {
+                         oItem.status = Constantes.astro_status_resetSession;
+                         oItem.statusUpdateDate = dateNow;
+                     }
+                     context.SaveChanges();
+                     Guid publicID = Util.newAstroTracking(Constantes.astro_type_servoAngle_inicio, 0, 0);
+                     result = publicID;
+                 }
+             }
+         }
+         catch (Exception ex)
+         {
+             Util.log(ex);
+         }
+         return result;
+     }*/
     public async Task<Esp32_astro> esp32_getAstro()
     {
         Esp32_astro result = null;
@@ -311,7 +311,7 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public string getValoresServos()
+    public  async Task<string> getValoresServos()
     {
         try
         {
@@ -343,6 +343,55 @@ public class ProcessAntV2 : IDisposable
                               ", \"vertical_min\":" + _Vertical_grados_min.ToString(System.Globalization.CultureInfo.InvariantCulture) +
                     ", \"vertical_max\":" + _Vertical_grados_max.ToString(System.Globalization.CultureInfo.InvariantCulture) +
         " }";
+        return result;
+    }
+    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max)
+    {
+        string result = "!Ok";
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                List<Config> l = context.Configs.ToList();
+                l.FirstOrDefault(x => x.name == "latitude").valueDouble = latitude;
+                l.FirstOrDefault(x => x.name == "longitude").valueDouble = longitude;
+                l.FirstOrDefault(x => x.name == "horizontal_grados_min").valueDouble = horizontal_grados_min;
+                l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble = horizontal_grados_max;
+                l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble = vertical_grados_min;
+                l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble = vertical_grados_max;
+                context.SaveChanges();
+            }
+            result = "Ok";
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
+        return result;
+    }
+    public  async Task<ConfigAnt> getConfig()
+    {
+        ConfigAnt result = null;
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                List<Config> l = context.Configs.ToList();
+                double _Horizontal_grados_min = l.FirstOrDefault(x => x.name == "horizontal_grados_min").valueDouble.Value;
+                double _Horizontal_grados_max = l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble.Value;
+                double _Vertical_grados_min = l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble.Value;
+                double _Vertical_grados_max = l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble.Value;
+                double latitude = l.FirstOrDefault(x => x.name == "latitude").valueDouble.Value;
+                double longitude = l.FirstOrDefault(x => x.name == "longitude").valueDouble.Value;
+
+
+                result = new ConfigAnt() { latitude = latitude, longitude = longitude, horizontal_grados_min = _Horizontal_grados_min, horizontal_grados_max = _Horizontal_grados_max, vertical_grados_min = _Vertical_grados_min, vertical_grados_max = _Vertical_grados_max };
+            }
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
         return result;
     }
     protected virtual void Dispose(bool disposing)

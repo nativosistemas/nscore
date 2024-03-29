@@ -1,7 +1,7 @@
 // crear el Dockerfile
 
 // crear imagen en docker local
-docker build -t nscore .
+sudo docker build -t nscore .
 //docker build -t nscore -f Dockerfile .
 
 

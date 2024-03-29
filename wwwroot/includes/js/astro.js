@@ -42,6 +42,8 @@ function pageMainLoad() {
         actulizarGradosServos_v2();
     } else if (pagina == 'espaciolab.html') {
         // loadIndex();
+    } else if (pagina == 'config_v2.html') {
+        htmlGetConfig();
     }
     if (pagina == 'estrellas.html' || pagina == 'config.html' || pagina == 'constelaciones.html') {
         fetchGetCity().then(el_city => {
@@ -689,7 +691,61 @@ function onchangeRangeMoverServo_v2() {
             isOnClickMoverServo_v2 = false;
             document.getElementById("spinner").style.display = "none";
 
-        })
+        });
     }
     return false;
+}
+function onClickGrabarConfig() {
+
+    document.getElementById("spinner").style.display = '';
+
+    var latitude = document.getElementById("txt_latitude").value;
+    var longitude = document.getElementById("txt_longitude").value;
+    var horizontal_grados_min = document.getElementById("txt_horizontal_grados_min").value;
+    var horizontal_grados_max = document.getElementById("txt_horizontal_grados_max").value;
+    var vertical_grados_min = document.getElementById("txt_vertical_grados_min").value;
+    var vertical_grados_max = document.getElementById("txt_vertical_grados_max").value;
+
+
+    setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max).then(text => {
+        var strHtml = '';
+        strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
+        document.getElementById("divMsg").innerHTML = strHtml;
+        document.getElementById("spinner").style.display = "none";
+
+    })
+
+
+}
+function htmlGetConfig() {
+    fetchGetConfig().then(response => {
+        var strHtml = '';
+
+        const o = JSON.parse(response);
+        document.getElementById("txt_latitude").value = o.latitude;
+        document.getElementById("txt_longitude").value = o.longitude;
+        document.getElementById("txt_horizontal_grados_min").value = o.horizontal_grados_min;
+        document.getElementById("txt_horizontal_grados_max").value = o.horizontal_grados_max;
+        document.getElementById("txt_vertical_grados_min").value = o.vertical_grados_min;
+        document.getElementById("txt_vertical_grados_max").value = o.vertical_grados_max;
+        //
+
+    });
+    // txt_latitude
+    // txt_longitude
+    // txt_horizontal_grados_min
+    // txt_horizontal_grados_max
+    // txt_vertical_grados_min
+    // txt_vertical_grados_max
+}
+async function fetchGetConfig() {
+    const response = await fetch('/getConfig');
+    const text = await response.text();
+    return text;
+}
+async function setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max) {
+    const response = await fetch('/setConfig?latitude=' + latitude + '&longitude=' + longitude + '&horizontal_grados_min=' + horizontal_grados_min + '&horizontal_grados_max=' + horizontal_grados_max
+        + '&vertical_grados_min=' + vertical_grados_min + '&vertical_grados_max=' + vertical_grados_max);
+    const text = await response.text();
+    return text;
 }
