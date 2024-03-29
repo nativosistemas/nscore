@@ -1,6 +1,6 @@
 docker-compose.yml
 
-
+//////////////////
 version: '3.7'
 
 services:
@@ -10,3 +10,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:80"
+//////////////////////////
+
+chmod +x despliegue.sh
