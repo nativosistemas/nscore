@@ -119,8 +119,12 @@ public class ProcessAntV2 : IDisposable
         {
             Guid device_publicID = new Guid(pDevice_publicID);
             Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+
+
             using (var context = new AstroDbContext())
             {
+      // SessionDevice oSessionDevices_existe = context.SessionDevices.Where(x => x.publicID == device_publicID).FirstOrDefault();
+
                 SessionDevice o = new SessionDevice();
                 o.device_name = pDevice_name;
                 o.device_publicID = device_publicID;

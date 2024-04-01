@@ -473,7 +473,7 @@ function onClickStar(pId) {
         var pagina = getNamePage();
         //|| pagina == 'index.html'
 
-        if (pagina == 'estrellas.html' || pagina == 'espaciolab.html') {
+       if (pagina == 'estrellas.html' || pagina == 'espaciolab.html') {
 
             fetchServo(id).then(text => {
                 var strHtml = '';
@@ -483,7 +483,7 @@ function onClickStar(pId) {
                 document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
             });
 
-        } else if (pagina == 'estrellas_v2.html') {
+        } else { //if (pagina == 'estrellas_v2.html') 
             fetchServo_v2(id).then(text => {
                 var strHtml = '';
                 strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
@@ -492,7 +492,7 @@ function onClickStar(pId) {
                 document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
             });
 
-        }
+       }
 
     }
 }
