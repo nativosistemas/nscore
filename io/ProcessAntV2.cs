@@ -105,12 +105,16 @@ public class ProcessAntV2 : IDisposable
                     is_sessionDeviceAdd = true;
                 }
                 result = await esp32_getAstro();
-                if (result != null && is_sessionDeviceAdd)
+                if (result != null)
                 {
-                    result.horizontal_grados_ant = null;
-                    result.vertical_grados_ant = null;
+                    if (is_sessionDeviceAdd)
+                    {
+                        result.horizontal_grados_ant = null;
+                        result.vertical_grados_ant = null;
+                    }
+                    result.sessionDevice_publicID_return = sessionDevice_publicID_return;
                 }
-                result.sessionDevice_publicID_return = sessionDevice_publicID_return;
+
             }
         }
         catch (Exception ex)
