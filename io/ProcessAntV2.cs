@@ -324,6 +324,7 @@ public class ProcessAntV2 : IDisposable
             context.AntTrackings.RemoveRange(context.AntTrackings.ToList());
             context.SessionApps.RemoveRange(context.SessionApps.ToList());
             context.SessionDevices.RemoveRange(context.SessionDevices.ToList());
+            context.Logs.RemoveRange(context.Logs.ToList());
             context.SaveChanges();
             result = true;
         }
