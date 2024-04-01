@@ -134,7 +134,7 @@ public class ProcessAntV2 : IDisposable
                 context.SessionDevices.Add(o);
                 context.SaveChanges();
             }
-             Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
+            // Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
         }
         catch (Exception ex)
         {
