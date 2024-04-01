@@ -625,7 +625,7 @@ public class ProcessEsp32 : IDisposable
     {
         HorizontalCoordinates resault = null;
         int contador = 0;
-
+        bool isFoundAntTracking = false;
         while (contador < 300)
         {
             using (var context = new AstroDbContext())
@@ -633,6 +633,7 @@ public class ProcessEsp32 : IDisposable
                 AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == Constantes.astro_status_movedServo).FirstOrDefault();
                 if (oAntTracking != null)
                 {
+                    isFoundAntTracking = true;
                     if (pType == Constantes.astro_type_star)
                     {
                         resault = new HorizontalCoordinates() { Altitude = oAntTracking.altitude.Value, Azimuth = oAntTracking.azimuth.Value };
@@ -651,7 +652,10 @@ public class ProcessEsp32 : IDisposable
             await Task.Delay(50);
             contador++;
         }
-        await ProcessAntV2.AntTrackingStatus(pGuid, Constantes.astro_status_noResponseEsp32, null);
+        if (!isFoundAntTracking)
+        {
+            await ProcessAntV2.AntTrackingStatus(pGuid, Constantes.astro_status_noResponseEsp32, null);
+        }
         return resault;
     }
     protected virtual void Dispose(bool disposing)
