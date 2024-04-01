@@ -13,3 +13,5 @@ services:
 //////////////////////////
 
 chmod +x despliegue.sh
+
+chmod +x despliegue-python.sh

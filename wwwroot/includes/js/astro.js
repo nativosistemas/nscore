@@ -25,7 +25,7 @@ function pageMainLoad() {
         loadIndex();
 
     } else if (pagina == 'estrellas_v2.html') {
-        loadStarsStellarium();
+       // loadStarsStellarium();
 
     } else if (pagina == 'config.html') {
         loadConfig();
