@@ -626,7 +626,7 @@ public class ProcessEsp32 : IDisposable
         HorizontalCoordinates resault = null;
         int contador = 0;
         bool isFoundAntTracking = false;
-        while (contador < 300)
+        while (contador < 400)
         {
             using (var context = new AstroDbContext())
             {
