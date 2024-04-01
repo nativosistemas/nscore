@@ -98,11 +98,18 @@ public class ProcessAntV2 : IDisposable
             {
                 Guid sessionDevice_publicID_return = sessionDevice_publicID;
                 SessionDevice o = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();//&& x.sessionApp_publicID == sessionApp_publicID
+                bool is_sessionDeviceAdd = false;
                 if (o == null || o.sessionApp_publicID != sessionApp_publicID)
                 {
                     sessionDevice_publicID_return = await sessionDeviceAdd(pDevice_publicID, Constantes.device_name_esp32_servos_laser);
+                    is_sessionDeviceAdd = true;
                 }
                 result = await esp32_getAstro();
+                if (result != null && is_sessionDeviceAdd)
+                {
+                    result.horizontal_grados_ant = null;
+                    result.vertical_grados_ant = null;
+                }
                 result.sessionDevice_publicID_return = sessionDevice_publicID_return;
             }
         }
@@ -119,12 +126,8 @@ public class ProcessAntV2 : IDisposable
         {
             Guid device_publicID = new Guid(pDevice_publicID);
             Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
-
-
             using (var context = new AstroDbContext())
             {
-      // SessionDevice oSessionDevices_existe = context.SessionDevices.Where(x => x.publicID == device_publicID).FirstOrDefault();
-
                 SessionDevice o = new SessionDevice();
                 o.device_name = pDevice_name;
                 o.device_publicID = device_publicID;
@@ -134,7 +137,7 @@ public class ProcessAntV2 : IDisposable
                 context.SessionDevices.Add(o);
                 context.SaveChanges();
             }
-            // Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
+            Guid newAntTracking_inicio = await antTracking_resetSession();
         }
         catch (Exception ex)
         {
@@ -142,37 +145,35 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-     public async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
-     {
-         Guid result = Guid.Empty;
-         try
-         {
-             Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
-             using (var context = new AstroDbContext())
-             {
-                 SessionDevice oSessionDevices = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();
-                 if (oSessionDevices != null)
-                 {
-                     Guid sessionApp_publicID = oSessionDevices.sessionApp_publicID;
-                     List<nscore.AntTracking> l = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID).ToList();
-                     DateTime dateNow = DateTime.Now;
-                     foreach (var oItem in l)
-                     {
-                         oItem.status = Constantes.astro_status_resetSession;
-                         oItem.statusUpdateDate = dateNow;
-                     }
-                     context.SaveChanges();
-                     //Guid publicID = Util.newAstroTracking(Constantes.astro_type_servoAngle_inicio, 0, 0);
-                     //result = publicID;
-                 }
-             }
-         }
-         catch (Exception ex)
-         {
-             Util.log(ex);
-         }
-         return result;
-     }
+    public async Task<Guid> antTracking_resetSession()
+    {
+        Guid result = Guid.Empty;
+        try
+        {
+            //Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
+            Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+            using (var context = new AstroDbContext())
+            {
+                //Guid sessionApp_publicID = oSessionDevices.sessionApp_publicID;
+                List<nscore.AntTracking> l = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movingServo).ToList();
+                DateTime dateNow = DateTime.Now;
+                foreach (var oItem in l)
+                {
+                    oItem.status = Constantes.astro_status_resetSession;
+                    oItem.statusUpdateDate = dateNow;
+                }
+                context.SaveChanges();
+                //Guid publicID = Util.newAstroTracking(Constantes.astro_type_servoAngle_inicio, 0, 0);
+                //result = publicID;
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Util.log(ex);
+        }
+        return result;
+    }
     public async Task<Esp32_astro> esp32_getAstro()
     {
         Esp32_astro result = null;
@@ -295,7 +296,7 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public async Task<bool> AntTrackingStatus(Guid pGuid, string pEstado, Guid? pSessionDevice_publicID)
+    public static async Task<bool> AntTrackingStatus(Guid pGuid, string pEstado, Guid? pSessionDevice_publicID)
     {
         bool result = false;
         using (var context = new AstroDbContext())
@@ -315,7 +316,20 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public  async Task<string> getValoresServos()
+    public async Task<bool> removeTable()
+    {
+        bool result = false;
+        using (var context = new AstroDbContext())
+        {
+            context.AntTrackings.RemoveRange(context.AntTrackings.ToList());
+            context.SessionApps.RemoveRange(context.SessionApps.ToList());
+            context.SessionDevices.RemoveRange(context.SessionDevices.ToList());
+            context.SaveChanges();
+            result = true;
+        }
+        return result;
+    }
+    public async Task<string> getValoresServos()
     {
         try
         {
@@ -373,7 +387,7 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public  async Task<ConfigAnt> getConfig()
+    public async Task<ConfigAnt> getConfig()
     {
         ConfigAnt result = null;
         try
@@ -637,6 +651,7 @@ public class ProcessEsp32 : IDisposable
             await Task.Delay(50);
             contador++;
         }
+        await ProcessAntV2.AntTrackingStatus(pGuid, Constantes.astro_status_noResponseEsp32, null);
         return resault;
     }
     protected virtual void Dispose(bool disposing)

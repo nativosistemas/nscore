@@ -42,6 +42,10 @@ public static class Constantes
     {
         get { return "resetSession"; }
     }
+        public static string astro_status_noResponseEsp32
+    {
+        get { return "noResponseEsp32"; }
+    }
     public static double servo_sleep_max
     {
         get { return 3; }
