@@ -63,7 +63,7 @@ internal class Program
         app.MapGet("/actionAnt_getAntTracking", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID, string pSessionDevice_publicID) => { return await pProcessAntV2.actionAnt_getAntTracking(pDevice_publicID, pSessionDevice_publicID); });
         app.MapGet("/", (nscore.ProcessAnt pProcessAnt) =>
         {
-            string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "index.html");// "index.html"
+            string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "estrellas_v2.html");// "index.html"
             var html = System.IO.File.ReadAllText(pathPageWeb);
             return Results.Content(html, "text/html");
             //return "Ok"; 

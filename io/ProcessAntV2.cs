@@ -130,7 +130,7 @@ public class ProcessAntV2 : IDisposable
                 context.SessionDevices.Add(o);
                 context.SaveChanges();
             }
-            // Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
+             Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
         }
         catch (Exception ex)
         {
@@ -138,7 +138,7 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    /* public async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
+     public async Task<Guid> antTracking_resetSession(string pSessionDevice_publicID)
      {
          Guid result = Guid.Empty;
          try
@@ -158,8 +158,8 @@ public class ProcessAntV2 : IDisposable
                          oItem.statusUpdateDate = dateNow;
                      }
                      context.SaveChanges();
-                     Guid publicID = Util.newAstroTracking(Constantes.astro_type_servoAngle_inicio, 0, 0);
-                     result = publicID;
+                     //Guid publicID = Util.newAstroTracking(Constantes.astro_type_servoAngle_inicio, 0, 0);
+                     //result = publicID;
                  }
              }
          }
@@ -168,7 +168,7 @@ public class ProcessAntV2 : IDisposable
              Util.log(ex);
          }
          return result;
-     }*/
+     }
     public async Task<Esp32_astro> esp32_getAstro()
     {
         Esp32_astro result = null;
