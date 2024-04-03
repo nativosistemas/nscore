@@ -291,12 +291,37 @@ public class ProcessAntV2 : IDisposable
         {
             Guid publicID = new Guid(pPublicID);
             Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
-            await AntTrackingStatus(publicID, Constantes.astro_status_movedServo, sessionDevice_publicID);
+            await AntTrackingStatus_endEsp32(publicID, sessionDevice_publicID);
             result = "Ok";
         }
         catch (Exception ex)
         {
             Util.log(ex);
+        }
+        return result;
+    }
+    public static async Task<bool> AntTrackingStatus_endEsp32(Guid pGuid, Guid? pSessionDevice_publicID)
+    {
+        bool result = false;
+        using (var context = new AstroDbContext())
+        {
+            AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid).FirstOrDefault();
+            string status = Constantes.astro_status_movedServo;
+            if (oAntTracking != null)
+            {
+                if (oAntTracking.type == Constantes.astro_type_laser)
+                {
+                    status = Constantes.astro_status_movedLaser;
+                }
+                oAntTracking.status = status;
+                oAntTracking.statusUpdateDate = DateTime.Now;
+                if (pSessionDevice_publicID != null)
+                {
+                    oAntTracking.sessionDevice_publicID = pSessionDevice_publicID.Value;
+                }
+                context.SaveChanges();
+                result = true;
+            }
         }
         return result;
     }
@@ -310,8 +335,8 @@ public class ProcessAntV2 : IDisposable
             {
                 oAntTracking.status = pEstado;
                 oAntTracking.statusUpdateDate = DateTime.Now;
-                oAntTracking.h = oAntTracking.h;
-                oAntTracking.v = oAntTracking.v;
+                //oAntTracking.h = oAntTracking.h;
+                //oAntTracking.v = oAntTracking.v;
                 if (pSessionDevice_publicID != null)
                 {
                     oAntTracking.sessionDevice_publicID = pSessionDevice_publicID.Value;
