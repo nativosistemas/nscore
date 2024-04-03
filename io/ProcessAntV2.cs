@@ -310,6 +310,8 @@ public class ProcessAntV2 : IDisposable
             {
                 oAntTracking.status = pEstado;
                 oAntTracking.statusUpdateDate = DateTime.Now;
+                oAntTracking.h = oAntTracking.h;
+                oAntTracking.v = oAntTracking.v;
                 if (pSessionDevice_publicID != null)
                 {
                     oAntTracking.sessionDevice_publicID = pSessionDevice_publicID.Value;

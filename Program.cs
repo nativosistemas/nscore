@@ -8,14 +8,15 @@ internal class Program
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        // builder.Services.AddSingleton<nscore.IServoController, nscore.ServoController>();
+        builder.Services.AddAuthorization();
+        builder.Services.AddAuthentication("Bearer").AddJwtBearer();
         builder.Services.AddSingleton<nscore.LedClient>();
-        //  builder.Services.AddSingleton<nscore.ServoClient>();
         builder.Services.AddSingleton<nscore.ProcessAnt>();
         builder.Services.AddSingleton<nscore.ProcessAntV2>();
         nscore.Util.WebRootPath = builder.Environment.WebRootPath;
         var app = builder.Build();
         app.UseStaticFiles();
+        app.UseAuthorization();
 
         nscore.Helper.app = builder.Configuration.GetSection("appSettings")["app"];
         nscore.Helper.folder = builder.Configuration.GetSection("appSettings")["folder"];// System.IO.Directory.GetCurrentDirectory();
@@ -31,7 +32,6 @@ internal class Program
         app.MapGet("/servo", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findStar(id, true); }));
         app.MapGet("/getservos", ((nscore.ProcessAnt pProcessAnt) => { return pProcessAnt.getValoresServos(); }));
         app.MapGet("/servomover", ((nscore.ProcessAnt pProcessAnt, double pH, double pV, double pH_min, double pH_max, double pV_min, double pV_max, bool pOnLaser) => { return pProcessAnt.actionAnt_servo(pH, pV, pH_min, pH_max, pV_min, pV_max, pOnLaser); }));
-        app.MapGet("/servomover_v2", ((nscore.ProcessAntV2 pProcessAntV2, double pH, double pV) => { return pProcessAntV2.actionAnt_servo(pH, pV); }));
         app.MapGet("/servoconstellations", ((nscore.ProcessAnt pProcessAnt, int id) => { return pProcessAnt.findConstellation(id); }));
         //app.MapGet("/laser", ((nscore.ProcessAnt pProcessAnt, int read, int on) => { return pProcessAnt.actionLaser(read, on); }));
         app.MapGet("/stars", ((nscore.ProcessAnt pProcessAnt) => { return Results.Json(pProcessAnt.getStars()); }));
@@ -53,12 +53,13 @@ internal class Program
         app.MapGet("/esp32", async (int led) => { return await nscore.Util.esp32_util(led); });
         //app.MapGet("/esp32_getAstro", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.esp32_getAstro(); });
         app.MapGet("/getservos_v2", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.getValoresServos(); });
-         app.MapGet("/clean", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.removeTable(); });
+        app.MapGet("/clean", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.removeTable(); });
         app.MapGet("/setConfig", async (nscore.ProcessAntV2 pProcessAntV2, double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max) => { return await pProcessAntV2.setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max); });
         app.MapGet("/getConfig", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.getConfig(); });
         app.MapGet("/laser", async (nscore.ProcessAntV2 pProcessAntV2, int read, int on) => { return await pProcessAntV2.actionAnt_laser(read, on); });
-        app.MapGet("/servo_v2", async(nscore.ProcessAntV2 pProcessAntV2, int id) => { return await pProcessAntV2.actionAnt_star(id); });
+        app.MapGet("/servo_v2", async (nscore.ProcessAntV2 pProcessAntV2, int id) => { return await pProcessAntV2.actionAnt_star(id); });
         app.MapGet("/esp32_setAstro", async (nscore.ProcessAntV2 pProcessAntV2, string publicID, string pSessionDevice_publicID) => { return await pProcessAntV2.esp32_setAstro(publicID, pSessionDevice_publicID); });
+        app.MapGet("/servomover_v2", ((nscore.ProcessAntV2 pProcessAntV2, double pH, double pV) => { return pProcessAntV2.actionAnt_servo(pH, pV); }));
         //app.MapGet("/sessionDeviceAdd", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID, string pDevice_name) => { return await pProcessAntV2.sessionDeviceAdd(pDevice_publicID, pDevice_name); });
         //app.MapGet("/isSessionDeviceOk", async (string pSessionDevice_publicID) => { return await nscore.Util.isSessionDeviceOk(pSessionDevice_publicID); });
         app.MapGet("/actionAnt_getAntTracking", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID, string pSessionDevice_publicID) => { return await pProcessAntV2.actionAnt_getAntTracking(pDevice_publicID, pSessionDevice_publicID); });
@@ -74,7 +75,29 @@ internal class Program
             http.Response.Headers.CacheControl = $"public,max-age={TimeSpan.FromHours(24).TotalSeconds}";
             return Results.Stream(stream => ResizeImageAsync(r, n, an, al, c, re, stream, token), "image/jpeg");
         });
-        //app.MapGet("/const", () => { return nscore.Util.CargaInicialConstelación(); });
+        //
+        app.MapGet("/secret", (System.Security.Claims.ClaimsPrincipal user) => $"Hello {user.Identity?.Name}. My secret").RequireAuthorization();
+        app.MapGet("/token", async (string pName, string pPass) =>
+{
+    string jwt = await Util.Jwt_GenerateToken(pName, pPass, "+0mOx5gMexKmtjjr8hZxdAZSYzAy4aWtd/GArNygLIg=", "dotnet-user-jwts");
+
+    return Results.Ok(new
+    {
+        AccessToken = jwt == null ? "!Ok" : jwt
+    });
+});
+        /* app.MapPost("/token", async (string pName, string pPass) =>
+         {
+             string jwt = await Util.Jwt_GenerateToken(pName, pPass, "pJwt_Key ", "pJwt_Issuer");
+
+             return Results.Ok(new
+             {
+                 AccessToken = jwt == null ? "!Ok" : jwt
+             });
+         });*/
+
+
+        //
         app.Run();
 
 
