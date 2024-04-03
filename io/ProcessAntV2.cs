@@ -658,11 +658,17 @@ public class ProcessEsp32 : IDisposable
         HorizontalCoordinates resault = null;
         int contador = 0;
         bool isFoundAntTracking = false;
+        string status = Constantes.astro_status_movedServo;
+        if (pType == Constantes.astro_type_laser)
+        {
+            status = Constantes.astro_status_movedLaser;
+        }
+
         while (contador < 400)
         {
             using (var context = new AstroDbContext())
             {
-                AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == Constantes.astro_status_movedServo).FirstOrDefault();
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == status).FirstOrDefault();
                 if (oAntTracking != null)
                 {
                     isFoundAntTracking = true;
