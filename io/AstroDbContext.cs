@@ -2,8 +2,8 @@ using Microsoft.EntityFrameworkCore;
 namespace nscore;
 public class AstroDbContext : DbContext
 {
-    public DbSet<nscore.AstronomicalObject> AstronomicalObjects { get; set; }
-    public DbSet<nscore.Constellation> Constellations { get; set; }
+    //public DbSet<nscore.AstronomicalObject> AstronomicalObjects { get; set; }
+    //public DbSet<nscore.Constellation> Constellations { get; set; }
     //public DbSet<nscore.AstroTracking> AstroTrackings { get; set; }
     public DbSet<nscore.AntTracking> AntTrackings { get; set; }
     public DbSet<nscore.Config> Configs { get; set; }
@@ -11,6 +11,8 @@ public class AstroDbContext : DbContext
     public DbSet<nscore.StellariumStar> StellariumStars { get; set; }
     public DbSet<nscore.SessionApp> SessionApps { get; set; }
     public DbSet<nscore.SessionDevice> SessionDevices { get; set; }
+    public DbSet<nscore.User> Users { get; set; }
+    public DbSet<nscore.SessionUser> SessionUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

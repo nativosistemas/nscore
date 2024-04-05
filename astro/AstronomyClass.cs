@@ -217,7 +217,7 @@ public class ConfigAnt
     public double vertical_grados_min { get; set; }//= Math.Round(2.5, 6);
     public double vertical_grados_max { get; set; }// = Math.Round(12.2, 6);
 
-    public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(2.9, 6), horizontal_grados_max = Math.Round(12.7, 6), vertical_grados_min = Math.Round(2.5, 6), vertical_grados_max = Math.Round(12.2, 6) };
+    public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(500.0, 6), horizontal_grados_max = Math.Round(2500.0, 6), vertical_grados_min = Math.Round(500.0, 6), vertical_grados_max = Math.Round(2500.0, 6) };
 }
 
 public class Esp32_astro

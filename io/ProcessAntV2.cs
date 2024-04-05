@@ -664,7 +664,7 @@ public class ProcessEsp32 : IDisposable
             status = Constantes.astro_status_movedLaser;
         }
 
-        while (contador < 400)
+        while (contador < 720)
         {
             using (var context = new AstroDbContext())
             {

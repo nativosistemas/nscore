@@ -28,4 +28,16 @@ public sealed class Helper
     {
         set; get;
     }
+    public static string Jwt_Issuer
+    {
+        set; get;
+    }
+    public static string Jwt_Audience
+    {
+        set; get;
+    }
+    public static string Jwt_Key
+    {
+        set; get;
+    }
 }
