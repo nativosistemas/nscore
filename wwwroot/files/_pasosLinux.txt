@@ -15,6 +15,14 @@ chmod +x /usr/src/nscore/py_laser
 //// para que la app se inicie siempre en la raspberry
 copiar el archivo en la ruta /etc/systemd/system/
 
+cp /home/pi/git/nscore/wwwroot/files/service/nscore.service  /etc/systemd/system/
+sudo systemctl enable nscore.service
+sudo systemctl start nscore.service
+
+cp /home/pi/git/nscore/wwwroot/files/service/nscore-python.service  /etc/systemd/system/
+sudo systemctl enable nscore-python.service
+sudo systemctl start nscore-python.service
+
 //Ejecuta los siguientes comandos para habilitar el servicio y asegurarte de que se inicie 
 sudo systemctl enable astro.service
 sudo systemctl start astro.service
