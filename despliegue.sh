@@ -16,7 +16,7 @@ sudo docker rmi nscore
 
 # INICIO TEMPORAL (FALTA docker-compose)
 sudo docker build -t nscore .
-sudo docker run -p 80:8080  -v /usr/src/dockerns:/usr/src  --name nscore --hostname nscore  -d nscore
+sudo docker run -p 80:8080  -v /usr/src/dockerns:/usr/src -v /usr/src/appsettings.json:/App/appsettings.json  --name nscore --hostname nscore  -d nscore
 # FIN TEMPORAL (FALTA docker-compose)
 
 sudo systemctl start nscore.service
