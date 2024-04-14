@@ -350,3 +350,4 @@ MigrationBackup/
 .ionide/
 
 nscore.sln
+appsettings.Development.json
