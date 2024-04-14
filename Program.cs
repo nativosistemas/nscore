@@ -46,6 +46,9 @@ internal class Program
         nscore.Helper.Jwt_Issuer = builder.Configuration["Jwt:Issuer"];
         nscore.Helper.Jwt_Audience = builder.Configuration["Jwt:Audience"];
         nscore.Helper.Jwt_Key = builder.Configuration["Jwt:Key"];
+        nscore.Helper.user_name = builder.Configuration["user:name"];
+        nscore.Helper.user_pass = builder.Configuration["user:pass"];
+        nscore.Helper.IoT_esp32 = builder.Configuration["IoT:esp32"];
         //
         nscore.AstroDbContext.initDbContext();
         int inicioApp = nscore.Util.inicioApp().Result; //       LlamarFuncionAsincronica().Wait(); 
@@ -89,6 +92,7 @@ internal class Program
         //app.MapGet("/sessionDeviceAdd", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID, string pDevice_name) => { return await pProcessAntV2.sessionDeviceAdd(pDevice_publicID, pDevice_name); });
         //app.MapGet("/isSessionDeviceOk", async (string pSessionDevice_publicID) => { return await nscore.Util.isSessionDeviceOk(pSessionDevice_publicID); });
         app.MapGet("/actionAnt_getAntTracking", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID, string pSessionDevice_publicID) => { return await pProcessAntV2.actionAnt_getAntTracking(pDevice_publicID, pSessionDevice_publicID); });
+        app.MapGet("/tokenDevice", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID) => { return await pProcessAntV2.api_sessionDeviceAdd(pDevice_publicID); });
         app.MapGet("/", () =>
         {
             string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "estrellas_v2.html");// "index.html"

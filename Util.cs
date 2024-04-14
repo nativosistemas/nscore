@@ -653,9 +653,9 @@ public class Util
             using (var context = new AstroDbContext())
             {
                 User o = new User();
-                o.name = "Pablo";
-                o.login = "corona";
-                string pass =  Convert.ToBase64String(Cryptography.ComputeHash(Encoding.UTF8.GetBytes("nova")));
+                o.name = nscore.Helper.user_name;
+                o.login = nscore.Helper.user_name;
+                string pass =  Convert.ToBase64String(Cryptography.ComputeHash(Encoding.UTF8.GetBytes(nscore.Helper.user_pass)));
                 o.pass = pass;
                 context.Users.Add(o);
                 context.SaveChanges();

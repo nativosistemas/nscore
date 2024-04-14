@@ -40,4 +40,16 @@ public sealed class Helper
     {
         set; get;
     }
+    public static string user_name
+    {
+        set; get;
+    }
+    public static string user_pass
+    {
+        set; get;
+    }
+    public static string IoT_esp32
+    {
+        set; get;
+    }
 }

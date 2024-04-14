@@ -92,35 +92,43 @@ public class ProcessAntV2 : IDisposable
         Esp32_astro result = null;
         try
         {
-            Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
-            Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
-            using (var context = new AstroDbContext())
+            if (isDeviceValid(pDevice_publicID).Result)
             {
-                Guid sessionDevice_publicID_return = sessionDevice_publicID;
-                SessionDevice o = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();//&& x.sessionApp_publicID == sessionApp_publicID
-                bool is_sessionDeviceAdd = false;
-                if (o == null || o.sessionApp_publicID != sessionApp_publicID)
+                Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
+                Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+                using (var context = new AstroDbContext())
                 {
-                    sessionDevice_publicID_return = await sessionDeviceAdd(pDevice_publicID, Constantes.device_name_esp32_servos_laser);
-                    is_sessionDeviceAdd = true;
-                }
-                result = await esp32_getAstro();
-                if (result != null)
-                {
-                    if (is_sessionDeviceAdd)
+                    Guid sessionDevice_publicID_return = sessionDevice_publicID;
+                    SessionDevice o = context.SessionDevices.Where(x => x.publicID == sessionDevice_publicID).FirstOrDefault();//&& x.sessionApp_publicID == sessionApp_publicID
+                    bool is_sessionDeviceAdd = false;
+                    if (o == null || o.sessionApp_publicID != sessionApp_publicID)
+                    {
+                        sessionDevice_publicID_return = await sessionDeviceAdd(pDevice_publicID, Constantes.device_name_esp32_servos_laser);
+                        is_sessionDeviceAdd = true;
+                    }
+                    result = await esp32_getAstro();
+                    if (result == null)
+                    {
+                        result = new Esp32_astro();
+                    }
+                    else if (is_sessionDeviceAdd)
                     {
                         result.horizontal_grados_ant = null;
                         result.vertical_grados_ant = null;
                     }
                     result.sessionDevice_publicID_return = sessionDevice_publicID_return;
                 }
-
             }
         }
         catch (Exception ex)
         {
             Util.log(ex);
         }
+        return result;
+    }
+    public async Task<Guid> api_sessionDeviceAdd(string pDevice_publicID)
+    {
+        Guid result = await sessionDeviceAdd(pDevice_publicID, Constantes.device_name_esp32_servos_laser); ;
         return result;
     }
     public async Task<Guid> sessionDeviceAdd(string pDevice_publicID, string pDevice_name)
@@ -146,6 +154,15 @@ public class ProcessAntV2 : IDisposable
         catch (Exception ex)
         {
             Util.log(ex);
+        }
+        return result;
+    }
+    public async Task<bool> isDeviceValid(string pDevice_publicID)
+    {
+        bool result = false;
+        if (Helper.IoT_esp32 == pDevice_publicID)
+        {
+            result = true;
         }
         return result;
     }
