@@ -15,6 +15,25 @@
 dotnet dev-certs https -ep ./certificate.pfx -p $PASS$ --trust
 
 en prod
+"Kestrel": {
+  "Endpoints": {
+    "Https": {
+      "Url": "https://*:443",
+      "Certificate": {
+        "Path": "/usr/src/fullchain.pem",
+        "KeyPath": "/usr/src/privkey.pem"
+      }
+    }
+  }
+}
+
+
+
 sudo systemctl stop nscore.service
 
 sudo certbot certonly --standalone -d estrellas.duckdns.org -d www.estrellas.duckdns.org 
+sudo systemctl start nscore.service
+
+
+sudo cp /etc/letsencrypt/live/estrellas.duckdns.org/fullchain.pem /usr/src/nscore/
+sudo cp /etc/letsencrypt/live/estrellas.duckdns.org/privkey.pem /usr/src/nscore/
