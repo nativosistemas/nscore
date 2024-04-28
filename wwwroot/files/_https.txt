@@ -1,0 +1,20 @@
+
+  "Kestrel": {
+    "Endpoints": {
+      "Https": {
+        "Url": "https://localhost:5001",
+        "Certificate": {
+          "Path": "certificate.pfx",
+          "Password": "PASS"
+        }
+      }
+    }
+  },
+
+
+dotnet dev-certs https -ep ./certificate.pfx -p $PASS$ --trust
+
+en prod
+sudo systemctl stop nscore.service
+
+sudo certbot certonly --standalone -d estrellas.duckdns.org -d www.estrellas.duckdns.org 

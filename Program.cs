@@ -39,6 +39,8 @@ internal class Program
         var app = builder.Build();
         app.UseStaticFiles();
         app.UseAuthorization();
+        app.UseHsts();
+        //app.UseHttpsRedirection();
 
         nscore.Helper.app = builder.Configuration.GetSection("appSettings")["app"];
         nscore.Helper.folder = builder.Configuration.GetSection("appSettings")["folder"];// System.IO.Directory.GetCurrentDirectory();

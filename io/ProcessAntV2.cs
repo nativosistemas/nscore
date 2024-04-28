@@ -103,9 +103,22 @@ public class ProcessAntV2 : IDisposable
                     bool is_sessionDeviceAdd = false;
                     if (o == null || o.sessionApp_publicID != sessionApp_publicID)
                     {
-                        sessionDevice_publicID_return = await sessionDeviceAdd(pDevice_publicID, Constantes.device_name_esp32_servos_laser);
                         is_sessionDeviceAdd = true;
                     }
+                    if (is_sessionDeviceAdd)
+                    {
+                        SessionDevice oSessionDevices = context.SessionDevices.Where(x => x.sessionApp_publicID == sessionApp_publicID).FirstOrDefault();
+                        if (oSessionDevices == null)
+                        {
+                            sessionDevice_publicID_return = await sessionDeviceAdd(pDevice_publicID, Constantes.device_name_esp32_servos_laser);
+                        }
+                        else
+                        {
+                            sessionDevice_publicID_return = oSessionDevices.publicID;
+                        }
+
+                    }
+
                     result = await esp32_getAstro();
                     if (result == null)
                     {
