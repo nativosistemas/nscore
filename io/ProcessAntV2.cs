@@ -65,17 +65,17 @@ public class ProcessAntV2 : IDisposable
         }
         return _l_Star.Where(x => x.visible).ToList();
     }
-    public async Task<string> actionAnt_laser(int pIsRead, int pLaser)
+    public async Task<cResultAnt> actionAnt_laser(int pIsRead, int pLaser)
     {
-        return _poolEsp32.Start_laser(pIsRead, pLaser);
+        return await _poolEsp32.Start_laser(pIsRead, pLaser);
     }
-    public string actionAnt_servo(double pHorizontal, double pVertical)
+    public async Task<cResultAnt> actionAnt_servo(double pHorizontal, double pVertical)
     {
-        return _poolEsp32.Start_servoAngle(pHorizontal, pVertical);
+        return await _poolEsp32.Start_servoAngle(pHorizontal, pVertical);
     }
-    public async Task<string> actionAnt_star(int pId, bool isLaserOn = false)
+    public async Task<cResultAnt> actionAnt_star(int pId, bool isLaserOn = false)
     {
-        string result = string.Empty;
+        cResultAnt result = new cResultAnt();
         Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
         if (oStar != null)
         {
@@ -83,7 +83,8 @@ public class ProcessAntV2 : IDisposable
         }
         else
         {
-            result = "No se encontro estrella";
+            //result.type = "sinResultado";
+            result.msg = "No se encontro estrella";
         }
         return result;
     }
@@ -219,6 +220,32 @@ public class ProcessAntV2 : IDisposable
                 AntTracking oAntTracking = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_calculationResolution).OrderBy(x1 => x1.date).FirstOrDefault();
                 if (oAntTracking != null)
                 {
+                    //
+                    List<Config> l = context.Configs.ToList();
+
+                    double _Horizontal_grados_min = 0;
+                    double _Horizontal_grados_max = 0;
+                    double _Vertical_grados_min = 0;
+                    double _Vertical_grados_max = 0;
+                    double _Horizontal_grados_calibrate = 0;
+                    double _Vertical_grados_calibrate = 0;
+
+                    if (l != null)
+                    {
+                        _Horizontal_grados_min = l.FirstOrDefault(x => x.name == "horizontal_grados_min").valueDouble.Value;
+                        _Horizontal_grados_max = l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble.Value;
+                        _Vertical_grados_min = l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble.Value;
+                        _Vertical_grados_max = l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble.Value;
+                        _Horizontal_grados_calibrate = l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble.Value;
+                        _Vertical_grados_calibrate = l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble.Value;
+                    }
+                    if (oAntTracking.type != Constantes.astro_type_servoAngle_calibrate)
+                    {
+                        oAntTracking._h_calibrate = _Horizontal_grados_calibrate;
+                        oAntTracking._v_calibrate = _Vertical_grados_calibrate;
+                    }
+                    //
+
                     AntTracking oAntTracking_ant = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
                     double? h_old = null;
                     double? v_old = null;
@@ -226,28 +253,28 @@ public class ProcessAntV2 : IDisposable
                     double? v_diferencia_grados = null;
                     if (oAntTracking_ant != null)
                     {
-                        h_old = oAntTracking_ant.h;
-                        v_old = oAntTracking_ant.v;
+                        h_old = oAntTracking_ant.get_h_calibrate();
+                        v_old = oAntTracking_ant.get_v_calibrate();
                         if (h_old != null && oAntTracking.h != null)
                         {
-                            if (h_old.Value > oAntTracking.h.Value)
+                            if (h_old.Value > oAntTracking.get_h_calibrate())
                             {
-                                h_diferencia_grados = Math.Abs(h_old.Value - oAntTracking.h.Value);
+                                h_diferencia_grados = Math.Abs(h_old.Value - oAntTracking.get_h_calibrate());
                             }
                             else
                             {
-                                h_diferencia_grados = Math.Abs(oAntTracking.h.Value - h_old.Value);
+                                h_diferencia_grados = Math.Abs(oAntTracking.get_h_calibrate() - h_old.Value);
                             }
                         }
                         if (v_old != null && oAntTracking.v != null)
                         {
-                            if (v_old.Value > oAntTracking.v.Value)
+                            if (v_old.Value > oAntTracking.get_v_calibrate())
                             {
-                                v_diferencia_grados = Math.Abs(v_old.Value - oAntTracking.v.Value);
+                                v_diferencia_grados = Math.Abs(v_old.Value - oAntTracking.get_v_calibrate());
                             }
                             else
                             {
-                                v_diferencia_grados = Math.Abs(oAntTracking.v.Value - v_old.Value);
+                                v_diferencia_grados = Math.Abs(oAntTracking.get_v_calibrate() - v_old.Value);
                             }
                         }
                     }
@@ -270,31 +297,18 @@ public class ProcessAntV2 : IDisposable
                         }
                     }
 
-                    await AntTrackingStatus(oAntTracking.publicID, Constantes.astro_status_movingServo, null);
-                    //
-                    List<Config> l = context.Configs.ToList();
+                    // await AntTrackingStatus(oAntTracking.publicID, Constantes.astro_status_movingServo, null);
+                    oAntTracking.status = Constantes.astro_status_movingServo;
+                    oAntTracking.statusUpdateDate = DateTime.Now;
 
-                    double _Horizontal_grados_min = 0;
-                    double _Horizontal_grados_max = 0;
-                    double _Vertical_grados_min = 0;
-                    double _Vertical_grados_max = 0;
-
-                    if (l != null)
-                    {
-                        _Horizontal_grados_min = l.FirstOrDefault(x => x.name == "horizontal_grados_min").valueDouble.Value;
-                        _Horizontal_grados_max = l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble.Value;
-                        _Vertical_grados_min = l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble.Value;
-                        _Vertical_grados_max = l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble.Value;
-                    }
-
-                    //
+                    context.SaveChanges();
                     result = new Esp32_astro()
                     {
                         type = oAntTracking.type,
                         isLaser = oAntTracking.isLaser,
                         publicID = oAntTracking.publicID,
-                        horizontal_grados = oAntTracking.h == null ? 0 : oAntTracking.h.Value,
-                        vertical_grados = oAntTracking.v == null ? 0 : oAntTracking.v.Value,
+                        horizontal_grados = oAntTracking.get_h_calibrate(),
+                        vertical_grados = oAntTracking.get_v_calibrate(),
                         horizontal_grados_ant = h_old,
                         vertical_grados_ant = v_old,
                         horizontal_grados_sleep = h_sleep_secs,
@@ -425,7 +439,7 @@ public class ProcessAntV2 : IDisposable
         " }";
         return result;
     }
-    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max)
+    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate)
     {
         string result = "!Ok";
         try
@@ -439,6 +453,8 @@ public class ProcessAntV2 : IDisposable
                 l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble = horizontal_grados_max;
                 l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble = vertical_grados_min;
                 l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble = vertical_grados_max;
+                l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble = horizontal_grados_calibrate;
+                l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble = vertical_grados_calibrate;
                 context.SaveChanges();
             }
             result = "Ok";
@@ -463,9 +479,10 @@ public class ProcessAntV2 : IDisposable
                 double _Vertical_grados_max = l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble.Value;
                 double latitude = l.FirstOrDefault(x => x.name == "latitude").valueDouble.Value;
                 double longitude = l.FirstOrDefault(x => x.name == "longitude").valueDouble.Value;
+                double horizontal_grados_calibrate = l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble.Value;
+                double vertical_grados_calibrate = l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble.Value;
 
-
-                result = new ConfigAnt() { latitude = latitude, longitude = longitude, horizontal_grados_min = _Horizontal_grados_min, horizontal_grados_max = _Horizontal_grados_max, vertical_grados_min = _Vertical_grados_min, vertical_grados_max = _Vertical_grados_max };
+                result = new ConfigAnt() { latitude = latitude, longitude = longitude, horizontal_grados_min = _Horizontal_grados_min, horizontal_grados_max = _Horizontal_grados_max, vertical_grados_min = _Vertical_grados_min, vertical_grados_max = _Vertical_grados_max, horizontal_grados_calibrate = horizontal_grados_calibrate, vertical_grados_calibrate = vertical_grados_calibrate };
             }
         }
         catch (Exception ex)
@@ -507,71 +524,74 @@ public class PoolEsp32 : IDisposable
             recursosDisponibles.Enqueue(oProcessEsp32);
         }
     }
-    public string Start_laser(int pIsRead, int pLaser)
+    public async Task<cResultAnt> Start_laser(int pIsRead, int pLaser)
     {
-        string output = "null";
+        cResultAnt result = null;
         try
         {
             ProcessEsp32 oProcess = GetResource();
             if (oProcess != null)
             {
-                output = oProcess.actionAnt_laser(pIsRead, pLaser);
+                result = await oProcess.actionAnt_laser(pIsRead, pLaser);
                 SetResource(oProcess);
             }
             else
             {
-                output = "Recurso no disponible o en uso";
+                result = new cResultAnt();
+                result.msg = "Recurso no disponible o en uso";
             }
         }
         catch (Exception ex)
         {
             Util.log(ex);
         }
-        return output;
+        return result;
     }
-    public string Start_servoAngle(double pHorizontal, double pVertical)
+    public async Task<cResultAnt> Start_servoAngle(double pHorizontal, double pVertical)
     {
-        string output = "null";
+        cResultAnt result = null;
         try
         {
             ProcessEsp32 oProcess = GetResource();
             if (oProcess != null)
             {
-                output = oProcess.actionAnt_servoAngle(pHorizontal, pVertical);
+                result = await oProcess.actionAnt_servoAngle(pHorizontal, pVertical);
                 SetResource(oProcess);
             }
             else
             {
-                output = "Recurso no disponible o en uso";
+                result = new cResultAnt();
+                result.msg = "Recurso no disponible o en uso";
             }
         }
         catch (Exception ex)
         {
             Util.log(ex);
         }
-        return output;
+        return result;
     }
-    public string Start_star(Star pStar, bool isLaserOn = false)
+    public cResultAnt Start_star(Star pStar, bool isLaserOn = false)
     {
-        string output = "null";
+        cResultAnt result = new cResultAnt();
         try
         {
             ProcessEsp32 oProcess = GetResource();
             if (oProcess != null)
             {
-                output = oProcess.actionAnt_star(pStar, isLaserOn);
+                result = oProcess.actionAnt_star(pStar, isLaserOn);
                 SetResource(oProcess);
             }
             else
             {
-                output = "Recurso no disponible o en uso";
+                //result.type = "Recurso no disponible o en uso";
+                result.msg = "Recurso no disponible o en uso";
             }
         }
         catch (Exception ex)
         {
             Util.log(ex);
         }
-        return output;
+        return result;
     }
     public ProcessEsp32 GetResource()
     {
@@ -624,68 +644,78 @@ public class ProcessEsp32 : IDisposable
     {
 
     }
-    public string actionAnt_laser(int pIsRead, int pLaser)
+    public async Task<cResultAnt> actionAnt_laser(int pIsRead, int pLaser)
     {
-        string result = string.Empty;
+        cResultAnt result = null;
         Guid oAstroTracking = Util.newAstroTracking_laser(Constantes.astro_type_laser, pLaser);
-        HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(Constantes.astro_type_laser, oAstroTracking).Result;
-        if (hc != null)
+        result = getAstroTracking_ResultAnt(Constantes.astro_type_laser, oAstroTracking).Result;
+        if (result != null)
         {
-            result = "Ok";
+            result.msg = "Ok";
         }
         else
         {
-            result = "No se obtuvo respuesta";
+            result = new cResultAnt();
+            result.msg = "No se obtuvo respuesta";
         }
         return result;
     }
-    public string actionAnt_servoAngle(double pHorizontal, double pVertical)
+    public async Task<cResultAnt> actionAnt_servoAngle(double pHorizontal, double pVertical)
     {
-        string result = string.Empty;
+        cResultAnt result = null;
         Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_servoAngle, pHorizontal, pVertical);
-        HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(Constantes.astro_type_servoAngle, oAstroTracking).Result;
-        if (hc != null)
-        {
-            result = "Ok";
-        }
+        result = getAstroTracking_ResultAnt(Constantes.astro_type_servoAngle, oAstroTracking).Result;
         return result;
     }
-    public string actionAnt_star(Star pStar, bool isLaserOn = false)
+    public async Task<cResultAnt> actionAnt_servoAngle_calibrate(double pHorizontal, double pVertical, double pH_calibrate, double pV_calibrate)
     {
-        string result = string.Empty;
+        cResultAnt result = null;
+        Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_servoAngle_calibrate, pHorizontal, pVertical, pH_calibrate, pV_calibrate);
+        result = getAstroTracking_ResultAnt(Constantes.astro_type_servoAngle_calibrate, oAstroTracking).Result;
+        return result;
+    }
+    public cResultAnt actionAnt_star(Star pStar, bool isLaserOn = false)
+    {
+        cResultAnt result = null;
         if (pStar != null)
         {
             Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_star, pStar.ra, pStar.dec);
-            HorizontalCoordinates hc = getAstroTracking_HorizontalCoordinates(Constantes.astro_type_star, oAstroTracking).Result;
-            if (hc != null)
+            result = getAstroTracking_ResultAnt(Constantes.astro_type_star, oAstroTracking).Result;
+            if (result != null)
             {
-                ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(hc);
+                ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(result.hc);
                 if (oServoCoordinates != null)
                 {
-                    string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(pStar.ra) + "/" + AstronomyEngine.GetSexagesimal(pStar.dec);
-                    string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(hc.Altitude);
-                    result += strEq + "<br/>" + strHc + "<br/>";
-                    result += "HIP " + pStar.hip.ToString() + "<br/>";
+                    result.sc = oServoCoordinates;
+                    //string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(pStar.ra) + "/" + AstronomyEngine.GetSexagesimal(pStar.dec);
+                    //string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(result.hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(result.hc.Altitude);
+                    // result += strEq + "<br/>" + strHc + "<br/>";
+                    // result += "HIP " + pStar.hip.ToString() + "<br/>";
+                    result.hip = pStar.hip;
+                    result.ec = new EquatorialCoordinates() { ra = pStar.ra, dec = pStar.dec };
                 }
                 else
                 {
-                    result = "Estrella no es visible";
+                    result.msg = "Estrella no es visible";
                 }
             }
             else
             {
-                result = "No se obtuvo respuesta";
+                result = new cResultAnt();
+                result.msg = "No se obtuvo respuesta";
             }
         }
         else
         {
-            result = "No se encontro estrella";
+            result = new cResultAnt();
+            result.msg = "No se encontro estrella";
         }
         return result;
     }
-    public async Task<HorizontalCoordinates> getAstroTracking_HorizontalCoordinates(string pType, Guid pGuid)
+    public async Task<cResultAnt> getAstroTracking_ResultAnt(string pType, Guid pGuid)
     {
-        HorizontalCoordinates resault = null;
+        cResultAnt result = null;
+        HorizontalCoordinates oHorizontalCoordinates = null;
         int contador = 0;
         bool isFoundAntTracking = false;
         string status = Constantes.astro_status_movedServo;
@@ -701,18 +731,19 @@ public class ProcessEsp32 : IDisposable
                 AntTracking oAntTracking = context.AntTrackings.Where(x => x.publicID == pGuid && x.status == status).FirstOrDefault();
                 if (oAntTracking != null)
                 {
+                    result = new cResultAnt();
                     isFoundAntTracking = true;
                     if (pType == Constantes.astro_type_star)
                     {
-                        resault = new HorizontalCoordinates() { Altitude = oAntTracking.altitude.Value, Azimuth = oAntTracking.azimuth.Value };
+                        oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = oAntTracking.altitude.Value, Azimuth = oAntTracking.azimuth.Value };
                     }
-                    else if (pType == Constantes.astro_type_servoAngle)
+                    else if (pType == Constantes.astro_type_servoAngle || pType == Constantes.astro_type_servoAngle_calibrate)
                     {
-                        resault = new HorizontalCoordinates() { Altitude = oAntTracking.h.Value, Azimuth = oAntTracking.v.Value };
+                        oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = oAntTracking.get_h_calibrate(), Azimuth = oAntTracking.get_v_calibrate() };
                     }
                     else if (pType == Constantes.astro_type_laser)
                     {
-                        resault = new HorizontalCoordinates() { Altitude = 0, Azimuth = 0 };
+                        oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = 0, Azimuth = 0 };
                     }
                     break;
                 }
@@ -720,11 +751,15 @@ public class ProcessEsp32 : IDisposable
             await Task.Delay(50);
             contador++;
         }
+        if (result != null && oHorizontalCoordinates != null)
+        {
+            result.hc = oHorizontalCoordinates;
+        }
         if (!isFoundAntTracking)
         {
             await ProcessAntV2.AntTrackingStatus(pGuid, Constantes.astro_status_noResponseEsp32, null);
         }
-        return resault;
+        return result;
     }
     protected virtual void Dispose(bool disposing)
     {

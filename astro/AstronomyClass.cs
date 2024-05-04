@@ -3,6 +3,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace nscore;
 
+public class cResultAnt
+{
+    public string msg { get; set; }
+    public string type { get; set; }
+    public int? hip { get; set; }
+    public EquatorialCoordinates ec { get; set; }
+    public HorizontalCoordinates hc { get; set; }
+    public ServoCoordinates sc { get; set; }
+
+}
+
 public class Singleton_SessionApp
 {
     private static readonly Lazy<Singleton_SessionApp> instance = new Lazy<Singleton_SessionApp>(() => new Singleton_SessionApp());
@@ -181,8 +192,17 @@ public class AntTracking
     public Guid sessionDevice_publicID { get; set; }
     public Guid sessionApp_publicID { get; set; }
     public int isLaser { get; set; }
+    public double? _h_calibrate { get; set; }
+    public double? _v_calibrate { get; set; }
 
-
+    public double get_h_calibrate()
+    {
+        return h.Value == null ? 0 : h.Value + (_h_calibrate == null ? 0 : _h_calibrate.Value);
+    }
+    public double get_v_calibrate()
+    {
+        return (v.Value == null ? 0 : v.Value) + (_v_calibrate == null ? 0 : _v_calibrate.Value);
+    }
 
 }
 
@@ -216,8 +236,9 @@ public class ConfigAnt
     public double horizontal_grados_max { get; set; }//= Math.Round(12.7, 6);
     public double vertical_grados_min { get; set; }//= Math.Round(2.5, 6);
     public double vertical_grados_max { get; set; }// = Math.Round(12.2, 6);
-
-    public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(500.0, 6), horizontal_grados_max = Math.Round(2500.0, 6), vertical_grados_min = Math.Round(500.0, 6), vertical_grados_max = Math.Round(2500.0, 6) };
+    public double horizontal_grados_calibrate { get; set; }
+    public double vertical_grados_calibrate { get; set; }
+    public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(500.0, 6), horizontal_grados_max = Math.Round(2500.0, 6), vertical_grados_min = Math.Round(500.0, 6), vertical_grados_max = Math.Round(2500.0, 6), horizontal_grados_calibrate = 0, vertical_grados_calibrate = 0 };
 }
 
 public class Esp32_astro
@@ -236,7 +257,7 @@ public class Esp32_astro
     public double horizontal_grados_max { get; set; }
     public double vertical_grados_min { get; set; }
     public double vertical_grados_max { get; set; }
-   public Guid  sessionDevice_publicID_return { get; set; }
+    public Guid sessionDevice_publicID_return { get; set; }
 }
 
 /*

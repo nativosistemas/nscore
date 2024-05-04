@@ -655,7 +655,7 @@ public class Util
                 User o = new User();
                 o.name = nscore.Helper.user_name;
                 o.login = nscore.Helper.user_name;
-                string pass =  Convert.ToBase64String(Cryptography.ComputeHash(Encoding.UTF8.GetBytes(nscore.Helper.user_pass)));
+                string pass = Convert.ToBase64String(Cryptography.ComputeHash(Encoding.UTF8.GetBytes(nscore.Helper.user_pass)));
                 o.pass = pass;
                 context.Users.Add(o);
                 context.SaveChanges();
@@ -1192,13 +1192,21 @@ public class Util
         }
         return result;
     }*/
-    public static Guid newAstroTracking(string pType, double pRa_h, double pDec_v)
+    public static Guid newAstroTracking(string pType, double pRa_h, double pDec_v, double? pH_calibrate = null, double? pV_calibrate = null)
     {
         Guid oGuid = Guid.NewGuid();
         using (var context = new AstroDbContext())
         {
 
             nscore.AntTracking o = new nscore.AntTracking(oGuid, pType, pRa_h, pDec_v);
+            if (pH_calibrate != null)
+            {
+                o._h_calibrate = pH_calibrate;
+            }
+            if (pV_calibrate != null)
+            {
+                o._v_calibrate = pV_calibrate;
+            }
             context.AntTrackings.Add(o);
             try
             {
@@ -1355,7 +1363,7 @@ public class Util
             User oUser = getUsers().Result.Where(x => x.login == pUser.name).FirstOrDefault();
             if (oUser != null)
             {
-                isLogin = Cryptography.VerifyHash(Encoding.UTF8.GetBytes(pUser.pass),  Convert.FromBase64String(oUser.pass));
+                isLogin = Cryptography.VerifyHash(Encoding.UTF8.GetBytes(pUser.pass), Convert.FromBase64String(oUser.pass));
             }
             if (oUser != null && isLogin)
             {

@@ -14,6 +14,10 @@ public static class Constantes
     {
         get { return "servoAngle"; }
     }
+    public static string astro_type_servoAngle_calibrate
+    {
+        get { return "servoAngle_calibrate"; }
+    }
     public static string astro_type_servoAngle_inicio
     {
         get { return "astro_type_servoAngle_inicio"; }

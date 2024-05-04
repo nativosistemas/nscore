@@ -25,7 +25,7 @@ function pageMainLoad() {
         loadIndex();
 
     } else if (pagina == 'estrellas_v2.html') {
-       // loadStarsStellarium();
+        // loadStarsStellarium();
 
     } else if (pagina == 'config.html') {
         loadConfig();
@@ -392,7 +392,7 @@ async function fetchServo(pId) {
 }
 async function fetchServo_v2(pId) {
     const response = await fetch('/servo_v2?id=' + pId);
-    const text = await response.text();
+    const text = await response.json();
     return text;
 }
 function ajaxBegingCallFunction() {
@@ -473,7 +473,7 @@ function onClickStar(pId) {
         var pagina = getNamePage();
         //|| pagina == 'index.html'
 
-       if (pagina == 'estrellas.html' || pagina == 'espaciolab.html') {
+        if (pagina == 'estrellas.html' || pagina == 'espaciolab.html') {
 
             fetchServo(id).then(text => {
                 var strHtml = '';
@@ -484,7 +484,8 @@ function onClickStar(pId) {
             });
 
         } else { //if (pagina == 'estrellas_v2.html') 
-            fetchServo_v2(id).then(text => {
+            fetchServo_v2(id).then(oJson => {
+                var text = oJson.msg;
                 var strHtml = '';
                 strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
                 document.getElementById("divMsg").innerHTML = strHtml;
@@ -492,7 +493,7 @@ function onClickStar(pId) {
                 document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
             });
 
-       }
+        }
 
     }
 }
@@ -705,9 +706,10 @@ function onClickGrabarConfig() {
     var horizontal_grados_max = document.getElementById("txt_horizontal_grados_max").value;
     var vertical_grados_min = document.getElementById("txt_vertical_grados_min").value;
     var vertical_grados_max = document.getElementById("txt_vertical_grados_max").value;
+    var horizontal_grados_calibrate = document.getElementById("txt_horizontal_grados_calibrate").value;
+    var vertical_grados_calibrate = document.getElementById("txt_vertical_grados_calibrate").value;
 
-
-    setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max).then(text => {
+    setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate).then(text => {
         var strHtml = '';
         strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
         document.getElementById("divMsg").innerHTML = strHtml;
@@ -728,6 +730,8 @@ function htmlGetConfig() {
         document.getElementById("txt_horizontal_grados_max").value = o.horizontal_grados_max;
         document.getElementById("txt_vertical_grados_min").value = o.vertical_grados_min;
         document.getElementById("txt_vertical_grados_max").value = o.vertical_grados_max;
+        document.getElementById("txt_horizontal_grados_calibrate").value = o.horizontal_grados_calibrate;
+        document.getElementById("txt_vertical_grados_calibrate").value = o.vertical_grados_calibrate;
         //
 
     });
@@ -743,9 +747,9 @@ async function fetchGetConfig() {
     const text = await response.text();
     return text;
 }
-async function setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max) {
+async function setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate) {
     const response = await fetch('/setConfig?latitude=' + latitude + '&longitude=' + longitude + '&horizontal_grados_min=' + horizontal_grados_min + '&horizontal_grados_max=' + horizontal_grados_max
-        + '&vertical_grados_min=' + vertical_grados_min + '&vertical_grados_max=' + vertical_grados_max);
+        + '&vertical_grados_min=' + vertical_grados_min + '&vertical_grados_max=' + vertical_grados_max + '&horizontal_grados_calibrate=' + horizontal_grados_calibrate + '&vertical_grados_calibrate=' + vertical_grados_calibrate);
     const text = await response.text();
     return text;
 }
