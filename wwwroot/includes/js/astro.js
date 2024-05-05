@@ -485,7 +485,7 @@ function onClickStar(pId) {
 
         } else { //if (pagina == 'estrellas_v2.html') 
             fetchServo_v2(id).then(oJson => {
-                var text = oJson.msg;
+                var text = oJson;
                 var strHtml = '';
                 strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
                 document.getElementById("divMsg").innerHTML = strHtml;

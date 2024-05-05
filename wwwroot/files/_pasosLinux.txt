@@ -60,3 +60,7 @@ rm /usr/src/nscore/astro.db
 
 //editar .bashrc --->La ruta completa sería ~/ o /home/tu_usuario/, donde "tu_usuario" es el nombre de tu usuario en el sistema.
 sudo nano ~/.bashrc
+
+
+chmod +x despliegue.sh
+sudo ./despliegue.sh

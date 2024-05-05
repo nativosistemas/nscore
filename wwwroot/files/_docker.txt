@@ -42,3 +42,8 @@ sudo docker build -t nscore-python .
 sudo docker run  -v /usr/src/dockerns:/usr/src  --name nscore-python --hostname nscore-python  -d nscore-python
 //windows
 docker run  -v C:\dockerns:/usr/src  --name nscore-python --hostname nscore-python  -d nscore-python
+
+/// SAMBA
+sudo docker pull dockurr/samba
+sudo docker run -it --rm -p 445:445 -e "USER=samba" -e "PASS=secret" -v "/home/example:/storage" dockurr/samba
+
