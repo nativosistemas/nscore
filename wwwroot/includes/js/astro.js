@@ -486,9 +486,9 @@ function onClickStar(pId) {
         } else { //if (pagina == 'estrellas_v2.html') 
             fetchServo_v2(id).then(oJson => {
                 var text = '';
-                var strEq = "AR/Dec: " + oJson.ec.ra + "/" + oJson.ec.dec;
-                var strHc = "Az./Alt.: " + oJson.hc.Azimuth + "/" + oJson.hc.Altitude;
-                var strSc = "H/V: " + oJson.sc.servoH + "/" + oJson.sc.servoV;
+                var strEq = "AR/Dec: " + oJson.ec.ra.toFixed(2) + " / " + oJson.ec.dec.toFixed(2);
+                var strHc = "Az./Alt.: " + oJson.hc.Azimuth.toFixed(2) + " / " + oJson.hc.Altitude.toFixed(2);
+                var strSc = "H/V: " + oJson.sc.servoH.toFixed(2) + " / " + oJson.sc.servoV.toFixed(2);
                 text += strEq + "<br/>" + strHc + "<br/>" + strSc + "<br/>";
                 text += "HIP " + oJson.hip + "<br/>";
 

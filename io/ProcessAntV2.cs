@@ -693,6 +693,7 @@ public class ProcessEsp32 : IDisposable
                     // result += "HIP " + pStar.hip.ToString() + "<br/>";
                     result.hip = pStar.hip;
                     result.ec = new EquatorialCoordinates() { ra = pStar.ra, dec = pStar.dec };
+                    result.hc = new HorizontalCoordinates() { Azimuth = result.hc.Azimuth, Altitude = result.hc.Altitude };
                 }
                 else
                 {
