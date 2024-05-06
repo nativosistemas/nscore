@@ -411,19 +411,19 @@ async function fetchServoConstellation(pId) {
 }
 function onClickApagarLaser() {
     ajaxBegingCallFunction();
-    fetchLaser(0, 0).then(text => {
-        ajaxEndCallFunction(text);
+    fetchLaser(0, 0).then(oJson => {
+        ajaxEndCallFunction(oJson.msg);
     });
 }
 function onClickEncenderLaser() {
     ajaxBegingCallFunction();
-    fetchLaser(0, 1).then(text => {
-        ajaxEndCallFunction(text);
+    fetchLaser(0, 1).then(oJson => {
+        ajaxEndCallFunction(oJson.msg);
     });
 }
 async function fetchLaser(pRead, pOn) {
     const response = await fetch('/laser?read=' + pRead + '&on=' + pOn);
-    const text = await response.text();
+    const text = await response.json();
     return text;
 }
 
@@ -489,7 +489,8 @@ function onClickStar(pId) {
                 var strEq = "AR/Dec: " + oJson.ec.ra.toFixed(2) + " / " + oJson.ec.dec.toFixed(2);
                 var strHc = "Az./Alt.: " + oJson.hc.azimuth.toFixed(2) + " / " + oJson.hc.altitude.toFixed(2);
                 var strSc = "H/V: " + oJson.sc.servoH.toFixed(2) + " / " + oJson.sc.servoV.toFixed(2);
-                text += strEq + "<br/>" + strHc + "<br/>" + strSc + "<br/>";
+                var str_calibrate = "h_calibrate / v_calibrate: " + oJson._h_calibrate + " / " + oJson._v_calibrate;
+                text += strEq + "<br/>" + strHc + "<br/>" + strSc + "<br/>" + str_calibrate + "<br/>";
                 text += "HIP " + oJson.hip + "<br/>";
 
 

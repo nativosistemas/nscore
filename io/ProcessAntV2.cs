@@ -717,6 +717,8 @@ public class ProcessEsp32 : IDisposable
     {
         cResultAnt result = null;
         HorizontalCoordinates oHorizontalCoordinates = null;
+        ServoCoordinates oServoCoordinates = null;
+        string msg = string.Empty;
         int contador = 0;
         bool isFoundAntTracking = false;
         string status = Constantes.astro_status_movedServo;
@@ -737,14 +739,17 @@ public class ProcessEsp32 : IDisposable
                     if (pType == Constantes.astro_type_star)
                     {
                         oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = oAntTracking.altitude.Value, Azimuth = oAntTracking.azimuth.Value };
+                        oServoCoordinates = new ServoCoordinates() { servoH = oAntTracking.get_h_calibrate(), servoV = oAntTracking.get_v_calibrate(), _h_calibrate = oAntTracking._h_calibrate, _v_calibrate = oAntTracking._v_calibrate };
                     }
                     else if (pType == Constantes.astro_type_servoAngle || pType == Constantes.astro_type_servoAngle_calibrate)
                     {
-                        oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = oAntTracking.get_h_calibrate(), Azimuth = oAntTracking.get_v_calibrate() };
+                        oServoCoordinates = new ServoCoordinates() { servoH = oAntTracking.get_h_calibrate(), servoV = oAntTracking.get_v_calibrate(), _h_calibrate = oAntTracking._h_calibrate, _v_calibrate = oAntTracking._v_calibrate };
+                        //oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = oAntTracking.get_h_calibrate(), Azimuth = oAntTracking.get_v_calibrate() };
                     }
                     else if (pType == Constantes.astro_type_laser)
                     {
-                        oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = 0, Azimuth = 0 };
+                        //oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = 0, Azimuth = 0 };
+                        msg = "laser: " + oAntTracking.isLaser;
                     }
                     break;
                 }
@@ -752,9 +757,20 @@ public class ProcessEsp32 : IDisposable
             await Task.Delay(50);
             contador++;
         }
-        if (result != null && oHorizontalCoordinates != null)
+        if (result != null)
         {
-            result.hc = oHorizontalCoordinates;
+            if (oHorizontalCoordinates != null)
+            {
+                result.hc = oHorizontalCoordinates;
+            }
+            if (oServoCoordinates != null)
+            {
+                result.sc = oServoCoordinates;
+            }
+            if (!string.IsNullOrEmpty(msg))
+            {
+                result.msg = msg;
+            }
         }
         if (!isFoundAntTracking)
         {
