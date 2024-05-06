@@ -197,11 +197,11 @@ public class AntTracking
 
     public double get_h_calibrate()
     {
-        return h.Value == null ? 0 : h.Value + (_h_calibrate == null ? 0 : _h_calibrate.Value);
+        return h == null ? 0 : h.Value + (_h_calibrate == null ? 0 : _h_calibrate.Value);
     }
     public double get_v_calibrate()
     {
-        return (v.Value == null ? 0 : v.Value) + (_v_calibrate == null ? 0 : _v_calibrate.Value);
+        return (v == null ? 0 : v.Value) + (_v_calibrate == null ? 0 : _v_calibrate.Value);
     }
 
 }
