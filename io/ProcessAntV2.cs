@@ -649,11 +649,7 @@ public class ProcessEsp32 : IDisposable
         cResultAnt result = null;
         Guid oAstroTracking = Util.newAstroTracking_laser(Constantes.astro_type_laser, pLaser);
         result = await getAstroTracking_ResultAnt(Constantes.astro_type_laser, oAstroTracking);
-        if (result != null)
-        {
-            result.msg = "Ok";
-        }
-        else
+        if (result == null)
         {
             result = new cResultAnt();
             result.msg = "No se obtuvo respuesta";

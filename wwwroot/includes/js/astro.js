@@ -489,7 +489,7 @@ function onClickStar(pId) {
                 var strEq = "AR/Dec: " + oJson.ec.ra.toFixed(2) + " / " + oJson.ec.dec.toFixed(2);
                 var strHc = "Az./Alt.: " + oJson.hc.azimuth.toFixed(2) + " / " + oJson.hc.altitude.toFixed(2);
                 var strSc = "H/V: " + oJson.sc.servoH.toFixed(2) + " / " + oJson.sc.servoV.toFixed(2);
-                var str_calibrate = "h_calibrate / v_calibrate: " + oJson._h_calibrate + " / " + oJson._v_calibrate;
+                var str_calibrate = "h_calibrate / v_calibrate: " + oJson.sc._h_calibrate + " / " + oJson.sc._v_calibrate;
                 text += strEq + "<br/>" + strHc + "<br/>" + strSc + "<br/>" + str_calibrate + "<br/>";
                 text += "HIP " + oJson.hip + "<br/>";
 
