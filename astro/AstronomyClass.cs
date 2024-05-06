@@ -415,6 +415,8 @@ public class ServoCoordinates
     private double _servoV { get; set; }
     public double? _h_calibrate { get; set; }
     public double? _v_calibrate { get; set; }
+    public double? servoH_original { get; set; }
+    public double? servoV_original { get; set; }
     public double servoH { get { return _servoH; } set { if (value >= 0.0 && value <= 180.0) { _servoH = value; } } }
     public double servoV { get { return _servoV; } set { if (value >= 0.0 && value <= 180.0) { _servoV = value; } } }
 

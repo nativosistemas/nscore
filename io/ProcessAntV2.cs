@@ -682,7 +682,7 @@ public class ProcessEsp32 : IDisposable
                 ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(result.hc);
                 if (oServoCoordinates != null)
                 {
-                   //result.sc = oServoCoordinates;
+                    //result.sc = oServoCoordinates;
                     //string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(pStar.ra) + "/" + AstronomyEngine.GetSexagesimal(pStar.dec);
                     //string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(result.hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(result.hc.Altitude);
                     // result += strEq + "<br/>" + strHc + "<br/>";
@@ -735,11 +735,11 @@ public class ProcessEsp32 : IDisposable
                     if (pType == Constantes.astro_type_star)
                     {
                         oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = oAntTracking.altitude.Value, Azimuth = oAntTracking.azimuth.Value };
-                        oServoCoordinates = new ServoCoordinates() { servoH = oAntTracking.get_h_calibrate(), servoV = oAntTracking.get_v_calibrate(), _h_calibrate = oAntTracking._h_calibrate, _v_calibrate = oAntTracking._v_calibrate };
+                        oServoCoordinates = new ServoCoordinates() { servoH = oAntTracking.get_h_calibrate(), servoV = oAntTracking.get_v_calibrate(), _h_calibrate = oAntTracking._h_calibrate, _v_calibrate = oAntTracking._v_calibrate, servoH_original = oAntTracking.h, servoV_original = oAntTracking.v };
                     }
                     else if (pType == Constantes.astro_type_servoAngle || pType == Constantes.astro_type_servoAngle_calibrate)
                     {
-                        oServoCoordinates = new ServoCoordinates() { servoH = oAntTracking.get_h_calibrate(), servoV = oAntTracking.get_v_calibrate(), _h_calibrate = oAntTracking._h_calibrate, _v_calibrate = oAntTracking._v_calibrate };
+                        oServoCoordinates = new ServoCoordinates() { servoH = oAntTracking.get_h_calibrate(), servoV = oAntTracking.get_v_calibrate(), _h_calibrate = oAntTracking._h_calibrate, _v_calibrate = oAntTracking._v_calibrate, servoH_original = oAntTracking.h, servoV_original = oAntTracking.v  };
                         //oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = oAntTracking.get_h_calibrate(), Azimuth = oAntTracking.get_v_calibrate() };
                     }
                     else if (pType == Constantes.astro_type_laser)
