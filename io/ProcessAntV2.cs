@@ -682,7 +682,7 @@ public class ProcessEsp32 : IDisposable
                 ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(result.hc);
                 if (oServoCoordinates != null)
                 {
-                    result.sc = oServoCoordinates;
+                   //result.sc = oServoCoordinates;
                     //string strEq = "AR/Dec: " + AstronomyEngine.GetHHmmss(pStar.ra) + "/" + AstronomyEngine.GetSexagesimal(pStar.dec);
                     //string strHc = "Az./Alt.: " + AstronomyEngine.GetSexagesimal(result.hc.Azimuth) + "/" + AstronomyEngine.GetSexagesimal(result.hc.Altitude);
                     // result += strEq + "<br/>" + strHc + "<br/>";
