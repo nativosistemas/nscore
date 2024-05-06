@@ -485,7 +485,14 @@ function onClickStar(pId) {
 
         } else { //if (pagina == 'estrellas_v2.html') 
             fetchServo_v2(id).then(oJson => {
-                var text = oJson.msg;
+                var text = '';
+                var strEq = "AR/Dec: " + oJson.ec.ra + "/" + oJson.ec.dec;
+                var strHc = "Az./Alt.: " + oJson.hc.Azimuth + "/" + oJson.hc.Altitude;
+                var strSc = "H/V: " + oJson.sc.servoH + "/" + oJson.sc.servoV;
+                text += strEq + "<br/>" + strHc + "<br/>" + strSc + "<br/>";
+                text += "HIP " + oJson.hip + "<br/>";
+
+
                 var strHtml = '';
                 strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
                 document.getElementById("divMsg").innerHTML = strHtml;
