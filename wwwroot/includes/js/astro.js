@@ -808,3 +808,16 @@ async function onclickCalibrar() {
     }
 
 }
+
+async function loadConfigcalibrate(){
+
+    fetchGetConfig().then(response => {
+        var strHtml = '';
+
+        const o = JSON.parse(response);
+        document.getElementById("txt_calibration_h").value = o.horizontal_grados_calibrate;
+        document.getElementById("txt_calibration_v").value = o.vertical_grados_calibrate;
+        //
+
+    });
+}
