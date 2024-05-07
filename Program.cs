@@ -86,6 +86,7 @@ internal class Program
         app.MapGet("/getservos_v2", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.getValoresServos(); });
         app.MapGet("/clean", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.removeTable(); });
         app.MapGet("/setConfig", async (nscore.ProcessAntV2 pProcessAntV2, double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate) => { return await pProcessAntV2.setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate); });
+        app.MapGet("/setConfig_calibrate", async (nscore.ProcessAntV2 pProcessAntV2, double horizontal_grados_calibrate, double vertical_grados_calibrate) => { return await pProcessAntV2.setConfig_calibrate(horizontal_grados_calibrate, vertical_grados_calibrate); });
         app.MapGet("/getConfig", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.getConfig(); });
         app.MapGet("/laser", async (nscore.ProcessAntV2 pProcessAntV2, int read, int on) => { return await pProcessAntV2.actionAnt_laser(read, on); });
         app.MapGet("/servo_v2", async (nscore.ProcessAntV2 pProcessAntV2, int id) => { return await pProcessAntV2.actionAnt_star(id); });

@@ -763,14 +763,14 @@ async function setConfig(latitude, longitude, horizontal_grados_min, horizontal_
     const text = await response.text();
     return text;
 }
-async function setConfig_calibrate( horizontal_grados_calibrate, vertical_grados_calibrate) {
+async function setConfig_calibrate(horizontal_grados_calibrate, vertical_grados_calibrate) {
     const response = await fetch('/setConfig_calibrate?horizontal_grados_calibrate=' + horizontal_grados_calibrate + '&vertical_grados_calibrate=' + vertical_grados_calibrate);
     const text = await response.text();
     return text;
 }
 
 
-function onclickCalibrar() {
+async function onclickCalibrar() {
     /*var selectElement = document.getElementById('miSelect');
     var selectedIndex = selectElement.selectedIndex;
     var selectedOption = selectElement.options[selectedIndex];
@@ -782,15 +782,29 @@ function onclickCalibrar() {
         var horizontal_grados_calibrate = document.getElementById("txt_calibration_h").value;
         var vertical_grados_calibrate = document.getElementById("txt_calibration_v").value;
         document.getElementById("spinner").style.display = '';
-        setConfig_calibrate( horizontal_grados_calibrate, vertical_grados_calibrate).then(text => {
-           // var strHtml = '';
-            //strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
-           // document.getElementById("divMsg").innerHTML = strHtml;
-            onClickStar(hip_select);
+        setConfig_calibrate(horizontal_grados_calibrate, vertical_grados_calibrate).then(text => {
+            fetchServo_v2(hip_select).then(oJson => {
+                var text = '';
+                var strEq = "AR/Dec: " + oJson.ec.ra.toFixed(2) + " / " + oJson.ec.dec.toFixed(2);
+                var strHc = "Az./Alt.: " + oJson.hc.azimuth.toFixed(2) + " / " + oJson.hc.altitude.toFixed(2);
+                var strSc = "H/V: " + oJson.sc.servoH.toFixed(2) + " / " + oJson.sc.servoV.toFixed(2);
+                var str_calibrate = "h_calibrate / v_calibrate: " + oJson.sc._h_calibrate + " / " + oJson.sc._v_calibrate;
+                var str_original = "h_original / v_original: " + oJson.sc.servoH_original + " / " + oJson.sc.servoV_original;
+                text += strEq + "<br/>" + strHc + "<br/>" + strSc + "<br/>" + str_calibrate + "<br/>" + str_original + "<br/>";
+                text += "HIP " + oJson.hip + "<br/>";
+
+
+                var strHtml = '';
+                strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
+                document.getElementById("divMsg").innerHTML = strHtml;
+                isOnClickStar = false;
+                document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
+            });
+            //onClickStar(hip_select);
             document.getElementById("spinner").style.display = "none";
-    
-        })
-       
+
+        });
+
     }
 
 }
