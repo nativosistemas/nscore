@@ -801,7 +801,7 @@ async function onclickCalibrar() {
                 document.getElementById("spinner").style.display = "none";// $("#spinner").hide();
             });
             //onClickStar(hip_select);
-            document.getElementById("spinner").style.display = "none";
+            //document.getElementById("spinner").style.display = "none";
 
         });
 
