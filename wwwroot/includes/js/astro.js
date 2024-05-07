@@ -2,7 +2,7 @@ var l_citys = [];
 var city = null;
 var idConstellationSelect = null;
 var l_constellations = [];
-
+var hip_select = null;
 window.addEventListener("load", (event) => {
 
     /*var bodyElement = document.body;
@@ -286,6 +286,7 @@ function quitarActiveLi() {
 function capturarEvento(elemento) {
     quitarActiveLi();
     elemento.classList.add("active");
+    hip_select = elemento.value;
     onClickStar(elemento.value);
     //  alert("Se hizo clic en el elemento: " + elemento.textContent + " id: " + elemento.value);
     // Aquí puedes realizar las acciones que desees al capturar el evento
@@ -761,4 +762,35 @@ async function setConfig(latitude, longitude, horizontal_grados_min, horizontal_
         + '&vertical_grados_min=' + vertical_grados_min + '&vertical_grados_max=' + vertical_grados_max + '&horizontal_grados_calibrate=' + horizontal_grados_calibrate + '&vertical_grados_calibrate=' + vertical_grados_calibrate);
     const text = await response.text();
     return text;
+}
+async function setConfig_calibrate( horizontal_grados_calibrate, vertical_grados_calibrate) {
+    const response = await fetch('/setConfig_calibrate?horizontal_grados_calibrate=' + horizontal_grados_calibrate + '&vertical_grados_calibrate=' + vertical_grados_calibrate);
+    const text = await response.text();
+    return text;
+}
+
+
+function onclickCalibrar() {
+    /*var selectElement = document.getElementById('miSelect');
+    var selectedIndex = selectElement.selectedIndex;
+    var selectedOption = selectElement.options[selectedIndex];
+    var selectedValue = selectedOption.value;
+    var selectedText = selectedOption.text;
+    console.log('Valor seleccionado: ' + selectedValue);
+    console.log('Texto seleccionado: ' + selectedText);*/
+    if (hip_select != null) {
+        var horizontal_grados_calibrate = document.getElementById("txt_calibration_h").value;
+        var vertical_grados_calibrate = document.getElementById("txt_calibration_v").value;
+        document.getElementById("spinner").style.display = '';
+        setConfig_calibrate( horizontal_grados_calibrate, vertical_grados_calibrate).then(text => {
+           // var strHtml = '';
+            //strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
+           // document.getElementById("divMsg").innerHTML = strHtml;
+            onClickStar(hip_select);
+            document.getElementById("spinner").style.display = "none";
+    
+        })
+       
+    }
+
 }

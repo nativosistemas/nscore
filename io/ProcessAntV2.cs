@@ -465,6 +465,26 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
+    public async Task<string> setConfig_calibrate(double horizontal_grados_calibrate, double vertical_grados_calibrate)
+    {
+        string result = "!Ok";
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                List<Config> l = context.Configs.ToList();
+                l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble = horizontal_grados_calibrate;
+                l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble = vertical_grados_calibrate;
+                context.SaveChanges();
+            }
+            result = "Ok";
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
+        return result;
+    }
     public async Task<ConfigAnt> getConfig()
     {
         ConfigAnt result = null;
@@ -739,7 +759,7 @@ public class ProcessEsp32 : IDisposable
                     }
                     else if (pType == Constantes.astro_type_servoAngle || pType == Constantes.astro_type_servoAngle_calibrate)
                     {
-                        oServoCoordinates = new ServoCoordinates() { servoH = oAntTracking.get_h_calibrate(), servoV = oAntTracking.get_v_calibrate(), _h_calibrate = oAntTracking._h_calibrate, _v_calibrate = oAntTracking._v_calibrate, servoH_original = oAntTracking.h, servoV_original = oAntTracking.v  };
+                        oServoCoordinates = new ServoCoordinates() { servoH = oAntTracking.get_h_calibrate(), servoV = oAntTracking.get_v_calibrate(), _h_calibrate = oAntTracking._h_calibrate, _v_calibrate = oAntTracking._v_calibrate, servoH_original = oAntTracking.h, servoV_original = oAntTracking.v };
                         //oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = oAntTracking.get_h_calibrate(), Azimuth = oAntTracking.get_v_calibrate() };
                     }
                     else if (pType == Constantes.astro_type_laser)

@@ -151,7 +151,7 @@ public class AntTracking
             ra = pRa_h;
             dec = pDec_v;
         }
-        else if (pType == Constantes.astro_type_servoAngle)
+        else if (pType == Constantes.astro_type_servoAngle || pType == Constantes.astro_type_servoAngle_calibrate)
         {
             h = pRa_h;
             v = pDec_v;
