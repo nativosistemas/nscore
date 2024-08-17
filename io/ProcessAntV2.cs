@@ -67,11 +67,15 @@ public class ProcessAntV2 : IDisposable
     }
     public async Task<cResultAnt> actionAnt_laser(int pIsRead, int pLaser)
     {
-        return await _poolEsp32.Start_laser(pIsRead, pLaser);
+        ConfigAnt oConfigAnt = await getConfig();
+        string device_name = oConfigAnt.device_name;
+        return await _poolEsp32.Start_laser(pIsRead, pLaser, device_name);
     }
     public async Task<cResultAnt> actionAnt_servo(double pHorizontal, double pVertical)
     {
-        return await _poolEsp32.Start_servoAngle(pHorizontal, pVertical);
+        ConfigAnt oConfigAnt = await getConfig();
+        string device_name = oConfigAnt.device_name;
+        return await _poolEsp32.Start_servoAngle(pHorizontal, pVertical, device_name);
     }
     public async Task<cResultAnt> actionAnt_star(int pId, bool isLaserOn = false)
     {
@@ -79,7 +83,9 @@ public class ProcessAntV2 : IDisposable
         Star oStar = _l_Star.Where(x => x.id == pId).FirstOrDefault();
         if (oStar != null)
         {
-            result = _poolEsp32.Start_star(oStar, isLaserOn);
+            ConfigAnt oConfigAnt = await getConfig();
+            string device_name = oConfigAnt.device_name;
+            result = _poolEsp32.Start_star(oStar, device_name, isLaserOn);
         }
         else
         {
@@ -111,7 +117,7 @@ public class ProcessAntV2 : IDisposable
                         SessionDevice oSessionDevices = context.SessionDevices.Where(x => x.sessionApp_publicID == sessionApp_publicID).FirstOrDefault();
                         if (oSessionDevices == null)
                         {
-                            sessionDevice_publicID_return = await sessionDeviceAdd(pDevice_publicID, Constantes.device_name_esp32_servos_laser);
+                            sessionDevice_publicID_return = await sessionDeviceAdd(pDevice_publicID);
                         }
                         else
                         {
@@ -120,7 +126,7 @@ public class ProcessAntV2 : IDisposable
 
                     }
 
-                    result = await esp32_getAstro();
+                    result = await esp32_getAstro(pDevice_publicID);
                     if (result == null)
                     {
                         result = new Esp32_astro();
@@ -140,22 +146,19 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public async Task<Guid> api_sessionDeviceAdd(string pDevice_publicID)
+    public async Task<Guid> sessionDeviceAdd(string pDevice_publicID)
     {
-        Guid result = await sessionDeviceAdd(pDevice_publicID, Constantes.device_name_esp32_servos_laser); ;
-        return result;
-    }
-    public async Task<Guid> sessionDeviceAdd(string pDevice_publicID, string pDevice_name)
-    {
+
         Guid result = Guid.Empty;
         try
         {
+            string device_name = await getDeviceName(pDevice_publicID);
             Guid device_publicID = new Guid(pDevice_publicID);
             Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
             using (var context = new AstroDbContext())
             {
                 SessionDevice o = new SessionDevice();
-                o.device_name = pDevice_name;
+                o.device_name = device_name;
                 o.device_publicID = device_publicID;
                 o.sessionApp_publicID = sessionApp_publicID;
                 o.createDate = DateTime.Now;
@@ -163,7 +166,7 @@ public class ProcessAntV2 : IDisposable
                 context.SessionDevices.Add(o);
                 context.SaveChanges();
             }
-            Guid newAntTracking_inicio = await antTracking_resetSession();
+            Guid newAntTracking_inicio = await antTracking_resetSession(device_name);
         }
         catch (Exception ex)
         {
@@ -174,23 +177,35 @@ public class ProcessAntV2 : IDisposable
     public async Task<bool> isDeviceValid(string pDevice_publicID)
     {
         bool result = false;
-        if (Helper.IoT_esp32 == pDevice_publicID)
+        string device_name = await getDeviceName(pDevice_publicID);
+        if (!string.IsNullOrEmpty(device_name))
         {
             result = true;
         }
         return result;
     }
-    public async Task<Guid> antTracking_resetSession()
+    public async Task<string> getDeviceName(string pDevice_publicID)
+    {
+        string result = string.Empty;
+        if (Helper.IoT_esp32 == pDevice_publicID)
+        {
+            result = Constantes.device_name_esp32_servos_laser;
+        }
+        else if (Helper.IoT_esp32_stepper == pDevice_publicID)
+        {
+            result = Constantes.device_name_esp32_stepper_laser;
+        }
+        return result;
+    }
+    public async Task<Guid> antTracking_resetSession(string pDevice_name)
     {
         Guid result = Guid.Empty;
         try
         {
-            //Guid sessionDevice_publicID = new Guid(pSessionDevice_publicID);
             Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
             using (var context = new AstroDbContext())
             {
-                //Guid sessionApp_publicID = oSessionDevices.sessionApp_publicID;
-                List<nscore.AntTracking> l = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movingServo).ToList();
+                List<nscore.AntTracking> l = context.AntTrackings.Where(x => x.device_name == pDevice_name && x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movingServo).ToList();
                 DateTime dateNow = DateTime.Now;
                 foreach (var oItem in l)
                 {
@@ -198,9 +213,6 @@ public class ProcessAntV2 : IDisposable
                     oItem.statusUpdateDate = dateNow;
                 }
                 context.SaveChanges();
-                //Guid publicID = Util.newAstroTracking(Constantes.astro_type_servoAngle_inicio, 0, 0);
-                //result = publicID;
-
             }
         }
         catch (Exception ex)
@@ -209,15 +221,16 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public async Task<Esp32_astro> esp32_getAstro()
+    public async Task<Esp32_astro> esp32_getAstro(string pDevice_publicID)
     {
         Esp32_astro result = null;
         try
         {
             using (var context = new AstroDbContext())
             {
+                string device_name = await getDeviceName(pDevice_publicID);
                 Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
-                AntTracking oAntTracking = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_calculationResolution).OrderBy(x1 => x1.date).FirstOrDefault();
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.device_name == device_name && x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_calculationResolution).OrderBy(x1 => x1.date).FirstOrDefault();
                 if (oAntTracking != null)
                 {
                     //
@@ -411,19 +424,20 @@ public class ProcessAntV2 : IDisposable
         {
             using (var context = new AstroDbContext())
             {
-                List<Config> l = context.Configs.ToList();
+                ConfigAnt oConfigAnt = await getConfig();
 
+                string device_name = oConfigAnt.device_name;
                 Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
-                AntTracking oAntTracking = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.device_name == device_name && x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
                 if (oAntTracking != null)
                 {
                     _Horizontal_grados = oAntTracking.h.Value;
                     _Vertical_grados = oAntTracking.v.Value;
                 }
-                _Horizontal_grados_min = l.FirstOrDefault(x => x.name == "horizontal_grados_min").valueDouble.Value;
-                _Horizontal_grados_max = l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble.Value;
-                _Vertical_grados_min = l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble.Value;
-                _Vertical_grados_max = l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble.Value;
+                _Horizontal_grados_min = oConfigAnt.horizontal_grados_min;
+                _Horizontal_grados_max = oConfigAnt.horizontal_grados_max;
+                _Vertical_grados_min = oConfigAnt.vertical_grados_min;
+                _Vertical_grados_max = oConfigAnt.vertical_grados_max;
             }
         }
         catch (Exception ex)
@@ -439,7 +453,7 @@ public class ProcessAntV2 : IDisposable
         " }";
         return result;
     }
-    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate)
+    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name)
     {
         string result = "!Ok";
         try
@@ -455,6 +469,7 @@ public class ProcessAntV2 : IDisposable
                 l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble = vertical_grados_max;
                 l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble = horizontal_grados_calibrate;
                 l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble = vertical_grados_calibrate;
+                l.FirstOrDefault(x => x.name == "device_name").value = device_name;
                 context.SaveChanges();
             }
             result = "Ok";
@@ -501,8 +516,8 @@ public class ProcessAntV2 : IDisposable
                 double longitude = l.FirstOrDefault(x => x.name == "longitude").valueDouble.Value;
                 double horizontal_grados_calibrate = l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble.Value;
                 double vertical_grados_calibrate = l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble.Value;
-
-                result = new ConfigAnt() { latitude = latitude, longitude = longitude, horizontal_grados_min = _Horizontal_grados_min, horizontal_grados_max = _Horizontal_grados_max, vertical_grados_min = _Vertical_grados_min, vertical_grados_max = _Vertical_grados_max, horizontal_grados_calibrate = horizontal_grados_calibrate, vertical_grados_calibrate = vertical_grados_calibrate };
+                string device_name = l.FirstOrDefault(x => x.name == "device_name").value == null ? string.Empty : l.FirstOrDefault(x => x.name == "device_name").value;
+                result = new ConfigAnt() { latitude = latitude, longitude = longitude, horizontal_grados_min = _Horizontal_grados_min, horizontal_grados_max = _Horizontal_grados_max, vertical_grados_min = _Vertical_grados_min, vertical_grados_max = _Vertical_grados_max, horizontal_grados_calibrate = horizontal_grados_calibrate, vertical_grados_calibrate = vertical_grados_calibrate, device_name = device_name };
             }
         }
         catch (Exception ex)
@@ -544,7 +559,7 @@ public class PoolEsp32 : IDisposable
             recursosDisponibles.Enqueue(oProcessEsp32);
         }
     }
-    public async Task<cResultAnt> Start_laser(int pIsRead, int pLaser)
+    public async Task<cResultAnt> Start_laser(int pIsRead, int pLaser, string pDevice_name)
     {
         cResultAnt result = null;
         try
@@ -552,7 +567,7 @@ public class PoolEsp32 : IDisposable
             ProcessEsp32 oProcess = GetResource();
             if (oProcess != null)
             {
-                result = await oProcess.actionAnt_laser(pIsRead, pLaser);
+                result = await oProcess.actionAnt_laser(pIsRead, pLaser, pDevice_name);
                 SetResource(oProcess);
             }
             else
@@ -567,7 +582,7 @@ public class PoolEsp32 : IDisposable
         }
         return result;
     }
-    public async Task<cResultAnt> Start_servoAngle(double pHorizontal, double pVertical)
+    public async Task<cResultAnt> Start_servoAngle(double pHorizontal, double pVertical, string pDevice_name)
     {
         cResultAnt result = null;
         try
@@ -575,7 +590,7 @@ public class PoolEsp32 : IDisposable
             ProcessEsp32 oProcess = GetResource();
             if (oProcess != null)
             {
-                result = await oProcess.actionAnt_servoAngle(pHorizontal, pVertical);
+                result = await oProcess.actionAnt_servoAngle(pHorizontal, pVertical, pDevice_name);
                 SetResource(oProcess);
             }
             else
@@ -590,7 +605,7 @@ public class PoolEsp32 : IDisposable
         }
         return result;
     }
-    public cResultAnt Start_star(Star pStar, bool isLaserOn = false)
+    public cResultAnt Start_star(Star pStar, string pDevice_name, bool isLaserOn = false)
     {
         cResultAnt result = new cResultAnt();
         try
@@ -598,7 +613,7 @@ public class PoolEsp32 : IDisposable
             ProcessEsp32 oProcess = GetResource();
             if (oProcess != null)
             {
-                result = oProcess.actionAnt_star(pStar, isLaserOn);
+                result = oProcess.actionAnt_star(pStar, pDevice_name, isLaserOn);
                 SetResource(oProcess);
             }
             else
@@ -664,10 +679,10 @@ public class ProcessEsp32 : IDisposable
     {
 
     }
-    public async Task<cResultAnt> actionAnt_laser(int pIsRead, int pLaser)
+    public async Task<cResultAnt> actionAnt_laser(int pIsRead, int pLaser, string pDevice_name)
     {
         cResultAnt result = null;
-        Guid oAstroTracking = Util.newAstroTracking_laser(Constantes.astro_type_laser, pLaser);
+        Guid oAstroTracking = Util.newAstroTracking_laser(Constantes.astro_type_laser, pLaser, pDevice_name);
         result = await getAstroTracking_ResultAnt(Constantes.astro_type_laser, oAstroTracking);
         if (result == null)
         {
@@ -676,26 +691,27 @@ public class ProcessEsp32 : IDisposable
         }
         return result;
     }
-    public async Task<cResultAnt> actionAnt_servoAngle(double pHorizontal, double pVertical)
+    public async Task<cResultAnt> actionAnt_servoAngle(double pHorizontal, double pVertical, string pDevice_name)
     {
         cResultAnt result = null;
-        Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_servoAngle, pHorizontal, pVertical);
+        Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_servoAngle, pDevice_name, pHorizontal, pVertical);
         result = getAstroTracking_ResultAnt(Constantes.astro_type_servoAngle, oAstroTracking).Result;
         return result;
     }
+    /*
     public async Task<cResultAnt> actionAnt_servoAngle_calibrate(double pHorizontal, double pVertical, double pH_calibrate, double pV_calibrate)
     {
         cResultAnt result = null;
         Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_servoAngle_calibrate, pHorizontal, pVertical, pH_calibrate, pV_calibrate);
         result = getAstroTracking_ResultAnt(Constantes.astro_type_servoAngle_calibrate, oAstroTracking).Result;
         return result;
-    }
-    public cResultAnt actionAnt_star(Star pStar, bool isLaserOn = false)
+    }*/
+    public cResultAnt actionAnt_star(Star pStar, string pDevice_name, bool isLaserOn = false)
     {
         cResultAnt result = null;
         if (pStar != null)
         {
-            Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_star, pStar.ra, pStar.dec);
+            Guid oAstroTracking = Util.newAstroTracking(Constantes.astro_type_star, pDevice_name, pStar.ra, pStar.dec);
             result = getAstroTracking_ResultAnt(Constantes.astro_type_star, oAstroTracking).Result;
             if (result != null)
             {

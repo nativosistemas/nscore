@@ -74,7 +74,7 @@ while True:
             print("No es contemplado.")
 
 
-
+        ## no va (inicio)
         parametroH_rango_min = oConfig.horizontal_grados_min
         parametroH_rango_max =  oConfig.horizontal_grados_max
         parametroV_rango_min = oConfig.vertical_grados_min
@@ -102,6 +102,7 @@ while True:
 
         cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroH,'servoH'))
         cursor.execute('UPDATE Configs SET valueDouble=? WHERE name=?', (parametroV, 'servoV'))
+        ## no va (fin)
         conexion.commit()
 
 

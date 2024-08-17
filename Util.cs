@@ -698,7 +698,19 @@ public class Util
                     object valor = propiedad.GetValue(oConfigAnt);
                     if (valor != null)
                     {
-                        context.Configs.Add(new Config() { name = propiedad.Name, valueDouble = Convert.ToDouble(valor) });
+                        if (valor is double)
+                        {
+                            context.Configs.Add(new Config() { name = propiedad.Name, valueDouble = Convert.ToDouble(valor) });
+                        }
+                        if (valor is int)
+                        {
+                            context.Configs.Add(new Config() { name = propiedad.Name, valueInt = Convert.ToInt32(valor) });
+                        }
+                        if (valor is String || valor is Guid)
+                        {
+                            context.Configs.Add(new Config() { name = propiedad.Name, value = Convert.ToString(valor) });
+                        }
+
                     }
 
                 }
@@ -1192,13 +1204,13 @@ public class Util
         }
         return result;
     }*/
-    public static Guid newAstroTracking(string pType, double pRa_h, double pDec_v, double? pH_calibrate = null, double? pV_calibrate = null)
+    public static Guid newAstroTracking(string pType,string pDevice_name, double pRa_h, double pDec_v, double? pH_calibrate = null, double? pV_calibrate = null)
     {
         Guid oGuid = Guid.NewGuid();
         using (var context = new AstroDbContext())
         {
 
-            nscore.AntTracking o = new nscore.AntTracking(oGuid, pType, pRa_h, pDec_v);
+            nscore.AntTracking o = new nscore.AntTracking(oGuid, pType,pDevice_name, pRa_h, pDec_v);
             if (pH_calibrate != null)
             {
                 o._h_calibrate = pH_calibrate;
@@ -1219,13 +1231,13 @@ public class Util
         }
         return oGuid;
     }
-    public static Guid newAstroTracking_laser(string pType, int pIsLaser)
+    public static Guid newAstroTracking_laser(string pType, int pIsLaser, string pDevice_name)
     {
         Guid oGuid = Guid.NewGuid();
         using (var context = new AstroDbContext())
         {
 
-            nscore.AntTracking o = new nscore.AntTracking(oGuid, pType, pIsLaser);
+            nscore.AntTracking o = new nscore.AntTracking(oGuid, pType, pIsLaser, pDevice_name);
             context.AntTrackings.Add(o);
             try
             {
@@ -1238,32 +1250,32 @@ public class Util
         }
         return oGuid;
     }
-    /*public static async Task<Guid> sessionDeviceAdd(string pDevice_publicID, string pDevice_name)
-    {
-        Guid result = Guid.Empty;
-        try
-        {
-            Guid device_publicID = new Guid(pDevice_publicID);
-            Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
-            using (var context = new AstroDbContext())
-            {
-                SessionDevice o = new SessionDevice();
-                o.device_name = pDevice_name;
-                o.device_publicID = device_publicID;
-                o.sessionApp_publicID = sessionApp_publicID;
-                o.createDate = DateTime.Now;
-                result = o.publicID;
-                context.SessionDevices.Add(o);
-                context.SaveChanges();
-            }
-            Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
-        }
-        catch (Exception ex)
-        {
-            log(ex);
-        }
-        return result;
-    }*/
+    /* public static async Task<Guid> sessionDeviceAdd(string pDevice_publicID, string pDevice_name)
+     {
+         Guid result = Guid.Empty;
+         try
+         {
+             Guid device_publicID = new Guid(pDevice_publicID);
+             Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+             using (var context = new AstroDbContext())
+             {
+                 SessionDevice o = new SessionDevice();
+                 o.device_name = pDevice_name;
+                 o.device_publicID = device_publicID;
+                 o.sessionApp_publicID = sessionApp_publicID;
+                 o.createDate = DateTime.Now;
+                 result = o.publicID;
+                 context.SessionDevices.Add(o);
+                 context.SaveChanges();
+             }
+             Guid newAntTracking_inicio = await antTracking_resetSession(result.ToString());
+         }
+         catch (Exception ex)
+         {
+             log(ex);
+         }
+         return result;
+     }*/
     public static async Task<string> isSessionDeviceOk(string pSessionDevice_publicID)
     {
         string result = "!Ok";

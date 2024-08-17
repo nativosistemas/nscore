@@ -66,5 +66,8 @@ public static class Constantes
     {
         get { return "esp32_servos_laser"; }
     }
-
+    public static string device_name_esp32_stepper_laser
+    {
+        get { return "esp32_stepper_laser"; }
+    }
 }

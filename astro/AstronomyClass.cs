@@ -136,15 +136,16 @@ public class AntTracking
     {
 
     }
-    public AntTracking(Guid pPublicID, string pType)
+    public AntTracking(Guid pPublicID, string pType, string pDevice_name)
     {
+        device_name = pDevice_name;
         publicID = pPublicID;
         type = pType;
         date = DateTime.Now;
         sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
         status = Constantes.astro_status_create;
     }
-    public AntTracking(Guid pPublicID, string pType, double? pRa_h = null, double? pDec_v = null) : this(pPublicID, pType)
+    public AntTracking(Guid pPublicID, string pType, string pDevice_name, double? pRa_h = null, double? pDec_v = null) : this(pPublicID, pType,pDevice_name)
     {
         if (pType == Constantes.astro_type_star)
         {
@@ -164,7 +165,7 @@ public class AntTracking
             status = Constantes.astro_status_calculationResolution;
         }
     }
-    public AntTracking(Guid pPublicID, string pType, int pIsLaser) : this(pPublicID, pType)
+    public AntTracking(Guid pPublicID, string pType, int pIsLaser,string pDevice_name) : this(pPublicID, pType,pDevice_name)
     {
         if (pType == Constantes.astro_type_laser)
         {
@@ -194,6 +195,7 @@ public class AntTracking
     public int isLaser { get; set; }
     public double? _h_calibrate { get; set; }
     public double? _v_calibrate { get; set; }
+    public string device_name { get; set; }
 
     public double get_h_calibrate()
     {
@@ -238,7 +240,8 @@ public class ConfigAnt
     public double vertical_grados_max { get; set; }// = Math.Round(12.2, 6);
     public double horizontal_grados_calibrate { get; set; }
     public double vertical_grados_calibrate { get; set; }
-    public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(500.0, 6), horizontal_grados_max = Math.Round(2500.0, 6), vertical_grados_min = Math.Round(500.0, 6), vertical_grados_max = Math.Round(2500.0, 6), horizontal_grados_calibrate = 0, vertical_grados_calibrate = 0 };
+    public string device_name { get; set; }
+    public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(500.0, 6), horizontal_grados_max = Math.Round(2500.0, 6), vertical_grados_min = Math.Round(500.0, 6), vertical_grados_max = Math.Round(2500.0, 6), horizontal_grados_calibrate = 0, vertical_grados_calibrate = 0, device_name = Constantes.device_name_esp32_stepper_laser };
 }
 
 public class Esp32_astro

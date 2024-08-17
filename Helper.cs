@@ -52,4 +52,8 @@ public sealed class Helper
     {
         set; get;
     }
+    public static string IoT_esp32_stepper
+    {
+        set; get;
+    }
 }

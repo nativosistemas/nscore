@@ -718,8 +718,9 @@ function onClickGrabarConfig() {
     var vertical_grados_max = document.getElementById("txt_vertical_grados_max").value;
     var horizontal_grados_calibrate = document.getElementById("txt_horizontal_grados_calibrate").value;
     var vertical_grados_calibrate = document.getElementById("txt_vertical_grados_calibrate").value;
+    var device_name = document.getElementById("txt_device_name").value;
 
-    setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate).then(text => {
+    setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate, device_name).then(text => {
         var strHtml = '';
         strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
         document.getElementById("divMsg").innerHTML = strHtml;
@@ -757,9 +758,9 @@ async function fetchGetConfig() {
     const text = await response.text();
     return text;
 }
-async function setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate) {
+async function setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate, device_name) {
     const response = await fetch('/setConfig?latitude=' + latitude + '&longitude=' + longitude + '&horizontal_grados_min=' + horizontal_grados_min + '&horizontal_grados_max=' + horizontal_grados_max
-        + '&vertical_grados_min=' + vertical_grados_min + '&vertical_grados_max=' + vertical_grados_max + '&horizontal_grados_calibrate=' + horizontal_grados_calibrate + '&vertical_grados_calibrate=' + vertical_grados_calibrate);
+        + '&vertical_grados_min=' + vertical_grados_min + '&vertical_grados_max=' + vertical_grados_max + '&horizontal_grados_calibrate=' + horizontal_grados_calibrate + '&vertical_grados_calibrate=' + vertical_grados_calibrate + '&device_name=' + device_name);
     const text = await response.text();
     return text;
 }
@@ -809,7 +810,7 @@ async function onclickCalibrar() {
 
 }
 
-async function loadConfigcalibrate(){
+async function loadConfigcalibrate() {
 
     fetchGetConfig().then(response => {
         var strHtml = '';

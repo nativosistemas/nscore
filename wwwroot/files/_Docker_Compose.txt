@@ -1,4 +1,14 @@
+//////////////////////////
+
+chmod +x despliegue.sh
+
+chmod +x despliegue-python.sh
+///////////////////////////
+
 docker-compose.yml
+
+
+docker-compose up -d
 
 //////////////////
 version: '3.7'
@@ -10,8 +20,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:80"
-//////////////////////////
 
-chmod +x despliegue.sh
 
-chmod +x despliegue-python.sh
+
+
+
+
+

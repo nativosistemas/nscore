@@ -51,6 +51,7 @@ internal class Program
         nscore.Helper.user_name = builder.Configuration["user:name"];
         nscore.Helper.user_pass = builder.Configuration["user:pass"];
         nscore.Helper.IoT_esp32 = builder.Configuration["IoT:esp32"];
+        nscore.Helper.IoT_esp32_stepper= builder.Configuration["IoT:esp32_stepper"];
         //
         nscore.AstroDbContext.initDbContext();
         int inicioApp = nscore.Util.inicioApp().Result; //       LlamarFuncionAsincronica().Wait(); 
@@ -85,7 +86,7 @@ internal class Program
         //app.MapGet("/esp32_getAstro", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.esp32_getAstro(); });
         app.MapGet("/getservos_v2", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.getValoresServos(); });
         app.MapGet("/clean", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.removeTable(); });
-        app.MapGet("/setConfig", async (nscore.ProcessAntV2 pProcessAntV2, double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate) => { return await pProcessAntV2.setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate); });
+        app.MapGet("/setConfig", async (nscore.ProcessAntV2 pProcessAntV2, double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name) => { return await pProcessAntV2.setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate,device_name); });
         app.MapGet("/setConfig_calibrate", async (nscore.ProcessAntV2 pProcessAntV2, double horizontal_grados_calibrate, double vertical_grados_calibrate) => { return await pProcessAntV2.setConfig_calibrate(horizontal_grados_calibrate, vertical_grados_calibrate); });
         app.MapGet("/getConfig", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.getConfig(); });
         app.MapGet("/laser", async (nscore.ProcessAntV2 pProcessAntV2, int read, int on) => { return await pProcessAntV2.actionAnt_laser(read, on); });
@@ -95,7 +96,7 @@ internal class Program
         //app.MapGet("/sessionDeviceAdd", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID, string pDevice_name) => { return await pProcessAntV2.sessionDeviceAdd(pDevice_publicID, pDevice_name); });
         //app.MapGet("/isSessionDeviceOk", async (string pSessionDevice_publicID) => { return await nscore.Util.isSessionDeviceOk(pSessionDevice_publicID); });
         app.MapGet("/actionAnt_getAntTracking", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID, string pSessionDevice_publicID) => { return await pProcessAntV2.actionAnt_getAntTracking(pDevice_publicID, pSessionDevice_publicID); });
-        app.MapGet("/tokenDevice", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID) => { return await pProcessAntV2.api_sessionDeviceAdd(pDevice_publicID); });
+        app.MapGet("/tokenDevice", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID) => { return await pProcessAntV2.sessionDeviceAdd(pDevice_publicID); });
         app.MapGet("/", () =>
         {
             string pathPageWeb = Path.Combine(nscore.Util.WebRootPath, "estrellas_v2.html");// "index.html"
