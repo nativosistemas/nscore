@@ -743,6 +743,7 @@ function htmlGetConfig() {
         document.getElementById("txt_vertical_grados_max").value = o.vertical_grados_max;
         document.getElementById("txt_horizontal_grados_calibrate").value = o.horizontal_grados_calibrate;
         document.getElementById("txt_vertical_grados_calibrate").value = o.vertical_grados_calibrate;
+        document.getElementById("txt_device_name").value = o.device_name;
         //
 
     });
