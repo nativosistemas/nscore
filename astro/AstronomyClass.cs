@@ -145,7 +145,7 @@ public class AntTracking
         sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
         status = Constantes.astro_status_create;
     }
-    public AntTracking(Guid pPublicID, string pType, string pDevice_name, double? pRa_h = null, double? pDec_v = null) : this(pPublicID, pType,pDevice_name)
+    public AntTracking(Guid pPublicID, string pType, string pDevice_name, double? pRa_h = null, double? pDec_v = null) : this(pPublicID, pType, pDevice_name)
     {
         if (pType == Constantes.astro_type_star)
         {
@@ -165,7 +165,7 @@ public class AntTracking
             status = Constantes.astro_status_calculationResolution;
         }
     }
-    public AntTracking(Guid pPublicID, string pType, int pIsLaser,string pDevice_name) : this(pPublicID, pType,pDevice_name)
+    public AntTracking(Guid pPublicID, string pType, int pIsLaser, string pDevice_name) : this(pPublicID, pType, pDevice_name)
     {
         if (pType == Constantes.astro_type_laser)
         {
@@ -260,6 +260,12 @@ public class Esp32_astro
     public double horizontal_grados_max { get; set; }
     public double vertical_grados_min { get; set; }
     public double vertical_grados_max { get; set; }
+    public double? altitude { get; set; }
+    public double? azimuth { get; set; }
+    public double? altitude_old { get; set; }
+    public double? azimuth_old { get; set; }
+    public double? horizontal_grados_calibrate { get; set; }
+    public double? vertical_grados_calibrate { get; set; }
     public Guid sessionDevice_publicID_return { get; set; }
 }
 

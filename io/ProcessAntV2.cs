@@ -259,11 +259,13 @@ public class ProcessAntV2 : IDisposable
                     }
                     //
 
-                    AntTracking oAntTracking_ant = context.AntTrackings.Where(x => x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
+                    AntTracking oAntTracking_ant = context.AntTrackings.Where(x => x.device_name == device_name && x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
                     double? h_old = null;
                     double? v_old = null;
                     double? h_diferencia_grados = null;
                     double? v_diferencia_grados = null;
+                    double? altitude_old = null;
+                    double? azimuth_old = null;
                     if (oAntTracking_ant != null)
                     {
                         h_old = oAntTracking_ant.get_h_calibrate();
@@ -290,6 +292,8 @@ public class ProcessAntV2 : IDisposable
                                 v_diferencia_grados = Math.Abs(oAntTracking.get_v_calibrate() - v_old.Value);
                             }
                         }
+                        altitude_old = oAntTracking_ant.altitude;
+                        azimuth_old = oAntTracking_ant.azimuth;
                     }
                     double h_sleep_secs = Constantes.servo_sleep_max;
                     double v_sleep_secs = Constantes.servo_sleep_max;
@@ -329,8 +333,13 @@ public class ProcessAntV2 : IDisposable
                         horizontal_grados_min = _Horizontal_grados_min,
                         horizontal_grados_max = _Horizontal_grados_max,
                         vertical_grados_min = _Vertical_grados_min,
-                        vertical_grados_max = _Vertical_grados_max
-
+                        vertical_grados_max = _Vertical_grados_max,
+                        altitude = oAntTracking.altitude,
+                        azimuth = oAntTracking.azimuth,
+                        altitude_old = altitude_old,
+                        azimuth_old = azimuth_old,
+                        horizontal_grados_calibrate = _Horizontal_grados_calibrate,
+                        vertical_grados_calibrate = _Vertical_grados_calibrate
                     };
                 }
             }
