@@ -26,6 +26,10 @@ public static class Constantes
     {
         get { return "laser"; }
     }
+       public static string astro_type_resetZero
+    {
+        get { return "resetZero"; }
+    }
     public static string astro_status_create
     {
         get { return "create"; }

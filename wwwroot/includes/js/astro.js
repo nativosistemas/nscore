@@ -770,8 +770,41 @@ async function setConfig_calibrate(horizontal_grados_calibrate, vertical_grados_
     const text = await response.text();
     return text;
 }
+async function antResetZero() {
+    const response = await fetch('/antResetZero');
+    const text = await response.text();
+    return text;
+}
+function onClick_antResetZero() {
 
 
+    if (!isOnClickMoverServo_v2) {
+        isOnClickMoverServo_v2 = true;
+        document.getElementById("spinner").style.display = '';
+
+        antResetZero().then(text => {
+            var strHtml = '';
+    
+            actulizarGradosServos_v2();
+            var strHtml = '';
+            strHtml += ' <div class="alert alert-primary" role="alert">' + 'ResetZero' + '  </div>';
+            document.getElementById("divMsg").innerHTML = strHtml;
+            isOnClickMoverServo_v2 = false;
+            document.getElementById("spinner").style.display = "none";
+            //
+    
+        });
+
+      //  fetchSetServoMover_v2(horizontal, vertical).then(text => {
+
+
+       // });
+    }
+    return false;
+
+
+
+}
 async function onclickCalibrar() {
     /*var selectElement = document.getElementById('miSelect');
     var selectedIndex = selectElement.selectedIndex;

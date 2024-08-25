@@ -55,7 +55,7 @@ cp /home/pi/git/nscore/wwwroot/files/skyfield/py_util.py /usr/src/nscore/
 chmod +x /usr/src/nscore/py_astroTracking.py
 chmod +x /usr/src/nscore/py_util.py
 
-rm /usr/src/nscore/astro.db
+rm /usr/src/dockerns/astro.db
 
 
 //editar .bashrc --->La ruta completa sería ~/ o /home/tu_usuario/, donde "tu_usuario" es el nombre de tu usuario en el sistema.

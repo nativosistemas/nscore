@@ -1204,13 +1204,13 @@ public class Util
         }
         return result;
     }*/
-    public static Guid newAstroTracking(string pType,string pDevice_name, double pRa_h, double pDec_v, double? pH_calibrate = null, double? pV_calibrate = null)
+    public static Guid newAstroTracking(string pType, string pDevice_name, double pRa_h, double pDec_v, double? pH_calibrate = null, double? pV_calibrate = null)
     {
         Guid oGuid = Guid.NewGuid();
         using (var context = new AstroDbContext())
         {
 
-            nscore.AntTracking o = new nscore.AntTracking(oGuid, pType,pDevice_name, pRa_h, pDec_v);
+            nscore.AntTracking o = new nscore.AntTracking(oGuid, pType, pDevice_name, pRa_h, pDec_v);
             if (pH_calibrate != null)
             {
                 o._h_calibrate = pH_calibrate;

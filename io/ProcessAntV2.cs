@@ -221,6 +221,33 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
+    public async Task<Guid> newAstroTrackingResetZero()
+    {
+        Guid oGuid = Guid.NewGuid();
+        ConfigAnt oConfigAnt = await getConfig();
+        using (var context = new AstroDbContext())
+        {
+            string device_name = oConfigAnt.device_name;
+            nscore.AntTracking o = new nscore.AntTracking(oGuid, Constantes.astro_type_resetZero, device_name);
+            o.h = 0;
+            o.v = 0;
+            o.altitude = 0;
+            o.azimuth = 0;
+            string status = Constantes.astro_status_movedServo;
+            o.status = status;
+            o.statusUpdateDate = DateTime.Now;
+            context.AntTrackings.Add(o);
+            try
+            {
+                context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                nscore.Util.log(ex);
+            }
+        }
+        return oGuid;
+    }
     public async Task<Esp32_astro> esp32_getAstro(string pDevice_publicID)
     {
         Esp32_astro result = null;
