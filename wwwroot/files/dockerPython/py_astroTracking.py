@@ -44,12 +44,12 @@ while True:
 
             horizontal =float_azimut
             vertical = float_altitud
-            if device_name == "esp32_servos_laser":
-                if float_azimut < 180.0:
-                    horizontal = 180.0 - float_azimut
-                    vertical = 180.0 - float_altitud
-                else:
-                    horizontal = 360.0 - float_azimut                    
+            #if device_name == "esp32_servos_laser":
+            if float_azimut < 180.0:
+                horizontal = 180.0 - float_azimut
+                vertical = 180.0 - float_altitud
+            else:
+                horizontal = 360.0 - float_azimut                    
             parametroH = horizontal
             parametroV = vertical
             cursor.execute('UPDATE AntTrackings SET altitude=?,azimuth=?,h=?,v=?,status=? WHERE publicID=?', (float_altitud,float_azimut,parametroH,parametroV,'calculationResolution',publicID))

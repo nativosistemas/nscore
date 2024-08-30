@@ -52,12 +52,12 @@
                 <div class="row">
                     <div class="col">
                         <label for="inputServoH" class="form-label">Servo Horizontal</label>
-                        <input type="number" class="form-control" id="inputServoH" placeholder="0,0">
+                        <input type="number" class="form-control" id="inputServoH" placeholder="0,0" min="-45" max="225">
 
                     </div>
                     <div class="col">
                         <label for="inputServoV" class="form-label">Servo Vertical </label>
-                        <input type="number" class="form-control" id="inputServoV" placeholder="0,0">
+                        <input type="number" class="form-control" id="inputServoV" placeholder="0,0" min="-45" max="225">
 
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                 <div class="row">
                     <div class="col">
                         <label for="rangeHorizontal" class="form-label">Horizontal</label>
-                        <input type="range" class="form-range " id="rangeHorizontal" min="-360" max="360" step="0.01"
+                        <input type="range" class="form-range " id="rangeHorizontal" min="-45" max="225" step="0.01"
                             onchange="onchangeRangeMoverServo_v2()">
                         <output id="bubbleHorizontal" for="rangeHorizontal"></output>
                     </div>
@@ -89,7 +89,7 @@
                 <div class="row">
                     <div class="col">
                         <label for="rangeVertical" class="form-label">Vertical</label>
-                        <input type="range" class="form-range " id="rangeVertical" min="-360" max="360" step="0.01"
+                        <input type="range" class="form-range " id="rangeVertical" min="-45" max="225" step="0.01"
                             onchange="onchangeRangeMoverServo_v2()">
                         <output id="bubbleVertical" for="rangeVertical"></output>
                     </div>
