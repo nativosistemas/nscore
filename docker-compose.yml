@@ -4,7 +4,7 @@ services:
   nginx:
     image: nginx:latest
     ports:
-      - "9999:80"
+      - "9090:80"
     volumes:
       - /var/www/html:/usr/share/nginx/html
     restart: always
