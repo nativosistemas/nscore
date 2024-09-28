@@ -1,9 +1,10 @@
 version: '3.7'
 
 services:
-  nscore_compose:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  nginx:
+    image: nginx:latest
     ports:
-      - "8080:80"
+      - "9999:80"
+    volumes:
+      - /var/www/html:/usr/share/nginx/html
+    restart: always
