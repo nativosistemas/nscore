@@ -1,11 +1,28 @@
-version: '3.7'
+version: '3.8'
 
 services:
   nginx:
-    image: nginx:latest
-    container_name: nginx_web
+    build: nginx:alpine
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx_html:/usr/share/nginx/html
-    restart: always
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf 
+      - ./nginx/html:/usr/share/nginx/html  # Mapeo de la carpeta completa
+    depends_on:
+      - dotnetapp
+    networks:
+      - app-network
+
+  dotnetapp:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - "80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
