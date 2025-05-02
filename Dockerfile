@@ -12,6 +12,7 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /App
 EXPOSE 80
-
 COPY --from=build-env /App/out .
+# Asegúrate que la app escuche en 0.0.0.0
+ENV ASPNETCORE_URLS=http://0.0.0.0:80 
 ENTRYPOINT ["dotnet", "nscore.dll"]
