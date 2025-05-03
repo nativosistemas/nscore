@@ -19,8 +19,11 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: dotnetapp  
-    expose:
-      - "80"
+#    expose:
+#      - "80"
+    # expose no es necesario (Nginx accede vía red)
+    environment:
+      - ASPNETCORE_URLS=http://+:8080  # Fuerza a escuchar en 8080      
     networks:
       - app-network
 
