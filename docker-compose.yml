@@ -8,7 +8,12 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf 
+      - /usr/src/nscore/nginx/nginx.conf:/etc/nginx/nginx.conf 
+      - /usr/src/nscore/nginx/sites:/etc/nginx/sites-enabled
+#      - /usr/src/nscore/nginx/html:/usr/share/nginx/html  # Mapeo de la carpeta completa      
+      - /usr/src/nscore/letsencrypt/www:/var/www/certbot:rw  # Para el reto HTTP-01
+      - /usr/src/nscore/letsencrypt/conf:/etc/letsencrypt  # Certificados generados
+    restart: unless-stopped      
     depends_on:
       - nscore
     networks:
@@ -19,10 +24,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: nscore  
-    #hostname: nscore  
     volumes:
-      - /usr/src/dockerns:/usr/src
-      - /usr/src/appsettings.json:/App/appsettings.json
+      - /usr/src/nscore/sqllite:/usr/src
+      - /usr/src/nscore/dotnet/appsettings.json:/App/appsettings.json
     environment:
       - ASPNETCORE_URLS=http://+:8080  # Fuerza a escuchar en 8080      
     networks:
@@ -31,9 +35,20 @@ services:
     build: ./wwwroot/files/dockerPython
     image: nscore-python
     container_name: nscore-python
-    #hostname: nscore-python
     volumes:
-      - /usr/src/dockerns:/usr/src
+      - /usr/src/nscore/sqllite:/usr/src
+    restart: unless-stopped
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - /usr/src/nscore/letsencrypt/www:/var/www/certbot:rw
+      - /usr/src/nscore/letsencrypt/conf:/etc/letsencrypt:rw
+    entrypoint: "/bin/sh -c"
+    command: |
+      "trap exit TERM; while :; do certbot renew; sleep 12h & wait $!; done;"
+    depends_on:
+      - nginx
     restart: unless-stopped
 
 networks:
