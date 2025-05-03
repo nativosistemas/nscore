@@ -50,6 +50,10 @@ services:
     depends_on:
       - nginx
     restart: unless-stopped
+  duckdns:
+    image: linuxserver/duckdns:latest
+    env_file: /usr/src/nscore/duckdns/duckdns-secrets.env
+    restart: always
 
 networks:
   app-network:
