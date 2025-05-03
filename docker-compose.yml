@@ -10,15 +10,15 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf 
     depends_on:
-      - dotnetapp
+      - nscore
     networks:
       - app-network
 
-  dotnetapp:
+  nscore:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: dotnetapp  
+    container_name: nscore  
 #    expose:
 #      - "80"
     # expose no es necesario (Nginx accede vía red)
