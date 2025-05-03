@@ -19,13 +19,22 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: nscore  
-#    expose:
-#      - "80"
-    # expose no es necesario (Nginx accede vía red)
+    hostname: nscore  
+    volumes:
+      - /usr/src/dockerns:/usr/src
+      - /usr/src/appsettings.json:/App/appsettings.json
     environment:
       - ASPNETCORE_URLS=http://+:8080  # Fuerza a escuchar en 8080      
     networks:
       - app-network
+  nscore-python:
+    build: ./wwwroot/files/dockerPython
+    image: nscore-python
+    container_name: nscore-python
+    hostname: nscore-python
+    volumes:
+      - /usr/src/dockerns:/usr/src
+    restart: unless-stopped
 
 networks:
   app-network:
