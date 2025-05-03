@@ -12,7 +12,7 @@ services:
       - /usr/src/nscore/nginx/sites:/etc/nginx/sites-enabled
 #      - /usr/src/nscore/nginx/html:/usr/share/nginx/html  # Mapeo de la carpeta completa      
       - /usr/src/nscore/letsencrypt/www:/var/www/certbot:rw  # Para el reto HTTP-01
-      - /usr/src/nscore/letsencrypt/conf:/etc/letsencrypt  # Certificados generados
+      - /etc/letsencrypt:/etc/letsencrypt  # Certificados generados
     restart: unless-stopped      
     depends_on:
       - nscore
@@ -43,7 +43,7 @@ services:
     container_name: certbot
     volumes:
       - /usr/src/nscore/letsencrypt/www:/var/www/certbot:rw
-      - /usr/src/nscore/letsencrypt/conf:/etc/letsencrypt:rw
+      - /etc/letsencrypt:/etc/letsencrypt:rw
     entrypoint: "/bin/sh -c"
     command: |
       "trap exit TERM; while :; do certbot renew; sleep 12h & wait $!; done;"
