@@ -52,6 +52,7 @@ services:
     restart: unless-stopped
   duckdns:
     image: linuxserver/duckdns:latest
+    container_name: nscore-duckdns
     env_file: /usr/src/nscore/duckdns/duckdns-secrets.env
     restart: always
 
