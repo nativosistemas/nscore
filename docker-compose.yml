@@ -19,7 +19,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: nscore  
-    hostname: nscore  
+    #hostname: nscore  
     volumes:
       - /usr/src/dockerns:/usr/src
       - /usr/src/appsettings.json:/App/appsettings.json
@@ -31,7 +31,7 @@ services:
     build: ./wwwroot/files/dockerPython
     image: nscore-python
     container_name: nscore-python
-    hostname: nscore-python
+    #hostname: nscore-python
     volumes:
       - /usr/src/dockerns:/usr/src
     restart: unless-stopped
