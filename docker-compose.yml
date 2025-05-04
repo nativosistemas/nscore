@@ -3,7 +3,7 @@ version: '3.8'
 services:
   nginx:
     image: nginx:alpine
-    container_name: nginx
+    container_name: nscore-nginx
     ports:
       - "80:80"
       - "443:443"
@@ -27,8 +27,9 @@ services:
     volumes:
       - /usr/src/nscore/sqllite:/usr/src
       - /usr/src/nscore/dotnet/appsettings.json:/App/appsettings.json
-    environment:
-      - ASPNETCORE_URLS=http://+:8080  # Fuerza a escuchar en 8080      
+#    environment:
+#      - ASPNETCORE_URLS=http://+:8080  # Fuerza a escuchar en 8080 
+    restart: unless-stopped     
     networks:
       - app-network
   nscore-python:
@@ -40,7 +41,7 @@ services:
     restart: unless-stopped
   certbot:
     image: certbot/certbot
-    container_name: certbot
+    container_name: nscore-certbot
     volumes:
       - /usr/src/nscore/letsencrypt/www:/var/www/certbot:rw
       - /etc/letsencrypt:/etc/letsencrypt:rw
