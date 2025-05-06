@@ -487,15 +487,18 @@ function onClickStar(pId) {
         } else { //if (pagina == 'estrellas_v2.html') 
             fetchServo_v2(id).then(oJson => {
                 var text = '';
-                var strEq = "AR/Dec: " + oJson.ec.ra.toFixed(2) + " / " + oJson.ec.dec.toFixed(2);
-                var strHc = "Az./Alt.: " + oJson.hc.azimuth.toFixed(2) + " / " + oJson.hc.altitude.toFixed(2);
-                var strSc = "H/V: " + oJson.sc.servoH.toFixed(2) + " / " + oJson.sc.servoV.toFixed(2);
-                var str_calibrate = "h_calibrate / v_calibrate: " + oJson.sc._h_calibrate + " / " + oJson.sc._v_calibrate;
-                var str_original = "h_original / v_original: " + oJson.sc.servoH_original + " / " + oJson.sc.servoV_original;
-                text += strEq + "<br/>" + strHc + "<br/>" + strSc + "<br/>" + str_calibrate + "<br/>" + str_original + "<br/>";
-                text += "HIP " + oJson.hip + "<br/>";
-
-
+                if (oJson.msg == null || oJson.msg != "No se obtuvo respuesta") {
+                    var strEq = "AR/Dec: " + oJson.ec.ra.toFixed(2) + " / " + oJson.ec.dec.toFixed(2);
+                    var strHc = "Az./Alt.: " + oJson.hc.azimuth.toFixed(2) + " / " + oJson.hc.altitude.toFixed(2);
+                    var strSc = "H/V: " + oJson.sc.servoH.toFixed(2) + " / " + oJson.sc.servoV.toFixed(2);
+                    var str_calibrate = "h_calibrate / v_calibrate: " + oJson.sc._h_calibrate + " / " + oJson.sc._v_calibrate;
+                    var str_original = "h_original / v_original: " + oJson.sc.servoH_original + " / " + oJson.sc.servoV_original;
+                    text += strEq + "<br/>" + strHc + "<br/>" + strSc + "<br/>" + str_calibrate + "<br/>" + str_original + "<br/>";
+                    text += "HIP " + oJson.hip + "<br/>";
+                }
+                else {
+                    text = oJson.msg;
+                }
                 var strHtml = '';
                 strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
                 document.getElementById("divMsg").innerHTML = strHtml;
@@ -784,7 +787,7 @@ function onClick_antResetZero() {
 
         antResetZero().then(text => {
             var strHtml = '';
-    
+
             actulizarGradosServos_v2();
             var strHtml = '';
             strHtml += ' <div class="alert alert-primary" role="alert">' + 'ResetZero' + '  </div>';
@@ -792,13 +795,13 @@ function onClick_antResetZero() {
             isOnClickMoverServo_v2 = false;
             document.getElementById("spinner").style.display = "none";
             //
-    
+
         });
 
-      //  fetchSetServoMover_v2(horizontal, vertical).then(text => {
+        //  fetchSetServoMover_v2(horizontal, vertical).then(text => {
 
 
-       // });
+        // });
     }
     return false;
 
