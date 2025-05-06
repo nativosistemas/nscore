@@ -33,6 +33,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: nscore  
+    image: nscore
     volumes:
       - /usr/src/nscore/sqllite:/usr/src
       - /usr/src/nscore/dotnet/appsettings.json:/App/appsettings.json
