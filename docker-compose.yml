@@ -21,7 +21,7 @@ services:
   nscore-python:
     build: 
       context: ./wwwroot/files/dockerPython
-      dockerfile: dockerPython.Dockerfile
+      dockerfile: Dockerfile
     image: nscore-python
     container_name: nscore-python
     volumes:

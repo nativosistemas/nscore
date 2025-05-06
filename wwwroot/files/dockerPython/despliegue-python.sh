@@ -10,7 +10,7 @@ sudo docker rmi nscore-python
 
 
 sudo docker build -t nscore-python .
-sudo docker run  -v /usr/src/dockerns:/usr/src  --name nscore-python --hostname nscore-python  -d nscore-python
+sudo docker run  -v /usr/src/nscore/sqllite:/usr/src  --name nscore-python --hostname nscore-python  -d nscore-python
 
 
 sudo systemctl start nscore-python.service
