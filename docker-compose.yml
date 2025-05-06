@@ -19,11 +19,14 @@ services:
     networks:
       - app-network
   nscore-python:
-    build: ./wwwroot/files/dockerPython
+    build: 
+      context: ./wwwroot/files/dockerPython
+      dockerfile: ./wwwroot/files/dockerPython/Dockerfile
     image: nscore-python
     container_name: nscore-python
     volumes:
       - /usr/src/nscore/sqllite:/usr/src
+      #- ./wwwroot/files/dockerPython:/app  # Mapea el código local al contenedor
     restart: unless-stopped
   nscore:
     build: 
