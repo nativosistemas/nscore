@@ -18,7 +18,13 @@ services:
       - nscore
     networks:
       - app-network
-
+  nscore-python:
+    build: ./wwwroot/files/dockerPython
+    image: nscore-python
+    container_name: nscore-python
+    volumes:
+      - /usr/src/nscore/sqllite:/usr/src
+    restart: unless-stopped
   nscore:
     build: 
       context: .
@@ -32,13 +38,6 @@ services:
     restart: unless-stopped     
     networks:
       - app-network
-  nscore-python:
-    build: ./wwwroot/files/dockerPython
-    image: nscore-python
-    container_name: nscore-python
-    volumes:
-      - /usr/src/nscore/sqllite:/usr/src
-    restart: unless-stopped
   certbot:
     image: certbot/certbot
     container_name: nscore-certbot
