@@ -122,6 +122,21 @@ internal class Program
             }
             return Results.Unauthorized();
         });
+        ///
+        /// 
+        /// 
+        /// api para react 
+        app.MapPost("/login",
+ [Microsoft.AspNetCore.Authorization.AllowAnonymous] async (request_User pUser) =>
+ {
+     string result = await Util.login(pUser);
+     if (!string.IsNullOrEmpty(result))
+     {
+         return Results.Ok(result);
+     }
+     return Results.Unauthorized();
+ });
+
 
         app.Run();
 
