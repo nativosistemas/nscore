@@ -127,7 +127,7 @@ internal class Program
         /// 
         /// api para react 
         app.MapPost("/login",
- [Microsoft.AspNetCore.Authorization.AllowAnonymous] async (request_User pUser) =>
+ [Microsoft.AspNetCore.Authorization.AllowAnonymous] async ([Microsoft.AspNetCore.Mvc.FromBody]request_User pUser) =>
  {
      string result = await Util.login(pUser);
      if (!string.IsNullOrEmpty(result))
