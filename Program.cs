@@ -32,6 +32,16 @@ internal class Program
             ValidateIssuerSigningKey = true
         };
     });
+        // 1. Agregar política de CORS
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins("https://nativosistemas.github.io")
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
         builder.Services.AddSingleton<nscore.LedClient>();
         //builder.Services.AddSingleton<nscore.ProcessAnt>();
         builder.Services.AddSingleton<nscore.ProcessAntV2>();
@@ -39,6 +49,7 @@ internal class Program
         var app = builder.Build();
         app.UseStaticFiles();
         app.UseAuthorization();
+        app.UseCors("AllowFrontend");
         //app.UseHsts();
         //app.UseHttpsRedirection();
 
@@ -127,7 +138,7 @@ internal class Program
         /// 
         /// api para react 
         app.MapPost("/login",
- [Microsoft.AspNetCore.Authorization.AllowAnonymous] async ([Microsoft.AspNetCore.Mvc.FromBody]request_User pUser) =>
+ [Microsoft.AspNetCore.Authorization.AllowAnonymous] async ([Microsoft.AspNetCore.Mvc.FromBody] request_User pUser) =>
  {
      string result = await Util.login(pUser);
      if (!string.IsNullOrEmpty(result))
