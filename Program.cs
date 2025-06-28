@@ -35,7 +35,7 @@ internal class Program
         // 1. Agregar política de CORS
         builder.Services.AddCors(options =>
         {
-            options.AddPolicy("AllowFrontend", policy =>
+            options.AddPolicy("AllowAll", policy =>
             {
                 policy.AllowAnyOrigin() //WithOrigins("https://nativosistemas.github.io")
                       .AllowAnyHeader()
@@ -49,7 +49,7 @@ internal class Program
         var app = builder.Build();
         app.UseStaticFiles();
         app.UseAuthorization();
-        app.UseCors("AllowFrontend");
+        app.UseCors("AllowAll");
         //app.UseHsts();
         //app.UseHttpsRedirection();
 
