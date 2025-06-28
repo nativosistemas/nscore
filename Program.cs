@@ -37,7 +37,7 @@ internal class Program
         {
             options.AddPolicy("AllowFrontend", policy =>
             {
-                policy.WithOrigins("https://nativosistemas.github.io")
+                policy.AllowAnyOrigin() //WithOrigins("https://nativosistemas.github.io")
                       .AllowAnyHeader()
                       .AllowAnyMethod();
             });
