@@ -133,6 +133,10 @@ internal class Program
             }
             return Results.Unauthorized();
         });
+        app.MapGet("/estrellas", async (System.Security.Claims.ClaimsPrincipal user, nscore.ProcessAntV2 pProcessAntV2) => { return Results.Json(pProcessAntV2.getStars()); }).RequireAuthorization();
+
+        //app.MapGet("/stars_stellarium", ((nscore.ProcessAntV2 pProcessAntV2) => { return Results.Json(pProcessAntV2.getStars()); }));
+
         ///
         /// 
         /// 
