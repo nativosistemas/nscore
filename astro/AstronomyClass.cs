@@ -242,8 +242,8 @@ public class ConfigAnt
     public double horizontal_grados_calibrate { get; set; }
     public double vertical_grados_calibrate { get; set; }
     public string device_name { get; set; }
-    public int vertical_sentido { get; set; }
-    public int horizontal_sentido { get; set; }
+    public double vertical_sentido { get; set; }
+    public double horizontal_sentido { get; set; }
     public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(500.0, 6), horizontal_grados_max = Math.Round(2500.0, 6), vertical_grados_min = Math.Round(500.0, 6), vertical_grados_max = Math.Round(2500.0, 6), horizontal_grados_calibrate = 0, vertical_grados_calibrate = 0, device_name = Constantes.device_name_esp32_stepper_laser, horizontal_sentido = 1, vertical_sentido = 1 };
 }
 
