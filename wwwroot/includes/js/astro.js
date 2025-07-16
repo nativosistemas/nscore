@@ -722,8 +722,10 @@ function onClickGrabarConfig() {
     var horizontal_grados_calibrate = document.getElementById("txt_horizontal_grados_calibrate").value;
     var vertical_grados_calibrate = document.getElementById("txt_vertical_grados_calibrate").value;
     var device_name = document.getElementById("txt_device_name").value;
+    var vertical_sentido = document.getElementById("txt_vertical_sentido").checked ? 1 : 0;
+    var horizontal_sentido = document.getElementById("txt_horizontal_sentido").checked ? 1 : 0;
 
-    setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate, device_name).then(text => {
+    setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate, device_name, vertical_sentido, horizontal_sentido, vertical_sentido, horizontal_sentido).then(text => {
         var strHtml = '';
         strHtml += ' <div class="alert alert-primary" role="alert">' + text + '  </div>';
         document.getElementById("divMsg").innerHTML = strHtml;
@@ -747,6 +749,8 @@ function htmlGetConfig() {
         document.getElementById("txt_horizontal_grados_calibrate").value = o.horizontal_grados_calibrate;
         document.getElementById("txt_vertical_grados_calibrate").value = o.vertical_grados_calibrate;
         document.getElementById("txt_device_name").value = o.device_name;
+        document.getElementById("txt_vertical_sentido").checked = o.vertical_sentido == 1 ? true : false;
+        document.getElementById("txt_horizontal_sentido").checked = o.horizontal_sentido == 1 ? true : false;
         //
 
     });
@@ -762,9 +766,10 @@ async function fetchGetConfig() {
     const text = await response.text();
     return text;
 }
-async function setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate, device_name) {
+async function setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate, device_name, vertical_sentido, horizontal_sentido) {
     const response = await fetch('/setConfig?latitude=' + latitude + '&longitude=' + longitude + '&horizontal_grados_min=' + horizontal_grados_min + '&horizontal_grados_max=' + horizontal_grados_max
-        + '&vertical_grados_min=' + vertical_grados_min + '&vertical_grados_max=' + vertical_grados_max + '&horizontal_grados_calibrate=' + horizontal_grados_calibrate + '&vertical_grados_calibrate=' + vertical_grados_calibrate + '&device_name=' + device_name);
+        + '&vertical_grados_min=' + vertical_grados_min + '&vertical_grados_max=' + vertical_grados_max + '&horizontal_grados_calibrate=' + horizontal_grados_calibrate + '&vertical_grados_calibrate=' + vertical_grados_calibrate + '&device_name=' + device_name
+        + '&vertical_sentido=' + vertical_sentido + '&horizontal_sentido=' + horizontal_sentido);
     const text = await response.text();
     return text;
 }

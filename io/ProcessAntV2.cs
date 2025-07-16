@@ -1,6 +1,7 @@
 using System.Diagnostics;
 
 namespace nscore;
+
 public class ProcessAntV2 : IDisposable
 {
     private bool disposedValue = false;
@@ -86,6 +87,7 @@ public class ProcessAntV2 : IDisposable
             ConfigAnt oConfigAnt = await getConfig();
             string device_name = oConfigAnt.device_name;
             result = _poolEsp32.Start_star(oStar, device_name, isLaserOn);
+            //result.configAnt = oConfigAnt;
         }
         else
         {
@@ -269,6 +271,8 @@ public class ProcessAntV2 : IDisposable
                     double _Vertical_grados_max = 0;
                     double _Horizontal_grados_calibrate = 0;
                     double _Vertical_grados_calibrate = 0;
+                    int _vertical_sentido = 1;
+                    int _horizontal_sentido = 1;
 
                     if (l != null)
                     {
@@ -278,6 +282,8 @@ public class ProcessAntV2 : IDisposable
                         _Vertical_grados_max = l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble.Value;
                         _Horizontal_grados_calibrate = l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble.Value;
                         _Vertical_grados_calibrate = l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble.Value;
+                        _vertical_sentido = Convert.ToInt32(l.FirstOrDefault(x => x.name == "vertical_sentido").valueDouble.Value);
+                        _horizontal_sentido = Convert.ToInt32(l.FirstOrDefault(x => x.name == "horizontal_sentido").valueDouble.Value);
                     }
                     if (oAntTracking.type != Constantes.astro_type_servoAngle_calibrate)
                     {
@@ -366,7 +372,9 @@ public class ProcessAntV2 : IDisposable
                         altitude_old = altitude_old,
                         azimuth_old = azimuth_old,
                         horizontal_grados_calibrate = _Horizontal_grados_calibrate,
-                        vertical_grados_calibrate = _Vertical_grados_calibrate
+                        vertical_grados_calibrate = _Vertical_grados_calibrate,
+                        vertical_sentido = _vertical_sentido,
+                        horizontal_sentido = _horizontal_sentido
                     };
                 }
             }
@@ -489,7 +497,7 @@ public class ProcessAntV2 : IDisposable
         " }";
         return result;
     }
-    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name)
+    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name, int vertical_sentido, int horizontal_sentido)
     {
         string result = "!Ok";
         try
@@ -506,6 +514,8 @@ public class ProcessAntV2 : IDisposable
                 l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble = horizontal_grados_calibrate;
                 l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble = vertical_grados_calibrate;
                 l.FirstOrDefault(x => x.name == "device_name").value = device_name;
+                l.FirstOrDefault(x => x.name == "vertical_sentido").valueDouble = vertical_sentido;
+                l.FirstOrDefault(x => x.name == "horizontal_sentido").valueDouble = horizontal_sentido;
                 context.SaveChanges();
             }
             result = "Ok";
@@ -553,7 +563,10 @@ public class ProcessAntV2 : IDisposable
                 double horizontal_grados_calibrate = l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble.Value;
                 double vertical_grados_calibrate = l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble.Value;
                 string device_name = l.FirstOrDefault(x => x.name == "device_name").value == null ? string.Empty : l.FirstOrDefault(x => x.name == "device_name").value;
-                result = new ConfigAnt() { latitude = latitude, longitude = longitude, horizontal_grados_min = _Horizontal_grados_min, horizontal_grados_max = _Horizontal_grados_max, vertical_grados_min = _Vertical_grados_min, vertical_grados_max = _Vertical_grados_max, horizontal_grados_calibrate = horizontal_grados_calibrate, vertical_grados_calibrate = vertical_grados_calibrate, device_name = device_name };
+                int vertical_sentido = l.FirstOrDefault(x => x.name == "vertical_sentido").valueDouble == null ? 1 : Convert.ToInt32(l.FirstOrDefault(x => x.name == "vertical_sentido").valueDouble);
+                int horizontal_sentido = l.FirstOrDefault(x => x.name == "horizontal_sentido").valueDouble == null ? 1 : Convert.ToInt32(l.FirstOrDefault(x => x.name == "horizontal_sentido").valueDouble);
+
+                result = new ConfigAnt() { latitude = latitude, longitude = longitude, horizontal_grados_min = _Horizontal_grados_min, horizontal_grados_max = _Horizontal_grados_max, vertical_grados_min = _Vertical_grados_min, vertical_grados_max = _Vertical_grados_max, horizontal_grados_calibrate = horizontal_grados_calibrate, vertical_grados_calibrate = vertical_grados_calibrate, device_name = device_name, vertical_sentido = vertical_sentido, horizontal_sentido = horizontal_sentido };
             }
         }
         catch (Exception ex)

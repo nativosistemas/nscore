@@ -8,6 +8,7 @@ public class cResultAnt
     public string msg { get; set; }
     public string type { get; set; }
     public int? hip { get; set; }
+    //public ConfigAnt configAnt { get; set; }
     public EquatorialCoordinates ec { get; set; }
     public HorizontalCoordinates hc { get; set; }
     public ServoCoordinates sc { get; set; }
@@ -241,7 +242,9 @@ public class ConfigAnt
     public double horizontal_grados_calibrate { get; set; }
     public double vertical_grados_calibrate { get; set; }
     public string device_name { get; set; }
-    public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(500.0, 6), horizontal_grados_max = Math.Round(2500.0, 6), vertical_grados_min = Math.Round(500.0, 6), vertical_grados_max = Math.Round(2500.0, 6), horizontal_grados_calibrate = 0, vertical_grados_calibrate = 0, device_name = Constantes.device_name_esp32_stepper_laser };
+    public int vertical_sentido { get; set; }
+    public int horizontal_sentido { get; set; }
+    public static ConfigAnt configDefault = new ConfigAnt() { latitude = -32.94681944444444, longitude = -60.6393194444444, horizontal_grados_min = Math.Round(500.0, 6), horizontal_grados_max = Math.Round(2500.0, 6), vertical_grados_min = Math.Round(500.0, 6), vertical_grados_max = Math.Round(2500.0, 6), horizontal_grados_calibrate = 0, vertical_grados_calibrate = 0, device_name = Constantes.device_name_esp32_stepper_laser, horizontal_sentido = 1, vertical_sentido = 1 };
 }
 
 public class Esp32_astro
@@ -266,6 +269,8 @@ public class Esp32_astro
     public double? azimuth_old { get; set; }
     public double? horizontal_grados_calibrate { get; set; }
     public double? vertical_grados_calibrate { get; set; }
+    public int vertical_sentido { get; set; }
+    public int horizontal_sentido { get; set; }
     public Guid sessionDevice_publicID_return { get; set; }
 }
 
