@@ -282,8 +282,8 @@ public class ProcessAntV2 : IDisposable
                         _Vertical_grados_max = l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble.Value;
                         _Horizontal_grados_calibrate = l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble.Value;
                         _Vertical_grados_calibrate = l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble.Value;
-                        _vertical_sentido = Convert.ToInt32(l.FirstOrDefault(x => x.name == "vertical_sentido").valueDouble.Value);
-                        _horizontal_sentido = Convert.ToInt32(l.FirstOrDefault(x => x.name == "horizontal_sentido").valueDouble.Value);
+                        _vertical_sentido = l.FirstOrDefault(x => x.name == "vertical_sentido").valueDouble.Value;
+                        _horizontal_sentido = l.FirstOrDefault(x => x.name == "horizontal_sentido").valueDouble.Value;
                     }
                     if (oAntTracking.type != Constantes.astro_type_servoAngle_calibrate)
                     {
