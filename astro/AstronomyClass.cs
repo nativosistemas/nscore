@@ -269,8 +269,8 @@ public class Esp32_astro
     public double? azimuth_old { get; set; }
     public double? horizontal_grados_calibrate { get; set; }
     public double? vertical_grados_calibrate { get; set; }
-    public int vertical_sentido { get; set; }
-    public int horizontal_sentido { get; set; }
+    public double vertical_sentido { get; set; }
+    public double horizontal_sentido { get; set; }
     public Guid sessionDevice_publicID_return { get; set; }
 }
 

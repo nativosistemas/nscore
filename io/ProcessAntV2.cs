@@ -271,8 +271,8 @@ public class ProcessAntV2 : IDisposable
                     double _Vertical_grados_max = 0;
                     double _Horizontal_grados_calibrate = 0;
                     double _Vertical_grados_calibrate = 0;
-                    int _vertical_sentido = 1;
-                    int _horizontal_sentido = 1;
+                    double _vertical_sentido = 1;
+                    double _horizontal_sentido = 1;
 
                     if (l != null)
                     {
