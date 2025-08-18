@@ -78,6 +78,15 @@ public class ProcessAntV2 : IDisposable
         string device_name = oConfigAnt.device_name;
         return await _poolEsp32.Start_servoAngle(pHorizontal, pVertical, device_name);
     }
+    public async Task<cResultAnt> actionAnt(ActionAntRequest pValue)
+    {
+        cResultAnt result = null;
+        if (pValue != null)
+        {
+            result = _poolEsp32.Start_Ant(pValue, _l_Star).Result;
+        }
+        return result;
+    }
     public async Task<cResultAnt> actionAnt_star(int pId, bool isLaserOn = false)
     {
         cResultAnt result = new cResultAnt();
@@ -96,6 +105,7 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
+
     public async Task<Esp32_astro> actionAnt_getAntTracking(string pDevice_publicID, string pSessionDevice_publicID)
     {
         Esp32_astro result = null;
@@ -497,7 +507,7 @@ public class ProcessAntV2 : IDisposable
         " }";
         return result;
     }
-    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name, int vertical_sentido, int horizontal_sentido)
+    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name, double vertical_sentido, double horizontal_sentido)
     {
         string result = "!Ok";
         try
@@ -546,7 +556,7 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public async Task<ConfigAnt> getConfig()
+    public static async Task<ConfigAnt> getConfig()
     {
         ConfigAnt result = null;
         try
@@ -607,6 +617,30 @@ public class PoolEsp32 : IDisposable
             ProcessEsp32 oProcessEsp32 = new ProcessEsp32();
             recursosDisponibles.Enqueue(oProcessEsp32);
         }
+    }
+    public async Task<cResultAnt> Start_Ant(ActionAntRequest pValue, List<Star> pListStar)
+    {
+        cResultAnt result = null;
+        try
+        {
+            ProcessEsp32 oProcess = GetResource();
+            if (oProcess != null)
+            {
+
+                result = await oProcess.actionAnt(pValue, pListStar);
+                SetResource(oProcess);
+            }
+            else
+            {
+                result = new cResultAnt();
+                result.msg = "Recurso no disponible o en uso";
+            }
+        }
+        catch (Exception ex)
+        {
+            Util.log(ex);
+        }
+        return result;
     }
     public async Task<cResultAnt> Start_laser(int pIsRead, int pLaser, string pDevice_name)
     {
@@ -727,6 +761,98 @@ public class ProcessEsp32 : IDisposable
     public ProcessEsp32()
     {
 
+    }
+    public async Task<cResultAnt> actionAnt(ActionAntRequest pValue, List<Star> pListStar)
+    {
+        cResultAnt result = null;
+        try
+        {
+            Guid oGuid = Guid.NewGuid();
+            ConfigAnt oConfigAnt = await ProcessAntV2.getConfig();
+            nscore.AntTracking o = null;
+            bool isSaveAntTracking = true;
+            Star oStar = null;
+            using (var context = new AstroDbContext())
+            {
+                string device_name = oConfigAnt.device_name;
+                o = new nscore.AntTracking(oGuid, pValue.type, device_name);
+
+                if (pValue.type == Constantes.astro_type_star)
+                {
+                   oStar = pListStar.Where(x => x.hip == pValue.hip).FirstOrDefault();
+                    if (oStar != null)
+                    {
+                        o.ra = oStar.ra;
+                        o.dec = oStar.dec;
+                    }
+                    else
+                    {
+                        isSaveAntTracking = false;
+                        result = new cResultAnt();
+                        result.msg = "No se encontro estrella";
+                    }
+                }
+                else if (pValue.type == Constantes.astro_type_servoAngle || pValue.type == Constantes.astro_type_servoAngle_calibrate)
+                {
+                    o.h = pValue.ra_h;
+                    o.v = pValue.dec_v;
+                    o.status = Constantes.astro_status_calculationResolution;
+                }
+                else if (pValue.type == Constantes.astro_type_resetZero)
+                {
+                    o.h = 0;
+                    o.v = 0;
+                    o.altitude = 0;
+                    o.azimuth = 0;
+                    string status = Constantes.astro_status_movedServo;
+                    o.status = status;
+                    o.statusUpdateDate = DateTime.Now;
+                }
+                if (isSaveAntTracking)
+                {
+                    context.AntTrackings.Add(o);
+                    try
+                    {
+                        context.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        nscore.Util.log(ex);
+                    }
+                }
+            }
+            if (o != null && isSaveAntTracking)
+            {
+                result = getAstroTracking_ResultAnt(pValue.type, o.publicID).Result;
+            }
+            if (result != null)
+            {
+                if (pValue.type == Constantes.astro_type_star && oStar != null)
+                {
+                    ServoCoordinates oServoCoordinates = ServoCoordinates.convertServoCoordinates(result.hc);
+                    if (oServoCoordinates != null)
+                    {
+                        result.hip = oStar.hip;
+                        result.ec = new EquatorialCoordinates() { ra = oStar.ra, dec = oStar.dec };
+                        result.hc = new HorizontalCoordinates() { Azimuth = result.hc.Azimuth, Altitude = result.hc.Altitude };
+                    }
+                    else
+                    {
+                        result.msg = "Estrella no es visible";
+                    }
+                }
+            }
+            else if (result == null)
+            {
+                result = new cResultAnt();
+                result.msg = "No se obtuvo respuesta";
+            }
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
+        return result;
     }
     public async Task<cResultAnt> actionAnt_laser(int pIsRead, int pLaser, string pDevice_name)
     {
@@ -876,4 +1002,15 @@ public class ProcessEsp32 : IDisposable
     {
         Dispose(true);
     }
+}
+public class ActionAntRequest
+{
+    public string type { get; set; }
+    //public string device_name { get; set; }
+    public int hip { get; set; }
+    public double ra_h { get; set; }
+    public double dec_v { get; set; }
+    public double? h_calibrate { get; set; }
+    public double? v_calibrate { get; set; }
+    public int isLaser { get; set; }
 }
