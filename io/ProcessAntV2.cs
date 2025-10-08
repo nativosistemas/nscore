@@ -482,11 +482,11 @@ public class ProcessAntV2 : IDisposable
 
                 string device_name = oConfigAnt.device_name;
                 Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
-                AntTracking oAntTracking = context.AntTrackings.Where(x => x.device_name == device_name && x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
-                if (oAntTracking != null)
+                cResultAnt oResultAnt = await getLastValoresServos();
+                if (oResultAnt != null)
                 {
-                    _Horizontal_grados = oAntTracking.h.Value;
-                    _Vertical_grados = oAntTracking.v.Value;
+                    _Horizontal_grados = oResultAnt.h_now == null ? 0 : oResultAnt.h_now.Value;
+                    _Vertical_grados = oResultAnt.v_now == null ? 0 : oResultAnt.v_now.Value;
                 }
                 _Horizontal_grados_min = oConfigAnt.horizontal_grados_min;
                 _Horizontal_grados_max = oConfigAnt.horizontal_grados_max;
@@ -505,6 +505,49 @@ public class ProcessAntV2 : IDisposable
                               ", \"vertical_min\":" + _Vertical_grados_min.ToString(System.Globalization.CultureInfo.InvariantCulture) +
                     ", \"vertical_max\":" + _Vertical_grados_max.ToString(System.Globalization.CultureInfo.InvariantCulture) +
         " }";
+        return result;
+    }
+    public async Task<cResultAnt> getLastValuesServos()
+    {
+        cResultAnt result = null;
+        try
+        {
+
+            result = await getLastValoresServos();
+
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
+
+        return result;
+    }
+    public static async Task<cResultAnt> getLastValoresServos()
+    {
+        cResultAnt result = null;
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                ConfigAnt oConfigAnt = await getConfig();
+
+                string device_name = oConfigAnt.device_name;
+                Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.device_name == device_name && x.sessionApp_publicID == sessionApp_publicID && x.status == Constantes.astro_status_movedServo && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
+                if (oAntTracking != null)
+                {
+                    result = new cResultAnt();
+                    result.h_now = oAntTracking.h.Value;
+                    result.v_now = oAntTracking.v.Value;
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
         return result;
     }
     public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name, double vertical_sentido, double horizontal_sentido)
@@ -620,25 +663,38 @@ public class PoolEsp32 : IDisposable
     }
     public async Task<cResultAnt> Start_Ant(ActionAntRequest pValue, List<Star> pListStar)
     {
+        ProcessEsp32 oProcess = null;
         cResultAnt result = null;
         try
         {
-            ProcessEsp32 oProcess = GetResource();
+            oProcess = GetResource();
             if (oProcess != null)
             {
 
                 result = await oProcess.actionAnt(pValue, pListStar);
-                SetResource(oProcess);
             }
             else
             {
                 result = new cResultAnt();
                 result.msg = "Recurso no disponible o en uso";
+                cResultAnt last_ResultAnt = await ProcessAntV2.getLastValoresServos();
+                if (last_ResultAnt != null)
+                {
+                    result.h_now = last_ResultAnt.h_now;// == null ? null : last_ResultAnt.h_now.Value / 2;
+                    result.v_now = last_ResultAnt.v_now;// == null ? null : last_ResultAnt.v_now.Value / 2;
+                }
             }
         }
         catch (Exception ex)
         {
             Util.log(ex);
+        }
+        finally
+        {
+            if (oProcess != null)
+            {
+                SetResource(oProcess);
+            }
         }
         return result;
     }
@@ -779,7 +835,7 @@ public class ProcessEsp32 : IDisposable
 
                 if (pValue.type == Constantes.astro_type_star)
                 {
-                   oStar = pListStar.Where(x => x.hip == pValue.hip).FirstOrDefault();
+                    oStar = pListStar.Where(x => x.hip == pValue.hip).FirstOrDefault();
                     if (oStar != null)
                     {
                         o.ra = oStar.ra;
@@ -796,7 +852,9 @@ public class ProcessEsp32 : IDisposable
                 {
                     o.h = pValue.ra_h;
                     o.v = pValue.dec_v;
-                    o.status = Constantes.astro_status_calculationResolution;
+                    //o.status = Constantes.astro_status_calculationResolution;
+                    o.status = Constantes.astro_status_movedServo;
+                    o.statusUpdateDate = DateTime.Now;
                 }
                 else if (pValue.type == Constantes.astro_type_resetZero)
                 {
@@ -847,6 +905,7 @@ public class ProcessEsp32 : IDisposable
                 result = new cResultAnt();
                 result.msg = "No se obtuvo respuesta";
             }
+
         }
         catch (Exception ex)
         {
@@ -942,6 +1001,7 @@ public class ProcessEsp32 : IDisposable
                 if (oAntTracking != null)
                 {
                     result = new cResultAnt();
+                    msg += "Ok";
                     isFoundAntTracking = true;
                     if (pType == Constantes.astro_type_star)
                     {
@@ -956,7 +1016,7 @@ public class ProcessEsp32 : IDisposable
                     else if (pType == Constantes.astro_type_laser)
                     {
                         //oHorizontalCoordinates = new HorizontalCoordinates() { Altitude = 0, Azimuth = 0 };
-                        msg = "laser: " + oAntTracking.isLaser;
+                        msg += " laser: " + oAntTracking.isLaser;
                     }
                     break;
                 }
@@ -982,7 +1042,21 @@ public class ProcessEsp32 : IDisposable
         if (!isFoundAntTracking)
         {
             await ProcessAntV2.AntTrackingStatus(pGuid, Constantes.astro_status_noResponseEsp32, null);
+            result = new cResultAnt();
+            result.msg = "!isFoundAntTracking";
         }
+        cResultAnt last_ResultAnt = await ProcessAntV2.getLastValoresServos();
+        if (last_ResultAnt != null)
+        {
+            if (result == null)
+            {
+                result = new cResultAnt();
+                result.msg = "El sistema recuperó únicamente la última muestra de los datos de los motores.";
+            }
+            result.h_now = last_ResultAnt.h_now;// == null ? null : last_ResultAnt.h_now.Value / 2;
+            result.v_now = last_ResultAnt.v_now;// == null ? null : last_ResultAnt.v_now.Value / 2;
+        }
+
         return result;
     }
     protected virtual void Dispose(bool disposing)

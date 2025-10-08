@@ -12,6 +12,10 @@ public class cResultAnt
     public EquatorialCoordinates ec { get; set; }
     public HorizontalCoordinates hc { get; set; }
     public ServoCoordinates sc { get; set; }
+    public double? h_now { get; set; }
+    public double? v_now { get; set; }
+
+
 
 }
 

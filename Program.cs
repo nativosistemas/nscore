@@ -149,6 +149,7 @@ internal class Program
  });
         app.MapGet("/estrellas", async (System.Security.Claims.ClaimsPrincipal user, nscore.ProcessAntV2 pProcessAntV2) => { return Results.Json(pProcessAntV2.getStars()); }).RequireAuthorization();
         app.MapPost("/actionAnt", async (nscore.ProcessAntV2 pProcessAntV2, [Microsoft.AspNetCore.Mvc.FromBody]ActionAntRequest pValue) => { return await pProcessAntV2.actionAnt(pValue); }).RequireAuthorization();
+        app.MapGet("/lastvalueservo", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.getLastValuesServos(); }).RequireAuthorization();
 
         app.Run();
 
