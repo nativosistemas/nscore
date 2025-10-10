@@ -852,9 +852,9 @@ public class ProcessEsp32 : IDisposable
                 {
                     o.h = pValue.ra_h;
                     o.v = pValue.dec_v;
-                    //o.status = Constantes.astro_status_calculationResolution;
-                    o.status = Constantes.astro_status_movedServo;
-                    o.statusUpdateDate = DateTime.Now;
+                    o.status = Constantes.astro_status_calculationResolution;
+                    //o.status = Constantes.astro_status_movedServo;
+                    //o.statusUpdateDate = DateTime.Now;
                 }
                 else if (pValue.type == Constantes.astro_type_resetZero)
                 {
