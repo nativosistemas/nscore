@@ -50,7 +50,7 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:rw
     entrypoint: "/bin/sh -c"
     command: |
-      "trap exit TERM; while :; do certbot renew; sleep 12h & wait $!; done;"
+      "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot; sleep 12h & wait $!; done;"
     depends_on:
       - nginx
     restart: unless-stopped

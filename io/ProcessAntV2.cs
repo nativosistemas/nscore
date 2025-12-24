@@ -66,11 +66,11 @@ public class ProcessAntV2 : IDisposable
         }
         return _l_Star.Where(x => x.visible).ToList();
     }
-    public async Task<cResultAnt> actionAnt_laser(int pIsRead, int pLaser)
+    public async Task<cResultAnt> actionAnt_laser( int pLaser)
     {
         ConfigAnt oConfigAnt = await getConfig();
         string device_name = oConfigAnt.device_name;
-        return await _poolEsp32.Start_laser(pIsRead, pLaser, device_name);
+        return await _poolEsp32.Start_laser( pLaser, device_name);
     }
     public async Task<cResultAnt> actionAnt_servo(double pHorizontal, double pVertical)
     {
@@ -523,6 +523,46 @@ public class ProcessAntV2 : IDisposable
 
         return result;
     }
+ /*   public async Task<cResultAnt> getAntLastValue(string pStatus)
+    {
+        cResultAnt result = null;
+        try
+        {
+
+            result = await getAntLastValue_generic(pStatus);
+
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
+
+        return result;
+    }*/
+    public async Task<cResultAnt> api_laser(ActionAntRequest pValue)
+    {
+        cResultAnt result = null;
+        try
+        {
+              if (pValue.type == Constantes.astro_type_laser && pValue.action == Constantes.astro_action_get)
+            {
+                result = await getAntLastValue_generic(Constantes.astro_status_movedLaser);
+
+            }
+            else if (pValue.type == Constantes.astro_type_laser && pValue.action == Constantes.astro_action_post)
+            {
+                   result =  await actionAnt_laser(pValue.isLaser);
+                   // result = await getAntLastValue_generic(Constantes.astro_status_movedLaser);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
+
+        return result;
+    }
     public static async Task<cResultAnt> getLastValoresServos()
     {
         cResultAnt result = null;
@@ -540,6 +580,40 @@ public class ProcessAntV2 : IDisposable
                     result = new cResultAnt();
                     result.h_now = oAntTracking.h.Value;
                     result.v_now = oAntTracking.v.Value;
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            nscore.Util.log(ex);
+        }
+        return result;
+    }
+    public static async Task<cResultAnt> getAntLastValue_generic(string pStatus)
+    {
+        cResultAnt result = null;
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                ConfigAnt oConfigAnt = await getConfig();
+                string device_name = oConfigAnt.device_name;
+                Guid sessionApp_publicID = Singleton_SessionApp.Instance.publicID;
+                AntTracking oAntTracking = context.AntTrackings.Where(x => x.device_name == device_name && x.sessionApp_publicID == sessionApp_publicID && x.status == pStatus && x.statusUpdateDate != null).OrderByDescending(x1 => x1.statusUpdateDate.Value).FirstOrDefault();
+                result = new cResultAnt();
+                result.isLaser = 0;
+                if (oAntTracking != null)
+                {
+                    if (pStatus == Constantes.astro_status_movedServo)
+                    {
+                        result.h_now = oAntTracking.h.Value;
+                        result.v_now = oAntTracking.v.Value;
+                    }
+                    else if (pStatus == Constantes.astro_status_movedLaser)
+                    {
+                        result.isLaser = oAntTracking.isLaser;
+                    }
                 }
 
             }
@@ -698,7 +772,7 @@ public class PoolEsp32 : IDisposable
         }
         return result;
     }
-    public async Task<cResultAnt> Start_laser(int pIsRead, int pLaser, string pDevice_name)
+    public async Task<cResultAnt> Start_laser( int pLaser, string pDevice_name)
     {
         cResultAnt result = null;
         try
@@ -706,7 +780,7 @@ public class PoolEsp32 : IDisposable
             ProcessEsp32 oProcess = GetResource();
             if (oProcess != null)
             {
-                result = await oProcess.actionAnt_laser(pIsRead, pLaser, pDevice_name);
+                result = await oProcess.actionAnt_laser( pLaser, pDevice_name);
                 SetResource(oProcess);
             }
             else
@@ -913,7 +987,7 @@ public class ProcessEsp32 : IDisposable
         }
         return result;
     }
-    public async Task<cResultAnt> actionAnt_laser(int pIsRead, int pLaser, string pDevice_name)
+    public async Task<cResultAnt> actionAnt_laser(int pLaser, string pDevice_name)
     {
         cResultAnt result = null;
         Guid oAstroTracking = Util.newAstroTracking_laser(Constantes.astro_type_laser, pLaser, pDevice_name);
@@ -1080,6 +1154,7 @@ public class ProcessEsp32 : IDisposable
 public class ActionAntRequest
 {
     public string type { get; set; }
+    public string action { get; set; }
     //public string device_name { get; set; }
     public int hip { get; set; }
     public double ra_h { get; set; }

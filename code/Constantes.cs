@@ -58,6 +58,15 @@ public static class Constantes
     {
         get { return "movedLaser"; }
     }
+    //
+        public static string astro_action_get
+    {
+        get { return "GET"; }
+    }
+    public static string astro_action_post
+    {
+        get { return "POST"; }
+    }
     public static double servo_sleep_max
     {
         get { return 3; }

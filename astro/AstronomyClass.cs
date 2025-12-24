@@ -14,7 +14,7 @@ public class cResultAnt
     public ServoCoordinates sc { get; set; }
     public double? h_now { get; set; }
     public double? v_now { get; set; }
-
+public int isLaser { get; set; }
 
 
 }
