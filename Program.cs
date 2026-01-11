@@ -91,20 +91,20 @@ internal class Program
         // llevar
         app.MapGet("/stars_stellarium", ((nscore.ProcessAntV2 pProcessAntV2) => { return Results.Json(pProcessAntV2.getStars()); }));
         app.MapGet("/esp32", async (int led) => { return await nscore.Util.esp32_util(led); });
-        app.MapGet("/astrotracking", (() => { return Util.getAntTrackings(); }));
-        app.MapGet("/restore", () => { return nscore.Util.restore(); });
-        app.MapGet("/logs", () => { return nscore.Util.getLogs(); });
+        //    app.MapGet("/astrotracking", (() => { return Util.getAntTrackings(); }));
+        //    app.MapGet("/restore", () => { return nscore.Util.restore(); });
+
         //app.MapGet("/esp32_getAstro", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.esp32_getAstro(); });
         app.MapGet("/getservos_v2", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.getValoresServos(); });
-        app.MapGet("/clean", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.removeTable(); });
-        app.MapGet("/setConfig", async (nscore.ProcessAntV2 pProcessAntV2, double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name, double vertical_sentido, double horizontal_sentido) => { return await pProcessAntV2.setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate, device_name, vertical_sentido, horizontal_sentido); });
+        //     app.MapGet("/clean", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.removeTable(); });
+        //app.MapGet("/setConfig", async (nscore.ProcessAntV2 pProcessAntV2, double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name, double vertical_sentido, double horizontal_sentido) => { return await pProcessAntV2.setConfig(latitude, longitude, horizontal_grados_min, horizontal_grados_max, vertical_grados_min, vertical_grados_max, horizontal_grados_calibrate, vertical_grados_calibrate, device_name, vertical_sentido, horizontal_sentido); });
         app.MapGet("/setConfig_calibrate", async (nscore.ProcessAntV2 pProcessAntV2, double horizontal_grados_calibrate, double vertical_grados_calibrate) => { return await pProcessAntV2.setConfig_calibrate(horizontal_grados_calibrate, vertical_grados_calibrate); });
-        app.MapGet("/getConfig", async (nscore.ProcessAntV2 pProcessAntV2) => { return await nscore.ProcessAntV2.getConfig(); });
+
         app.MapGet("/laser", async (nscore.ProcessAntV2 pProcessAntV2, int read, int on) => { return await pProcessAntV2.actionAnt_laser(on); });
         app.MapGet("/servo_v2", async (nscore.ProcessAntV2 pProcessAntV2, int id) => { return await pProcessAntV2.actionAnt_star(id); });
         app.MapGet("/esp32_setAstro", async (nscore.ProcessAntV2 pProcessAntV2, string publicID, string pSessionDevice_publicID) => { return await pProcessAntV2.esp32_setAstro(publicID, pSessionDevice_publicID); });
         app.MapGet("/servomover_v2", async (nscore.ProcessAntV2 pProcessAntV2, double pH, double pV) => { return pProcessAntV2.actionAnt_servo(pH, pV); });
-        app.MapGet("/antResetZero", async (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.newAstroTrackingResetZero(); });
+        //app.MapGet("/antResetZero", async (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.newAstroTrackingResetZero(); });
         //app.MapGet("/sessionDeviceAdd", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID, string pDevice_name) => { return await pProcessAntV2.sessionDeviceAdd(pDevice_publicID, pDevice_name); });
         //app.MapGet("/isSessionDeviceOk", async (string pSessionDevice_publicID) => { return await nscore.Util.isSessionDeviceOk(pSessionDevice_publicID); });
         app.MapGet("/actionAnt_getAntTracking", async (nscore.ProcessAntV2 pProcessAntV2, string pDevice_publicID, string pSessionDevice_publicID) => { return await pProcessAntV2.actionAnt_getAntTracking(pDevice_publicID, pSessionDevice_publicID); });
@@ -151,6 +151,13 @@ internal class Program
         app.MapPost("/actionAnt", async (nscore.ProcessAntV2 pProcessAntV2, [Microsoft.AspNetCore.Mvc.FromBody] ActionAntRequest pValue) => { return await pProcessAntV2.actionAnt(pValue); }).RequireAuthorization();
         app.MapGet("/lastvalueservo", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.getLastValuesServos(); }).RequireAuthorization();
         app.MapPost("/laser", async (nscore.ProcessAntV2 pProcessAntV2, [Microsoft.AspNetCore.Mvc.FromBody] ActionAntRequest pValue) => { return await pProcessAntV2.api_laser(pValue); }).RequireAuthorization();
+        app.MapGet("/logs", () => { return nscore.Util.getLogs(); }).RequireAuthorization();
+        app.MapGet("/getConfig", async (nscore.ProcessAntV2 pProcessAntV2) => { return await nscore.ProcessAntV2.getConfig(); }).RequireAuthorization();
+        app.MapPost("/setConfig", async (nscore.ProcessAntV2 pProcessAntV2, [Microsoft.AspNetCore.Mvc.FromBody] ConfigAnt pValue) => { return await pProcessAntV2.setConfig(pValue); }).RequireAuthorization();
+        //app.MapGet("/clean", async (nscore.ProcessAntV2 pProcessAntV2) => { return await pProcessAntV2.removeTable(); }).RequireAuthorization();
+        app.MapGet("/astrotracking", (() => { return Util.getAntTrackings(); })).RequireAuthorization();
+        app.MapGet("/resetear_baseDatos", () => { return nscore.Util.resetear_baseDatos(); }).RequireAuthorization();
+         app.MapGet("/antResetZero", async (nscore.ProcessAntV2 pProcessAntV2) => { return pProcessAntV2.newAstroTrackingResetZero(); }).RequireAuthorization();
         app.Run();
 
 

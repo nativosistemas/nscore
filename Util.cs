@@ -668,6 +668,31 @@ public class Util
         }
         return result;
     }
+    public static async Task<string> resetear_baseDatos()
+    {
+        string result = string.Empty;
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+            }
+        }
+        catch (Exception ex)
+        {
+            result = "!Ok";
+            log(ex);
+        }
+        if (result == string.Empty)
+        {
+            await restoreUser();
+            restoreDatosConfig();
+            await restoreStellarium();
+            result = "Ok";
+        }
+        return result;
+    }
     public static async Task<string> restore()
     {
         //restoreConstelaciones();
@@ -1253,8 +1278,7 @@ public class Util
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 var jwtToken = tokenHandler.WriteToken(token);
-                var stringToken = tokenHandler.WriteToken(token);
-                result = stringToken;
+                result = jwtToken;
                 await newSessionUser(oUser.publicID);
             }
         }

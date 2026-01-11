@@ -66,11 +66,11 @@ public class ProcessAntV2 : IDisposable
         }
         return _l_Star.Where(x => x.visible).ToList();
     }
-    public async Task<cResultAnt> actionAnt_laser( int pLaser)
+    public async Task<cResultAnt> actionAnt_laser(int pLaser)
     {
         ConfigAnt oConfigAnt = await getConfig();
         string device_name = oConfigAnt.device_name;
-        return await _poolEsp32.Start_laser( pLaser, device_name);
+        return await _poolEsp32.Start_laser(pLaser, device_name);
     }
     public async Task<cResultAnt> actionAnt_servo(double pHorizontal, double pVertical)
     {
@@ -523,36 +523,36 @@ public class ProcessAntV2 : IDisposable
 
         return result;
     }
- /*   public async Task<cResultAnt> getAntLastValue(string pStatus)
-    {
-        cResultAnt result = null;
-        try
-        {
+    /*   public async Task<cResultAnt> getAntLastValue(string pStatus)
+       {
+           cResultAnt result = null;
+           try
+           {
 
-            result = await getAntLastValue_generic(pStatus);
+               result = await getAntLastValue_generic(pStatus);
 
-        }
-        catch (Exception ex)
-        {
-            nscore.Util.log(ex);
-        }
+           }
+           catch (Exception ex)
+           {
+               nscore.Util.log(ex);
+           }
 
-        return result;
-    }*/
+           return result;
+       }*/
     public async Task<cResultAnt> api_laser(ActionAntRequest pValue)
     {
         cResultAnt result = null;
         try
         {
-              if (pValue.type == Constantes.astro_type_laser && pValue.action == Constantes.astro_action_get)
+            if (pValue.type == Constantes.astro_type_laser && pValue.action == Constantes.astro_action_get)
             {
                 result = await getAntLastValue_generic(Constantes.astro_status_movedLaser);
 
             }
             else if (pValue.type == Constantes.astro_type_laser && pValue.action == Constantes.astro_action_post)
             {
-                   result =  await actionAnt_laser(pValue.isLaser);
-                   // result = await getAntLastValue_generic(Constantes.astro_status_movedLaser);
+                result = await actionAnt_laser(pValue.isLaser);
+                // result = await getAntLastValue_generic(Constantes.astro_status_movedLaser);
             }
 
         }
@@ -624,7 +624,7 @@ public class ProcessAntV2 : IDisposable
         }
         return result;
     }
-    public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name, double vertical_sentido, double horizontal_sentido)
+    /*public async Task<string> setConfig(double latitude, double longitude, double horizontal_grados_min, double horizontal_grados_max, double vertical_grados_min, double vertical_grados_max, double horizontal_grados_calibrate, double vertical_grados_calibrate, string device_name, double vertical_sentido, double horizontal_sentido)
     {
         string result = "!Ok";
         try
@@ -652,7 +652,42 @@ public class ProcessAntV2 : IDisposable
             nscore.Util.log(ex);
         }
         return result;
+    }*/
+    public async Task<cResultAnt> setConfig(ConfigAnt config)
+    {
+        cResultAnt result = new cResultAnt();
+       // result.typeStatusApi ="0";
+        try
+        {
+            using (var context = new AstroDbContext())
+            {
+                List<Config> l = context.Configs.ToList();
+
+                l.FirstOrDefault(x => x.name == "latitude").valueDouble = config.latitude;
+                l.FirstOrDefault(x => x.name == "longitude").valueDouble = config.longitude;
+                l.FirstOrDefault(x => x.name == "horizontal_grados_min").valueDouble = config.horizontal_grados_min;
+                l.FirstOrDefault(x => x.name == "horizontal_grados_max").valueDouble = config.horizontal_grados_max;
+                l.FirstOrDefault(x => x.name == "vertical_grados_min").valueDouble = config.vertical_grados_min;
+                l.FirstOrDefault(x => x.name == "vertical_grados_max").valueDouble = config.vertical_grados_max;
+                l.FirstOrDefault(x => x.name == "horizontal_grados_calibrate").valueDouble = config.horizontal_grados_calibrate;
+                l.FirstOrDefault(x => x.name == "vertical_grados_calibrate").valueDouble = config.vertical_grados_calibrate;
+                l.FirstOrDefault(x => x.name == "device_name").value = config.device_name;
+                l.FirstOrDefault(x => x.name == "vertical_sentido").valueDouble = config.vertical_sentido;
+                l.FirstOrDefault(x => x.name == "horizontal_sentido").valueDouble = config.horizontal_sentido;
+
+                context.SaveChanges();
+            }
+            result.typeStatusApi ="ok";
+        }
+        catch (Exception ex)
+        {
+            result.typeStatusApi ="error";
+            result.configAnt = await getConfig();
+            nscore.Util.log(ex);
+        }
+        return result;
     }
+
     public async Task<string> setConfig_calibrate(double horizontal_grados_calibrate, double vertical_grados_calibrate)
     {
         string result = "!Ok";
@@ -772,7 +807,7 @@ public class PoolEsp32 : IDisposable
         }
         return result;
     }
-    public async Task<cResultAnt> Start_laser( int pLaser, string pDevice_name)
+    public async Task<cResultAnt> Start_laser(int pLaser, string pDevice_name)
     {
         cResultAnt result = null;
         try
@@ -780,7 +815,7 @@ public class PoolEsp32 : IDisposable
             ProcessEsp32 oProcess = GetResource();
             if (oProcess != null)
             {
-                result = await oProcess.actionAnt_laser( pLaser, pDevice_name);
+                result = await oProcess.actionAnt_laser(pLaser, pDevice_name);
                 SetResource(oProcess);
             }
             else

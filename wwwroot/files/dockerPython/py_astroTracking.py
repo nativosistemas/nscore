@@ -17,7 +17,7 @@ earth = planets['earth']
 ts = load.timescale()
 status_create = 'create'
 while True:
-    print("hola py")
+    #print("hola py")
     cursor.execute('SELECT * FROM AntTrackings WHERE tracking = 1 OR status=\'create\'')
     registros = cursor.fetchall()
     oConfig = getConfig()

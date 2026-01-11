@@ -7,16 +7,15 @@ public class cResultAnt
 {
     public string msg { get; set; }
     public string type { get; set; }
+      public string typeStatusApi { get; set; }
     public int? hip { get; set; }
-    //public ConfigAnt configAnt { get; set; }
+    public ConfigAnt configAnt { get; set; }
     public EquatorialCoordinates ec { get; set; }
     public HorizontalCoordinates hc { get; set; }
     public ServoCoordinates sc { get; set; }
     public double? h_now { get; set; }
     public double? v_now { get; set; }
 public int isLaser { get; set; }
-
-
 }
 
 public class Singleton_SessionApp
