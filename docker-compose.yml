@@ -42,6 +42,13 @@ services:
     restart: unless-stopped     
     networks:
       - app-network
+  seweb:
+    image: ghcr.io/nativosistemas/seweb:latest
+    container_name: seweb
+    restart: unless-stopped
+    networks:
+      - app-network
+
   certbot:
     image: certbot/certbot
     container_name: nscore-certbot
