@@ -28,7 +28,7 @@ services:
       - /usr/src/nscore/sqllite:/usr/src
       #- ./wwwroot/files/dockerPython:/app  # Mapea el código local al contenedor
     restart: unless-stopped
-nscore:
+  nscore:
     image: ghcr.io/nativosistemas/nscore:latest
     container_name: nscore
     restart: unless-stopped
