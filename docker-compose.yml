@@ -28,18 +28,13 @@ services:
       - /usr/src/nscore/sqllite:/usr/src
       #- ./wwwroot/files/dockerPython:/app  # Mapea el código local al contenedor
     restart: unless-stopped
-  nscore:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: nscore  
-    image: nscore
+nscore:
+    image: ghcr.io/nativosistemas/nscore:latest
+    container_name: nscore
+    restart: unless-stopped
     volumes:
       - /usr/src/nscore/sqllite:/usr/src
       - /usr/src/nscore/dotnet/appsettings.json:/App/appsettings.json
-#    environment:
-#      - ASPNETCORE_URLS=http://+:8080  # Fuerza a escuchar en 8080 
-    restart: unless-stopped     
     networks:
       - app-network
   certbot:
