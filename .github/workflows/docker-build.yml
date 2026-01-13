@@ -10,8 +10,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-        # 1. Configurar el constructor para multi-plataforma
+   
+      # 1. Configurar QEMU y Docker Buildx para construir imágenes multi-arquitectura
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -23,11 +26,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-       # 3. Build y push de la imagen
-      - name: Build and Push
+      # 3. Build y push de la imagen para varias plataformas (incluye Raspberry Pi)
+      - name: Build and Push (multi-arch)
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          platforms: linux/arm64       
-          tags: ghcr.io/${{ github.repository_owner }}/nscore:latest
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/nscore:latest
+            ghcr.io/${{ github.repository_owner }}/nscore:${{ github.sha }}
