@@ -30,6 +30,7 @@ services:
     restart: unless-stopped
   nscore:
     image: ghcr.io/nativosistemas/nscore:latest
+    platform: linux/arm64
     container_name: nscore
     restart: unless-stopped
     volumes:
