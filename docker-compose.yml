@@ -38,6 +38,13 @@ services:
       - /usr/src/nscore/dotnet/appsettings.json:/App/appsettings.json
     networks:
       - app-network
+  nscore-seweb:
+    image: ghcr.io/nativosistemas/seweb:latest
+    platform: linux/arm64
+    container_name: nscore-seweb
+    restart: unless-stopped
+    networks:
+      - app-network      
   certbot:
     image: certbot/certbot
     container_name: nscore-certbot
