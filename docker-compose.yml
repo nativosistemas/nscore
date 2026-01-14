@@ -43,6 +43,8 @@ services:
     platform: linux/arm64
     container_name: nscore-seweb
     restart: unless-stopped
+    volumes:
+      - /usr/src/nscore/nginx/html:/usr/share/nginx/html 
     networks:
       - app-network      
   certbot:
