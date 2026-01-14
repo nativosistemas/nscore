@@ -44,7 +44,7 @@ services:
     container_name: nscore-seweb
     restart: unless-stopped
     volumes:
-      - /usr/src/nscore/nginx/html:/usr/share/nginx/html 
+      - /usr/src/nscore/nginx/html:/usr/share/nginx/html:rw
     networks:
       - app-network      
   certbot:
