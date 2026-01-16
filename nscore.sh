@@ -5,6 +5,9 @@
 echo "=== Deteniendo y eliminando contenedores ==="
 docker-compose down
 
+echo "=== Eliminando imágenes Docker ==="
+docker rmi -f $(docker images -q)
+
 echo -e "\n=== Levantando contenedores en segundo plano ==="
 docker-compose up -d --pull always
 
