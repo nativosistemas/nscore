@@ -31,6 +31,7 @@ services:
     restart: unless-stopped
   nscore:
     image: ghcr.io/nativosistemas/nscore:latest
+    pull_policy: always
     platform: linux/arm64
     container_name: nscore
     restart: unless-stopped
@@ -41,6 +42,7 @@ services:
       - app-network
   nscore-seweb:
     image: ghcr.io/nativosistemas/seweb:latest
+    pull_policy: always
     platform: linux/arm64
     container_name: nscore-seweb
     restart: unless-stopped
