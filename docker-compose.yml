@@ -10,7 +10,7 @@ services:
     volumes:
       - /usr/src/nscore/nginx/nginx.conf:/etc/nginx/nginx.conf 
       - /usr/src/nscore/nginx/sites:/etc/nginx/sites-enabled
-      - shared-data:/usr/share/nginx/html  # Mapeo de la carpeta completa      
+      #- shared-data:/usr/share/nginx/html  # Mapeo de la carpeta completa      
       - /usr/src/nscore/letsencrypt/www:/var/www/certbot:rw  # Para el reto HTTP-01
       - /etc/letsencrypt:/etc/letsencrypt  # Certificados generados
     restart: unless-stopped      
@@ -44,8 +44,8 @@ services:
     platform: linux/arm64
     container_name: nscore-seweb
     restart: unless-stopped
-    volumes:
-      - shared-data:/usr/share/nginx/html
+    #volumes:
+    #  - shared-data:/usr/share/nginx/html
     networks:
       - app-network      
   certbot:
@@ -70,5 +70,5 @@ networks:
   app-network:
     driver: bridge
 
-volumes:
-  shared-data:
+#volumes:
+#  shared-data:
