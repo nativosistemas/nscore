@@ -10,8 +10,8 @@ echo "=== Eliminando imágenes Docker ==="
 docker rmi ghcr.io/nativosistemas/seweb:latest
 docker rmi ghcr.io/nativosistemas/nscore:latest
 
-echo "=== Eliminando volumen Docker ==="
-docker volume rm shared-data
+#echo "=== Eliminando volumen Docker ==="
+#docker volume rm shared-data
 
 echo -e "\n=== Levantando contenedores en segundo plano ==="
 docker-compose up -d --pull always
