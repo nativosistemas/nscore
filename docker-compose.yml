@@ -19,15 +19,13 @@ services:
       - nscore-seweb
     networks:
       - app-network
-  nscore-python:
-    build: 
-      context: ./wwwroot/files/dockerPython
-      dockerfile: Dockerfile
-    image: nscore-python
-    container_name: nscore-python
+  nscore-nssky:
+    image: ghcr.io/nativosistemas/nssky:latest
+    pull_policy: always
+    platform: linux/arm64
+    container_name: nscore-nssky
     volumes:
       - /usr/src/nscore/sqllite:/usr/src
-      #- ./wwwroot/files/dockerPython:/app  # Mapea el código local al contenedor
     restart: unless-stopped
   nscore:
     image: ghcr.io/nativosistemas/nscore:latest
