@@ -9,6 +9,7 @@ echo "=== Eliminando imágenes Docker ==="
 #docker rmi -f $(docker images -q)
 docker rmi ghcr.io/nativosistemas/seweb:latest
 docker rmi ghcr.io/nativosistemas/nscore:latest
+docker rmi ghcr.io/nativosistemas/nssky:latest
 
 #echo "=== Eliminando volumen Docker ==="
 #docker volume rm shared-data

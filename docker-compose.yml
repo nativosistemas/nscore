@@ -3,7 +3,7 @@ version: '3.8'
 services:
   nginx:
     image: nginx:alpine
-    container_name: nscore-nginx
+    container_name: nginx
     ports:
       - "80:80"
       - "443:443"
@@ -16,14 +16,15 @@ services:
     restart: unless-stopped      
     depends_on:
       - nscore
-      - nscore-seweb
+      - seweb
+      - nssky
     networks:
       - app-network
-  nscore-nssky:
+  nssky:
     image: ghcr.io/nativosistemas/nssky:latest
     pull_policy: always
     platform: linux/arm64
-    container_name: nscore-nssky
+    container_name: nssky
     volumes:
       - /usr/src/nscore/sqllite:/usr/src
     restart: unless-stopped
@@ -38,11 +39,11 @@ services:
       - /usr/src/nscore/dotnet/appsettings.json:/App/appsettings.json
     networks:
       - app-network
-  nscore-seweb:
+  seweb:
     image: ghcr.io/nativosistemas/seweb:latest
     pull_policy: always
     platform: linux/arm64
-    container_name: nscore-seweb
+    container_name: seweb
     restart: unless-stopped
 #    volumes:
 #      - shared-data:/usr/share/nginx/html
@@ -50,7 +51,7 @@ services:
       - app-network      
   certbot:
     image: certbot/certbot
-    container_name: nscore-certbot
+    container_name: certbot
     volumes:
       - /usr/src/nscore/letsencrypt/www:/var/www/certbot:rw
       - /etc/letsencrypt:/etc/letsencrypt:rw
@@ -62,7 +63,7 @@ services:
     restart: unless-stopped
   duckdns:
     image: linuxserver/duckdns:latest
-    container_name: nscore-duckdns
+    container_name: duckdns
     env_file: /usr/src/nscore/duckdns/duckdns-secrets.env
     restart: always
 
